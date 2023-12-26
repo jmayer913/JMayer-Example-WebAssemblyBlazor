@@ -1,8 +1,17 @@
 using JMayer.Example.WebAssemblyBlazor.Client.Layout;
 using JMayer.Example.WebAssemblyBlazor.Components;
+using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Part;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Setup Database, Data Layers & Logging
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole(); //Temp for now.
+builder.Services.AddSingleton<PartDataLayer>();
+
+#endregion
 
 #region Setup Services
 
@@ -33,17 +42,23 @@ else
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(MainLayout).Assembly);
 
-app.MapControllers();
+app.UseRouting();
+app.UseAntiforgery();
+app.UseEndpoints(endpoints =>
+{
+    _ = endpoints.MapControllers();
+});
 
 #endregion
 
 app.Run();
+
+//Used to expose the launching of the web application to xunit using WebApplicationFactory.
+public partial class Program { }

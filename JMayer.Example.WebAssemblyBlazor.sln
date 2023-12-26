@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JMayer.Example.WebAssemblyBlazor", "JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor.csproj", "{EFA506BD-9F35-4047-9FB7-D153CD754AC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JMayer.Example.WebAssemblyBlazor", "JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor.csproj", "{EFA506BD-9F35-4047-9FB7-D153CD754AC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JMayer.Example.WebAssemblyBlazor.Client", "JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor.Client\JMayer.Example.WebAssemblyBlazor.Client.csproj", "{F66DC2A6-5878-4D8D-9184-A8308699017A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JMayer.Example.WebAssemblyBlazor.Client", "JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor.Client\JMayer.Example.WebAssemblyBlazor.Client.csproj", "{F66DC2A6-5878-4D8D-9184-A8308699017A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JMayer.Example.WebAssemblyBlazor.Shared", "JMayer.Example.WebAssemblyBlazor.Shared\JMayer.Example.WebAssemblyBlazor.Shared.csproj", "{DD7A3FF6-BF25-47A0-9B9F-F3FEF2EB1AB0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JMayer.Data", "..\JMayer-Data-Library\JMayer.Data\JMayer.Data.csproj", "{809A2F95-E54C-46F3-8A0A-86745908DC29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JMayer.Web.Mvc", "..\JMayer-Web-Mvc-Library\JMayer.Web.Mvc\JMayer.Web.Mvc.csproj", "{4A629675-978A-4133-B393-45728E80E04F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{F66DC2A6-5878-4D8D-9184-A8308699017A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F66DC2A6-5878-4D8D-9184-A8308699017A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F66DC2A6-5878-4D8D-9184-A8308699017A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD7A3FF6-BF25-47A0-9B9F-F3FEF2EB1AB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD7A3FF6-BF25-47A0-9B9F-F3FEF2EB1AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD7A3FF6-BF25-47A0-9B9F-F3FEF2EB1AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD7A3FF6-BF25-47A0-9B9F-F3FEF2EB1AB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{809A2F95-E54C-46F3-8A0A-86745908DC29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{809A2F95-E54C-46F3-8A0A-86745908DC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{809A2F95-E54C-46F3-8A0A-86745908DC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{809A2F95-E54C-46F3-8A0A-86745908DC29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A629675-978A-4133-B393-45728E80E04F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A629675-978A-4133-B393-45728E80E04F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A629675-978A-4133-B393-45728E80E04F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A629675-978A-4133-B393-45728E80E04F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

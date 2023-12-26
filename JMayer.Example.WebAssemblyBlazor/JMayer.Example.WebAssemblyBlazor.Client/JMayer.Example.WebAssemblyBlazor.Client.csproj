@@ -13,4 +13,8 @@
     <PackageReference Include="MudBlazor" Version="6.11.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\JMayer.Example.WebAssemblyBlazor.Shared\JMayer.Example.WebAssemblyBlazor.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
