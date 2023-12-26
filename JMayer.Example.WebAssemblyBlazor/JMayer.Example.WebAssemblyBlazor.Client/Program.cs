@@ -1,4 +1,4 @@
-using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Part;
+using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 

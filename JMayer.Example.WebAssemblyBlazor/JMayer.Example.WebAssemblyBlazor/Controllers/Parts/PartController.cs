@@ -1,16 +1,16 @@
-﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Part;
-using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Part;
+﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
+using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
 using JMayer.Web.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JMayer.Example.WebAssemblyBlazor.Controllers.Part;
+namespace JMayer.Example.WebAssemblyBlazor.Controllers.Parts;
 
 /// <summary>
 /// The class manages HTTP requests for CRUD operations associated with a part in a database.
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class PartController : StandardCRUDController<PartDataObject, PartDataLayer>
+public class PartController : StandardCRUDController<Part, PartDataLayer>
 {
     /// <summary>
     /// The dependency injection constructor.

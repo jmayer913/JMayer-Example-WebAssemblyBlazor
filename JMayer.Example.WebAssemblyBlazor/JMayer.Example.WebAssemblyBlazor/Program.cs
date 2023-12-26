@@ -1,7 +1,9 @@
 using JMayer.Example.WebAssemblyBlazor.Client.Layout;
 using JMayer.Example.WebAssemblyBlazor.Components;
-using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Part;
+using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
+using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,15 @@ builder.Services.AddRazorComponents()
 builder.Services.AddControllers();
 builder.Services.AddMudServices();
 
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
+builder.Services.AddResponseCompression(options =>
+{
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
 #endregion
 
 var app = builder.Build();
@@ -43,18 +54,14 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(MainLayout).Assembly);
 
-app.UseRouting();
-app.UseAntiforgery();
-app.UseEndpoints(endpoints =>
-{
-    _ = endpoints.MapControllers();
-});
+app.MapControllers();
 
 #endregion
 

@@ -1,11 +1,11 @@
 ﻿using JMayer.Data.Data;
 
-namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Part;
+namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 
 /// <summary>
 /// The class represents a part to be used for repairing an asset.
 /// </summary>
-public class PartDataObject : UserEditableDataObject
+public class Part : UserEditableDataObject
 {
     /// <summary>
     /// The property gets/sets the common category for the part.
@@ -40,20 +40,20 @@ public class PartDataObject : UserEditableDataObject
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public PartDataObject() : base() { }
+    public Part() : base() { }
 
     /// <summary>
     /// The copy constructor.
     /// </summary>
     /// <param name="copy">The copy.</param>
-    public PartDataObject(PartDataObject copy) : base(copy) { }
+    public Part(Part copy) : base(copy) { }
 
     /// <inheritdoc/>
     public override void MapProperties(DataObject dataObject)
     {
         base.MapProperties(dataObject);
 
-        if (dataObject is PartDataObject partDataObject)
+        if (dataObject is Part partDataObject)
         {
             Category = partDataObject.Category;
             Make = partDataObject.Make;
