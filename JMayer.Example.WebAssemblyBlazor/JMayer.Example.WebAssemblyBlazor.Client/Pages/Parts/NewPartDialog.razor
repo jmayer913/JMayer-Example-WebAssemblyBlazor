@@ -1,0 +1,25 @@
+﻿@rendermode InteractiveAuto
+@inherits NewPartDialogBase
+
+<MudDialog>
+    
+    <DialogContent>
+        <EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitFormAsync">
+            <DataAnnotationsValidator />
+            <ServerSideValidation @ref="@ServerSideValidation" />
+
+            <MudCard Elevation="0">
+                <MudCardContent>
+                    <MudTextField @bind-Value="@Part.Name" Label="Name" For="@(() => Part.Name)" />
+                    <MudTextField @bind-Value="@Part.Description" Label="Description" Lines="5" For="@(() => Part.Description)" />
+                </MudCardContent>
+
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit">Create</MudButton>
+                    <MudButton OnClick="@OnCancelButtonClick">Cancel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </DialogContent>
+
+</MudDialog>

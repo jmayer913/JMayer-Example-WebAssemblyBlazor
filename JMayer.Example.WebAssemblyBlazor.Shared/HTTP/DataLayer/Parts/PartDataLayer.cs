@@ -6,7 +6,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 /// <summary>
 /// The class manages CRUD interactions with a remote server for a part.
 /// </summary>
-public class PartDataLayer : UserEditableDataLayer<Part>
+public class PartDataLayer : UserEditableDataLayer<Part>, IPartDataLayer
 {
     /// <inheritdoc/>
     public PartDataLayer(HttpClient httpClient) : base(httpClient) { }

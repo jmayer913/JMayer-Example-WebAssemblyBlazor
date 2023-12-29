@@ -5,6 +5,11 @@ using MudBlazor.Services;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddMudServices();
-builder.Services.AddScoped<PartDataLayer>();
+
+#region Setup HTTP Data Layers
+
+builder.Services.AddHttpClient<IPartDataLayer, PartDataLayer>(httpClient => { httpClient.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); });
+
+#endregion
 
 await builder.Build().RunAsync();

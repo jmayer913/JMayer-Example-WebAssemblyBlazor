@@ -1,0 +1,30 @@
+﻿@page "/Parts"
+@rendermode InteractiveAuto
+@inherits PartSearchBase
+
+<MudStack>
+
+    <MudText Typo="Typo.h5">Part Search</MudText>
+
+    <MudDataGrid @ref="@MudDataGrid" EditMode="DataGridEditMode.Form" Items="@Parts">
+        <ToolBarContent>
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewClickAsync" />
+        </ToolBarContent>
+
+        <Columns>
+            <TemplateColumn IsEditable="false">
+                <CellTemplate>
+                    <MudStack Row="true">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteClickAsync(context.Item))" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" />
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Manufacturer" />
+            <PropertyColumn Property="x => x.ManufacturerNumber" />
+            <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" />
+        </Columns>
+    </MudDataGrid>
+
+</MudStack>
