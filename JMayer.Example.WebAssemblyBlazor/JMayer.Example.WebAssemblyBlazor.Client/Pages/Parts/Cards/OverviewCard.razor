@@ -1,0 +1,60 @@
+﻿@rendermode InteractiveAuto
+@inherits OverviewCardBase
+
+<EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitFormAsync">
+    <DataAnnotationsValidator />
+    <ServerSideValidation @ref="@ServerSideValidation" />
+
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Overview</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+
+            <MudGrid>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@Part.Name" Label="Name" For="@(() => Part.Name)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    @* <MudTextField @bind-Value="@Part.Name" Label="Category" For="@(() => Part.Category)" /> *@
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@Part.Manufacturer" Label="Manufacturer" For="@(() => Part.Manufacturer)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@Part.ManufacturerNumber" Label="Manufacturer #" For="@(() => Part.ManufacturerNumber)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@Part.Model" Label="Model" For="@(() => Part.Model)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@Part.Make" Label="Make" For="@(() => Part.Make)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@Part.Description" Label="Description" Lines="5" For="@(() => Part.Description)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudCheckBox @bind-Value="@Part.Obsolete" Label="Obsolete" For="@(() => Part.Obsolete)" />
+                </MudItem>
+
+            </MudGrid>
+            
+        </MudCardContent>
+
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Text">Update</MudButton>
+            <MudButton OnClick="@OnCancelClick">Cancel</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>

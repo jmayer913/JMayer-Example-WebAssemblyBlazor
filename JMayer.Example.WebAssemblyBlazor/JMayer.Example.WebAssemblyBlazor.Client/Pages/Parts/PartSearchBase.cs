@@ -30,6 +30,12 @@ public class PartSearchBase : ComponentBase
     protected MudDataGrid<Part> MudDataGrid { get; set; } = null!;
 
     /// <summary>
+    /// The property gets/sets the navigation manager which is used to navigate to the inspector.
+    /// </summary>
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; } = null!;
+
+    /// <summary>
     /// The property gets/sets the parts to display on the UI.
     /// </summary>
     protected List<Part> Parts { get; set; } = [];
@@ -49,7 +55,7 @@ public class PartSearchBase : ComponentBase
     /// </summary>
     /// <param name="part">The part to delete.</param>
     /// <returns>A Task object for the async.</returns>
-    protected async Task OnDeleteClickAsync(Part part)
+    protected async Task OnDeleteButtonClickAsync(Part part)
     {
         bool? result = await DialogService.ShowConfirmActionMessageAsync();
 
@@ -76,10 +82,19 @@ public class PartSearchBase : ComponentBase
     }
 
     /// <summary>
+    /// The method navigates to the inspector page.
+    /// </summary>
+    /// <param name="part">The part to inspect.</param>
+    protected void OnEditButtonClick(Part part)
+    {
+        NavigationManager.NavigateTo($"/Part/{part.Integer64ID}");
+    }
+
+    /// <summary>
     /// The method opens a dialog for creating a new part and if not canceled, the list is required from the server.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
-    protected async Task OnNewClickAsync()
+    protected async Task OnNewButtonClickAsync()
     {
         IDialogReference dialogReference = await DialogService.ShowAsync<NewPartDialog>("Create a New Part");
         DialogResult dialogResult = await dialogReference.Result;

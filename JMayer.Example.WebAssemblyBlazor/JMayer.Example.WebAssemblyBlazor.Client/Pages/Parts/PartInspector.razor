@@ -1,0 +1,18 @@
+﻿@page "/Part/{indexKey:int}"
+@rendermode InteractiveAuto
+@inherits PartInspectorBase
+
+@if (Part != null)
+{
+    <MudGrid>
+
+        <MudItem xs="12">
+            <JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Cards.OverviewCard @bind-Part="@Part" />
+        </MudItem>
+
+    </MudGrid>
+}
+else
+{
+    @* TO DO: Display a not found message. *@
+}

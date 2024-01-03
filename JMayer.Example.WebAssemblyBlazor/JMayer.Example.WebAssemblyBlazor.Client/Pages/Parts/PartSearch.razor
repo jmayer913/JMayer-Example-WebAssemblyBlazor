@@ -6,17 +6,17 @@
 
     <MudText Typo="Typo.h5">Part Search</MudText>
 
-    <MudDataGrid @ref="@MudDataGrid" EditMode="DataGridEditMode.Form" Items="@Parts">
+    <MudDataGrid @ref="@MudDataGrid" EditTrigger="DataGridEditTrigger.Manual" Items="@Parts">
         <ToolBarContent>
-            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewClickAsync" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
         </ToolBarContent>
 
         <Columns>
             <TemplateColumn IsEditable="false">
                 <CellTemplate>
                     <MudStack Row="true">
-                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteClickAsync(context.Item))" />
-                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteButtonClickAsync(context.Item))" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="@(() => OnEditButtonClick(context.Item))" />
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

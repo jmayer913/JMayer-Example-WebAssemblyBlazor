@@ -19,6 +19,17 @@ public static class IDialogServiceExtension
     }
 
     /// <summary>
+    /// The method displays an edit conflict message to the user.
+    /// </summary>
+    /// <param name="dialogService">The dialog service used to display the error message.</param>
+    /// <param name="message">The message to display to the user.</param>
+    /// <returns>A Task object for the async.</returns>
+    public static async Task ShowEditConflictMessageAsync(this IDialogService dialogService, string message = "The submitted data was detected to be out of date; please refresh and try again.")
+    {
+        _ = await dialogService.ShowMessageBox("Warning", message, options: new DialogOptions() { CloseButton = false });
+    }
+
+    /// <summary>
     /// The method displays an error message to the user.
     /// </summary>
     /// <param name="dialogService">The dialog service used to display the error message.</param>
