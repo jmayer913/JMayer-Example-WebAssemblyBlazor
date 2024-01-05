@@ -15,6 +15,11 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts;
 public class NewPartDialogBase : ComponentBase
 {
     /// <summary>
+    /// The property gets/sets the categories for the parts.
+    /// </summary>
+    protected List<string> Categories { get; set; } = [];
+
+    /// <summary>
     /// The property gets/sets the data layer to be used by the dialog.
     /// </summary>
     [Inject]
@@ -57,9 +62,36 @@ public class NewPartDialogBase : ComponentBase
     }
 
     /// <summary>
+    /// The method sets up the component after the parameters are set.
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnParametersSetAsync()
+    {
+        Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        await base.OnParametersSetAsync();
+    }
+
+    /// <summary>
     /// The method closes the dialog with a cancel result.
     /// </summary>
     protected void OnCancelButtonClick() => MudDialog?.Cancel();
+
+    /// <summary>
+    /// The method returns the list based on what the user has typed in.
+    /// </summary>
+    /// <param name="value">The value to search for.</param>
+    /// <returns>A list of acceptable categories.</returns>
+    protected async Task<IEnumerable<string>> OnCategoryAutoCompleteSearch(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return await Task.FromResult(Categories);
+        }
+        else
+        {
+            return await Task.FromResult(Categories.Where(s => s.Contains(value)));
+        }
+    }
 
     /// <summary>
     /// The method attempts to create a new part on the server.

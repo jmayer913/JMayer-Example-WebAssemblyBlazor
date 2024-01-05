@@ -16,6 +16,11 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Cards;
 public class OverviewCardBase : ComponentBase
 {
     /// <summary>
+    /// The property gets/sets the categories for the parts.
+    /// </summary>
+    protected List<string> Categories { get; set; } = [];
+
+    /// <summary>
     /// The property gets/sets the data layer to used by the page.
     /// </summary>
     [Inject]
@@ -55,13 +60,23 @@ public class OverviewCardBase : ComponentBase
     protected ServerSideValidation ServerSideValidation { get; set; } = null!;
 
     /// <summary>
-    /// The method sets 
+    /// The method sets up the component after the parameters are set.
     /// </summary>
     protected override void OnParametersSet()
     {
         OriginalPart = new(Part);
         EditContext = new(Part);
         base.OnParametersSet();
+    }
+
+    /// <summary>
+    /// The method sets up the component after the parameters are set.
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnParametersSetAsync()
+    {
+        Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        await base.OnParametersSetAsync();
     }
 
     /// <summary>
@@ -72,6 +87,23 @@ public class OverviewCardBase : ComponentBase
     {
         Part.MapProperties(OriginalPart);
         EditContext.MarkAsUnmodified();
+    }
+
+    /// <summary>
+    /// The method returns the list based on what the user has typed in.
+    /// </summary>
+    /// <param name="value">The value to search for.</param>
+    /// <returns>A list of acceptable categories.</returns>
+    protected async Task<IEnumerable<string>> OnCategoryAutoCompleteSearch(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return await Task.FromResult(Categories);
+        }
+        else
+        {
+            return await Task.FromResult(Categories.Where(s => s.Contains(value)));
+        }
     }
 
     /// <summary>

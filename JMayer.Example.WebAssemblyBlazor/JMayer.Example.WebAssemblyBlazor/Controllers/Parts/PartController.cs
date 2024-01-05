@@ -18,4 +18,24 @@ public class PartController : StandardCRUDController<Part, PartDataLayer>
     /// <param name="dataLayer">The data layer the controller will interact with.</param>
     /// <param name="logger">The logger the controller will interact with.</param>
     public PartController(PartDataLayer dataLayer, ILogger<PartController> logger) : base(dataLayer, logger) { }
+
+    /// <summary>
+    /// The method returns the categories for the parts.
+    /// </summary>
+    /// <returns>A list of categories.</returns>
+    [HttpGet("Category/All")]
+    public async Task<IActionResult> GetCategoriesAsync()
+    {
+        try
+        {
+            List<Part> dataObjects = await _dataLayer.GetAllAsync();
+            List<string?> categories = dataObjects.Select(obj => obj.Category).Distinct().ToList();
+            return Ok(categories);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to return the part categories.");
+            return Problem();
+        }
+    }
 }

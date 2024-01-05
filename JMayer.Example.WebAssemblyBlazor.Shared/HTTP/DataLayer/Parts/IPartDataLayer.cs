@@ -8,4 +8,10 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 /// </summary>
 public interface IPartDataLayer : IUserEditableDataLayer<Part>
 {
+    /// <summary>
+    /// The method returns all the defined categories for the parts.
+    /// </summary>
+    /// <param name="cancellationToken">A token used for task cancellations.</param>
+    /// <returns>A list of categories.</returns>
+    Task<List<string>?> GetCategoriesAsync(CancellationToken cancellationToken = default);
 }
