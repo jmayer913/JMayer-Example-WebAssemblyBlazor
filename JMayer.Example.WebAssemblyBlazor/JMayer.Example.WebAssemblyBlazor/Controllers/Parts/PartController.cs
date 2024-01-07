@@ -28,13 +28,13 @@ public class PartController : StandardCRUDController<Part, PartDataLayer>
     {
         try
         {
-            List<Part> dataObjects = await _dataLayer.GetAllAsync();
+            List<Part> dataObjects = await DataLayer.GetAllAsync();
             List<string?> categories = dataObjects.Select(obj => obj.Category).Distinct().ToList();
             return Ok(categories);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to return the part categories.");
+            Logger.LogError(ex, "Failed to return the part categories.");
             return Problem();
         }
     }

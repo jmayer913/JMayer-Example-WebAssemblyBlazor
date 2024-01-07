@@ -17,7 +17,7 @@ public class PartDataLayer : UserEditableDataLayer<Part>, IPartDataLayer
     public async Task<List<string>?> GetCategoriesAsync(CancellationToken cancellationToken = default)
     {
         List<string>? categories = null;
-        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync($"api/{_typeName}/Category/All", cancellationToken);
+        HttpResponseMessage httpResponseMessage = await HttpClient.GetAsync($"api/{TypeName}/Category/All", cancellationToken);
 
         if (httpResponseMessage.IsSuccessStatusCode && httpResponseMessage.StatusCode != HttpStatusCode.NoContent)
         {
