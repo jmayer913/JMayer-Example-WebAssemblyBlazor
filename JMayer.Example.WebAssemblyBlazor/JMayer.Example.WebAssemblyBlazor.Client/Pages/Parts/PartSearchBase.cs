@@ -36,18 +36,31 @@ public class PartSearchBase : ComponentBase
     protected NavigationManager NavigationManager { get; set; } = null!;
 
     /// <summary>
-    /// The property gets/sets the parts to display on the UI.
+    /// The method queries a page of parts based on user interactions with the grid.
     /// </summary>
-    protected List<Part> Parts { get; set; } = [];
-
-    /// <summary>
-    /// The method loads data when the parameters are set on the page.
-    /// </summary>
-    /// <returns></returns>
-    protected override async Task OnParametersSetAsync()
+    /// <param name="gridState">Tells the server how to query data.</param>
+    /// <returns>A page of parts.</returns>
+    protected async Task<GridData<Part>> OnDataGridStateChangedAsync(GridState<Part> gridState)
     {
-        await RefreshAsync();
-        await base.OnParametersSetAsync();
+        try
+        {
+            List<Part>? parts = await DataLayer.GetPageAsync(gridState.ToQueryDefinition());
+
+            if (parts != null)
+            {
+                return new GridData<Part>()
+                {
+                    TotalItems = parts.Count,
+                    Items = parts,
+                };
+            }
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
+        return new GridData<Part>();
     }
 
     /// <summary>
@@ -67,7 +80,7 @@ public class PartSearchBase : ComponentBase
 
                 if (operationResult.IsSuccessStatusCode)
                 {
-                    await RefreshAsync();
+                    await MudDataGrid.ReloadServerData();
                 }
                 else
                 {
@@ -101,16 +114,7 @@ public class PartSearchBase : ComponentBase
 
         if (!dialogResult.Canceled)
         {
-            await RefreshAsync();
+            await MudDataGrid.ReloadServerData();
         }
-    }
-
-    /// <summary>
-    /// The method refreshes the parts from the server and updates the UI.
-    /// </summary>
-    /// <returns>A Task object for the async.</returns>
-    private async Task RefreshAsync()
-    {
-        Parts = await DataLayer.GetAllAsync() ?? [];
     }
 }

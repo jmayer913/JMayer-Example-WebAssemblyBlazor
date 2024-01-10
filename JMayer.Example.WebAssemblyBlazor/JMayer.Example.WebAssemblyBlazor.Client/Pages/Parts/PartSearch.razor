@@ -6,13 +6,13 @@
 
     <MudText Typo="Typo.h5">Part Search</MudText>
 
-    <MudDataGrid @ref="@MudDataGrid" EditTrigger="DataGridEditTrigger.Manual" Items="@Parts">
+    <MudDataGrid @ref="@MudDataGrid" T="Part" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" ServerData="@OnDataGridStateChangedAsync" SortMode="SortMode.Single">
         <ToolBarContent>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
         </ToolBarContent>
 
         <Columns>
-            <TemplateColumn IsEditable="false">
+            <TemplateColumn IsEditable="false" Filterable="false" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true">
                         <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteButtonClickAsync(context.Item))" />
@@ -25,6 +25,10 @@
             <PropertyColumn Property="x => x.ManufacturerNumber" />
             <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" />
         </Columns>
+
+        <PagerContent>
+            <MudDataGridPager T="Part" />
+        </PagerContent>
     </MudDataGrid>
 
 </MudStack>

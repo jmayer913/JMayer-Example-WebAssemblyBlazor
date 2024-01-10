@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
-namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts;
+namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Dialogs;
 
 /// <summary>
 /// The class manages user interactions with the NewPartDialog.razor dialog.
