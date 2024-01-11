@@ -3,15 +3,15 @@
 <MudDialog>
     
     <DialogContent>
-        <EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitFormAsync">
+        <EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitEditFormAsync">
             <DataAnnotationsValidator />
             <ServerSideValidation @ref="@ServerSideValidation" />
 
             <MudCard Elevation="0">
                 <MudCardContent>
-                    <MudTextField @bind-Value="@Part.Name" Label="Name" For="@(() => Part.Name)" />
-                    <MudTextField @bind-Value="@Part.Description" Label="Description" Lines="5" For="@(() => Part.Description)" />
-                    <MudAutocomplete @bind-Value="@Part.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => Part.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearch" />
+                    <MudTextField @bind-Value="@DataObject.Name" Label="Name" For="@(() => DataObject.Name)" />
+                    <MudTextField @bind-Value="@DataObject.Description" Label="Description" Lines="5" For="@(() => DataObject.Description)" />
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => DataObject.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
                 </MudCardContent>
 
                 <MudCardActions>
