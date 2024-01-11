@@ -1,5 +1,6 @@
 ﻿using JMayer.Data.HTTP.DataLayer;
 using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
+using JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Dialogs;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 using Microsoft.AspNetCore.Components;
