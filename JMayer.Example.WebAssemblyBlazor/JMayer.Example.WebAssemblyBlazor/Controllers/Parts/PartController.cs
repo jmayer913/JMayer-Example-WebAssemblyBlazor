@@ -10,14 +10,14 @@ namespace JMayer.Example.WebAssemblyBlazor.Controllers.Parts;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class PartController : StandardCRUDController<Part, PartDataLayer>
+public class PartController : StandardCRUDController<Part, IPartDataLayer>
 {
     /// <summary>
     /// The dependency injection constructor.
     /// </summary>
     /// <param name="dataLayer">The data layer the controller will interact with.</param>
     /// <param name="logger">The logger the controller will interact with.</param>
-    public PartController(PartDataLayer dataLayer, ILogger<PartController> logger) : base(dataLayer, logger) { }
+    public PartController(IPartDataLayer dataLayer, ILogger<PartController> logger) : base(dataLayer, logger) { }
 
     /// <summary>
     /// The method returns the categories for the parts.

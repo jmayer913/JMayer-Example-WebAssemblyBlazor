@@ -11,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole(); //Temp for now.
-builder.Services.AddSingleton<PartDataLayer>();
+builder.Services.AddSingleton<IPartDataLayer, PartDataLayer>();
+
+//Because of prerendering, register the HTTP clients on the server.
+builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.IPartDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.PartDataLayer>();
 
 #endregion
 
