@@ -16,35 +16,35 @@
             <MudGrid>
 
                 <MudItem xs="6">
-                    <MudTextField @bind-Value="@Part.Name" Label="Name" For="@(() => Part.Name)" />
+                    <MudTextField @bind-Value="@DataObject.Name" Label="Name" For="@(() => DataObject.Name)" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudAutocomplete @bind-Value="@Part.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => Part.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearch" />
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => DataObject.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearch" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudTextField @bind-Value="@Part.Manufacturer" Label="Manufacturer" For="@(() => Part.Manufacturer)" />
+                    <MudTextField @bind-Value="@DataObject.Manufacturer" Label="Manufacturer" For="@(() => DataObject.Manufacturer)" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudTextField @bind-Value="@Part.ManufacturerNumber" Label="Manufacturer #" For="@(() => Part.ManufacturerNumber)" />
+                    <MudTextField @bind-Value="@DataObject.ManufacturerNumber" Label="Manufacturer #" For="@(() => DataObject.ManufacturerNumber)" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudTextField @bind-Value="@Part.Model" Label="Model" For="@(() => Part.Model)" />
+                    <MudTextField @bind-Value="@DataObject.Model" Label="Model" For="@(() => DataObject.Model)" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudTextField @bind-Value="@Part.Make" Label="Make" For="@(() => Part.Make)" />
+                    <MudTextField @bind-Value="@DataObject.Make" Label="Make" For="@(() => DataObject.Make)" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudTextField @bind-Value="@Part.Description" Label="Description" Lines="5" For="@(() => Part.Description)" />
+                    <MudTextField @bind-Value="@DataObject.Description" Label="Description" Lines="5" For="@(() => DataObject.Description)" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudCheckBox @bind-Value="@Part.Obsolete" Label="Obsolete" For="@(() => Part.Obsolete)" />
+                    <MudCheckBox @bind-Value="@DataObject.Obsolete" Label="Obsolete" For="@(() => DataObject.Obsolete)" />
                 </MudItem>
 
             </MudGrid>
