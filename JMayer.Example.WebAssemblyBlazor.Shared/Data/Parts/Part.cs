@@ -37,15 +37,10 @@ public class Part : UserEditableDataObject
     /// </summary>
     public bool Obsolete { get; set; }
 
-    /// <summary>
-    /// The default constructor.
-    /// </summary>
+    /// <inheritdoc/>
     public Part() : base() { }
 
-    /// <summary>
-    /// The copy constructor.
-    /// </summary>
-    /// <param name="copy">The copy.</param>
+    /// <inheritdoc/>
     public Part(Part copy) : base(copy) { }
 
     /// <inheritdoc/>
