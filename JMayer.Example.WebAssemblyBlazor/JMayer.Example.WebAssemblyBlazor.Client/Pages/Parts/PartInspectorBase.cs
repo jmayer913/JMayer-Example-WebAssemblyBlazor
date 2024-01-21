@@ -19,7 +19,7 @@ public class PartInspectorBase : ComponentBase
     /// The property gets/sets the index key for the part.
     /// </summary>
     [Parameter]
-    public int IndexKey { get; set; }
+    public long IndexKey { get; set; }
 
     /// <summary>
     /// The property gets/sets the part being inspected.

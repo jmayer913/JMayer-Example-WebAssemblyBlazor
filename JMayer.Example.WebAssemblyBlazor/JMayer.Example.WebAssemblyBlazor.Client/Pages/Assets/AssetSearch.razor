@@ -1,11 +1,11 @@
-﻿@page "/Parts"
-@inherits PartSearchBase
+﻿@page "/Assets"
+@inherits AssetSearchBase
 
 <MudStack>
 
-    <MudText Typo="Typo.h5">Part Search</MudText>
+    <MudText Typo="Typo.h5">Asset Search</MudText>
 
-    <MudDataGrid @ref="@MudDataGrid" T="Part" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" ServerData="@OnDataGridStateChangedAsync" SortMode="SortMode.Single">
+    <MudDataGrid @ref="@MudDataGrid" T="Asset" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" ServerData="@OnDataGridStateChangedAsync" SortMode="SortMode.Single">
         <ToolBarContent>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
         </ToolBarContent>
@@ -19,19 +19,22 @@
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
+            <PropertyColumn Property="x => x.ParentPath" Grouping="true" />
             <PropertyColumn Property="x => x.Name" />
             <PropertyColumn Property="x => x.Category" />
-            <PropertyColumn Property="x => x.Manufacturer" />
-            <PropertyColumn Property="x => x.ManufacturerNumber" />
+            <PropertyColumn Property="x => x.Type" Hidden="true" />
+            <PropertyColumn Property="x => x.Manufacturer" Hidden="true" />
+            <PropertyColumn Property="x => x.ManufacturerNumber" Hidden="true" />
             <PropertyColumn Property="x => x.Make" Hidden="true" />
             <PropertyColumn Property="x => x.Model" Hidden="true" />
-            <PropertyColumn Property="x => x.Obsolete" Hidden="true" />
+            <PropertyColumn Property="x => x.Priority" Hidden="true" />
+            <PropertyColumn Property="x => x.IsOnline" />
             <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" />
             <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" />
         </Columns>
 
         <PagerContent>
-            <MudDataGridPager T="Part" />
+            <MudDataGridPager T="Asset" />
         </PagerContent>
     </MudDataGrid>
 

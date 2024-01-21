@@ -35,6 +35,9 @@ public class Asset : UserEditableDataObject
     /// <summary>
     /// The property gets the parent path as if this asset is the parent.
     /// </summary>
+    /// <remarks>
+    /// This is only used by the backend when updating the parent path.
+    /// </remarks>
     internal string MeAsParentPath
     {
         get => ParentID == null ? Name : $"{ParentPath}/{Name}";

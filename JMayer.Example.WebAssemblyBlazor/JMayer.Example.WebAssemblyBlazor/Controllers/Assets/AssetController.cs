@@ -1,5 +1,4 @@
-﻿using JMayer.Data.Database.DataLayer;
-using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
+﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 using JMayer.Web.Mvc.Controller;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Controllers.Assets;
 public class AssetController : UserEditableController<Asset, IAssetDataLayer>
 {
     /// <inheritdoc/>
-    public AssetController(IUserEditableDataLayer<Asset> dataLayer, ILogger logger) : base(dataLayer, logger) { }
+    public AssetController(IAssetDataLayer dataLayer, ILogger<AssetController> logger) : base(dataLayer, logger) { }
 
     /// <summary>
     /// The method returns the categories for the assets.

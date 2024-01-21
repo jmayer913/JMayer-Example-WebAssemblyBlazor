@@ -1,0 +1,33 @@
+﻿@inherits NewAssetDialogBase
+
+@* TO DO: For Autocomplete, find out how to properly bind ListView.Integer64ID to Asset.ParentID. *@
+
+<MudDialog>
+
+    <DialogContent>
+        <EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitEditFormAsync">
+            <DataAnnotationsValidator />
+            <ServerSideValidation @ref="@ServerSideValidation" />
+
+            <MudCard Elevation="0">
+                <MudCardContent>
+                    <MudTextField @bind-Value="@DataObject.Name" Label="Name" For="@(() => DataObject.Name)" />
+                    <MudTextField @bind-Value="@DataObject.Description" Label="Description" Lines="5" For="@(() => DataObject.Description)" />
+                    <MudRadioGroup @bind-Value="@DataObject.Type">
+                        <MudRadio Value="AssetType.Area">Area</MudRadio>
+                        <MudRadio Value="AssetType.Group">Group</MudRadio>
+                        <MudRadio Value="AssetType.Equipment">Equipment</MudRadio>
+                    </MudRadioGroup>
+                    <MudAutocomplete @bind-Value="@SelectedAssetParent" T="ListView" CoerceText="true" CoerceValue="true" Label="Parent Asset" ResetValueOnEmptyText="true" SearchFunc="@OnAssetParentAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />/
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => DataObject.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
+                </MudCardContent>
+
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit">Create</MudButton>
+                    <MudButton OnClick="@OnCancelButtonClick">Cancel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </DialogContent>
+
+</MudDialog>
