@@ -25,7 +25,7 @@ public class PartController : StandardCRUDController<Part, IPartDataLayer>
         try
         {
             List<Part> dataObjects = await DataLayer.GetAllAsync();
-            List<string?> categories = dataObjects.Select(obj => obj.Category).Distinct().ToList();
+            List<string?> categories = [.. dataObjects.Select(obj => obj.Category).Distinct().OrderBy(s => s)];
             return Ok(categories);
         }
         catch (Exception ex)

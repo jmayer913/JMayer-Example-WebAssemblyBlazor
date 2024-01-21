@@ -47,6 +47,21 @@ public class AssetOverviewCardBase : OverviewCardBase<Asset, IAssetDataLayer>
     {
         Assets = await DataLayer.GetAllListViewAsync() ?? [];
         Categories = await DataLayer.GetCategoriesAsync() ?? [];
+
+        if (DataObject.ParentID != null)
+        {
+            Asset? parent = await DataLayer.GetSingleAsync($"{DataObject.ParentID}");
+
+            if (parent != null)
+            {
+                SelectedAssetParent = new ListView()
+                {
+                    Integer64ID = parent.Integer64ID,
+                    Name = parent.Name,
+                };
+            }
+        }
+        
         await base.OnParametersSetAsync();
     }
 

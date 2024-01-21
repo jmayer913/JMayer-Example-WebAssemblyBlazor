@@ -53,18 +53,23 @@ public class AssetDataLayer : UserEditableMemoryDataLayer<Asset>, IAssetDataLaye
     /// <returns>A list of children assets or an empty list is none exists.</returns>
     private async Task<List<Asset>> GetChildrenAsync(Asset parent, CancellationToken cancellationToken)
     {
+        List<Asset> returnList = [];
         List<Asset> children = await GetAllAsync(obj => obj.ParentID == parent.Integer64ID, cancellationToken);
-        List<Asset> returnList = [..children];
 
-        foreach (Asset child in children)
+        if (children.Count > 0)
         {
-            if (child.ParentID == null)
-            {
-                List<Asset> temp = await GetChildrenAsync(child, cancellationToken);
+            returnList = [.. children];
 
-                if (temp.Count > 0)
+            foreach (Asset child in children)
+            {
+                if (child.ParentID != null)
                 {
-                    returnList.AddRange(temp);
+                    List<Asset> temp = await GetChildrenAsync(child, cancellationToken);
+
+                    if (temp.Count > 0)
+                    {
+                        returnList.AddRange(temp);
+                    }
                 }
             }
         }

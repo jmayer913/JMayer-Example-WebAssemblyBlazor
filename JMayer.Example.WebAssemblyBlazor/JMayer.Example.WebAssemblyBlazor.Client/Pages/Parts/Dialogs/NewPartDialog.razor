@@ -11,7 +11,7 @@
                 <MudCardContent>
                     <MudTextField @bind-Value="@DataObject.Name" Label="Name" For="@(() => DataObject.Name)" />
                     <MudTextField @bind-Value="@DataObject.Description" Label="Description" Lines="5" For="@(() => DataObject.Description)" />
-                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => DataObject.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" For="@(() => DataObject.Category)" Label="Category" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
                 </MudCardContent>
 
                 <MudCardActions>

@@ -20,7 +20,7 @@
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => DataObject.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearch" />
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" For="@(() => DataObject.Category)" Label="Category" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnCategoryAutoCompleteSearch" />
                 </MudItem>
 
                 <MudItem xs="6">

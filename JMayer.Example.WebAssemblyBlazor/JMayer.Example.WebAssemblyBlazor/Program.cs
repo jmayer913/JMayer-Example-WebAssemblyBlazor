@@ -13,7 +13,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole(); //Temp for now.
 
-builder.Services.AddSingleton<IAssetDataLayer, AssetDataLayer>();
+//Add the data layers and build example data for the application.
+builder.Services.AddSingleton<IAssetDataLayer, AssetDataLayer>(factory =>
+{
+    AssetDataLayer dataLayer = new();
+
+    AssetBHSExampleBuilder builder = new()
+    {
+        DataLayer = dataLayer,
+    };
+    builder.Build();
+
+    return dataLayer;
+});
 builder.Services.AddSingleton<IPartDataLayer, PartDataLayer>();
 
 #warning This is a bad solution. I either need to disable prerendering or determine how to find the base address when registering on the server.

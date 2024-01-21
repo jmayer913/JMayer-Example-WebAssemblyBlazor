@@ -1,17 +1,20 @@
 ﻿@page "/Asset/{indexKey:long}"
 @inherits AssetInspectorBase
 
-@if (DataObject != null)
+@if (Initialized)
 {
-    <MudGrid>
+    @if (DataObject != null)
+    {
+        <MudGrid>
 
-        <MudItem xs="12">
-            <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.AssetOverviewCard @bind-DataObject="@DataObject" />
-        </MudItem>
+            <MudItem xs="12">
+                <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.AssetOverviewCard @bind-DataObject="@DataObject" />
+            </MudItem>
 
-    </MudGrid>
-}
-else
-{
-    <NotFound ObjectTypeName="Asset" />
+        </MudGrid>
+    }
+    else
+    {
+        <NotFound ObjectTypeName="Asset" />
+    }
 }

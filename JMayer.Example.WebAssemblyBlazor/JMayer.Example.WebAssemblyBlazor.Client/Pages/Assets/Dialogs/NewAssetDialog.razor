@@ -18,8 +18,8 @@
                         <MudRadio Value="AssetType.Group">Group</MudRadio>
                         <MudRadio Value="AssetType.Equipment">Equipment</MudRadio>
                     </MudRadioGroup>
-                    <MudAutocomplete @bind-Value="@SelectedAssetParent" T="ListView" CoerceText="true" CoerceValue="true" Label="Parent Asset" ResetValueOnEmptyText="true" SearchFunc="@OnAssetParentAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />/
-                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => DataObject.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
+                    <MudAutocomplete @bind-Value="@SelectedAssetParent" T="ListView" CoerceText="true" CoerceValue="true" Label="Parent Asset" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnAssetParentAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" For="@(() => DataObject.Category)" Label="Category" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
                 </MudCardContent>
 
                 <MudCardActions>

@@ -20,15 +20,15 @@
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudAutocomplete @bind-Value="@SelectedAssetParent" T="ListView" CoerceText="true" CoerceValue="true" Label="Parent Asset" ResetValueOnEmptyText="true" SearchFunc="@OnAssetParentAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />/
+                    <MudAutocomplete @bind-Value="@SelectedAssetParent" T="ListView" CoerceText="true" CoerceValue="true" Label="Parent Asset" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnAssetParentAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudText>@DataObject.Type.ToString()</MudText>
+                    <MudTextField @bind-Value="@DataObject.Type" Label="Type" ReadOnly="true" />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" Label="Category" For="@(() => DataObject.Category)" ResetValueOnEmptyText="true" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" For="@(() => DataObject.Category)" Label="Category" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
                 </MudItem>
 
                 <MudItem xs="6" hidden="@(DataObject.Type != AssetType.Equipment)">

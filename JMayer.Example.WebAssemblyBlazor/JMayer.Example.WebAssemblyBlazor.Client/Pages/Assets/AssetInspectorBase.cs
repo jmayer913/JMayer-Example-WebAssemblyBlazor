@@ -27,6 +27,11 @@ public class AssetInspectorBase : ComponentBase
     public long IndexKey { get; set; }
 
     /// <summary>
+    /// The property gets/sets if the inspector has finished initializing.
+    /// </summary>
+    protected bool Initialized { get; set; }
+
+    /// <summary>
     /// The method queries the data object based on the set index key.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
@@ -34,5 +39,6 @@ public class AssetInspectorBase : ComponentBase
     {
         DataObject = await DataLayer.GetSingleAsync(IndexKey.ToString());
         await base.OnParametersSetAsync();
+        Initialized = true;
     }
 }
