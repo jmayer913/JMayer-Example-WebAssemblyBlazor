@@ -54,14 +54,14 @@ public class SearchBase<T, U, V> : ComponentBase
     {
         try
         {
-            List<T>? dataObjects = await DataLayer.GetPageAsync(gridState.ToQueryDefinition());
+            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(gridState.ToQueryDefinition());
 
-            if (dataObjects != null)
+            if (pagedDataObjects != null)
             {
                 return new GridData<T>()
                 {
-                    TotalItems = dataObjects.Count,
-                    Items = dataObjects,
+                    TotalItems = pagedDataObjects.TotalRecords,
+                    Items = pagedDataObjects.DataObjects,
                 };
             }
         }
