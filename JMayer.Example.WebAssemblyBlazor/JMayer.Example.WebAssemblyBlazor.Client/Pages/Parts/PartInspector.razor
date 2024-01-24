@@ -1,17 +1,20 @@
 ﻿@page "/Part/{indexKey:long}"
 @inherits PartInspectorBase
 
-@if (Part != null)
+@if (Initialized)
 {
-    <MudGrid>
+    @if (DataObject != null)
+    {
+        <MudGrid>
 
-        <MudItem xs="12">
-            <JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Cards.OverviewCard @bind-DataObject="@Part" />
-        </MudItem>
+            <MudItem xs="12">
+                <JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Cards.OverviewCard @bind-DataObject="@DataObject" />
+            </MudItem>
 
-    </MudGrid>
-}
-else
-{
-    <NotFound ObjectTypeName="Part" />
+        </MudGrid>
+    }
+    else
+    {
+        <NotFound ObjectTypeName="Part" />
+    }
 }
