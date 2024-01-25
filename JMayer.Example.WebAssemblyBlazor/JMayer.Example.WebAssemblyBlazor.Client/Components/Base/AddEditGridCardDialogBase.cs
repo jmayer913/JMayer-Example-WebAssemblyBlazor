@@ -9,31 +9,25 @@ using System.Net;
 namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 
 /// <summary>
-/// The class manages user interaction for an overview card.
+/// The class manages user interaction for an add/edit dialog associated with a grid card.
 /// </summary>
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
-public class OverviewCardBase<T, U> : ComponentBase
+public class AddEditGridCardDialogBase<T, U> : ComponentBase
     where T : UserEditableDataObject, new()
     where U : IUserEditableDataLayer<T>
 {
     /// <summary>
-    /// The property gets/sets the data layer to used by the page.
+    /// The property gets/sets the data layer to be used by the dialog.
     /// </summary>
     [Inject]
     protected U DataLayer { get; set; }
 
     /// <summary>
-    /// The property gets/sets the data object the overview will display information on.
+    /// The property gets/sets the data object to add/edit.
     /// </summary>
     [Parameter]
     public T DataObject { get; set; } = new();
-
-    /// <summary>
-    /// The property gets/sets a change event for the data object.
-    /// </summary>
-    [Parameter]
-    public EventCallback<T> DataObjectChanged { get; set; }
 
     /// <summary>
     /// The property gets/sets the dialog service used for managing MudDialogs.
@@ -47,9 +41,16 @@ public class OverviewCardBase<T, U> : ComponentBase
     protected EditContext EditContext { get; set; } = null!;
 
     /// <summary>
-    /// The original data object before edits.
+    /// The property gets/sets if the data object is a new record.
     /// </summary>
-    private readonly T OriginalDataObject = new();
+    [Parameter]
+    public bool IsNewRecord { get; set; }
+
+    /// <summary>
+    /// The property gets/sets a reference to the mud dialog.
+    /// </summary>
+    [CascadingParameter]
+    protected MudDialogInstance MudDialog { get; set; } = null!;
 
     /// <summary>
     /// The property gets/sets a reference to the server side validation.
@@ -57,39 +58,41 @@ public class OverviewCardBase<T, U> : ComponentBase
     protected ServerSideValidation ServerSideValidation { get; set; } = null!;
 
     /// <summary>
-    /// The method sets up the component after the parameters are set.
+    /// The method initializes the component.
     /// </summary>
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
-        OriginalDataObject.MapProperties(DataObject);
         EditContext = new(DataObject);
-        base.OnParametersSet();
+        base.OnInitialized();
     }
 
     /// <summary>
-    /// The method resets the user's edits.
+    /// The method closes the dialog with a cancel result.
     /// </summary>
-    /// <returns></returns>
-    protected virtual void OnCancelClick()
-    {
-        DataObject.MapProperties(OriginalDataObject);
-        EditContext.MarkAsUnmodified();
-    }
+    protected virtual void OnCancelButtonClick() => MudDialog.Cancel();
 
     /// <summary>
-    /// The method attempts to update a data object on the server.
+    /// The method attempts to create a new data object on the server.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
-    protected virtual async Task OnSubmitFormAsync()
+    protected virtual async Task OnSubmitEditFormAsync()
     {
         try
         {
-            OperationResult operationResult = await DataLayer.UpdateAsync(DataObject);
+            OperationResult operationResult;
+
+            if (IsNewRecord)
+            {
+                operationResult = await DataLayer.CreateAsync(DataObject);
+            }
+            else
+            {
+                operationResult = await DataLayer.UpdateAsync(DataObject);
+            }
 
             if (operationResult.IsSuccessStatusCode)
             {
-                OriginalDataObject.MapProperties(DataObject);
-                EditContext.MarkAsUnmodified();
+                MudDialog.Close();
             }
             else if (operationResult.ServerSideValidationResult?.Errors.Count > 0)
             {
@@ -108,7 +111,7 @@ public class OverviewCardBase<T, U> : ComponentBase
             }
             else
             {
-                await DialogService.ShowErrorMessageAsync("Failed to update the part because of an error on the server.");
+                await DialogService.ShowErrorMessageAsync($"Failed to {(IsNewRecord ? "create" : "update")} the object because of an error on the server.");
             }
         }
         catch

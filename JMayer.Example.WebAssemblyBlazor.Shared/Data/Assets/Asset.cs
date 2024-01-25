@@ -64,6 +64,14 @@ public class Asset : UserEditableDataObject
     public Priority Priority { get; set; } = Priority.Medium;
 
     /// <summary>
+    /// The property gets/sets the storage location the asset is located in.
+    /// </summary>
+    /// <remarks>
+    /// Only an equipment asset can be assigned a storage location.
+    /// </remarks>
+    public long StorageLocationId { get; set; }
+
+    /// <summary>
     /// The property gets/sets what the asset represents.
     /// </summary>
     public AssetType Type { get; set; } = AssetType.Equipment;
@@ -90,6 +98,7 @@ public class Asset : UserEditableDataObject
             ParentID = asset.ParentID;
             ParentPath = asset.ParentPath;
             Priority = asset.Priority;
+            StorageLocationId = asset.StorageLocationId;
             Type = asset.Type;
         }
     }

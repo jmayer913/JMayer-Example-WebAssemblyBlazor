@@ -1,0 +1,25 @@
+﻿@inherits AddEditStorageLocationDialogBase
+
+<MudDialog>
+
+    <DialogContent>
+        <EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitEditFormAsync">
+            <DataAnnotationsValidator />
+            <ServerSideValidation @ref="@ServerSideValidation" />
+
+            <MudCard Elevation="0">
+                <MudCardContent>
+                    <MudTextField @bind-Value="@DataObject.LocationA" Label="Location A" For="@(() => DataObject.LocationA)" />
+                    <MudTextField @bind-Value="@DataObject.LocationB" Label="Location B" For="@(() => DataObject.LocationB)" />
+                    <MudTextField @bind-Value="@DataObject.LocationC" Label="Location C" For="@(() => DataObject.LocationC)" />
+                </MudCardContent>
+
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit">@(IsNewRecord ? "Create" : "Update")</MudButton>
+                    <MudButton OnClick="@OnCancelButtonClick">Cancel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </DialogContent>
+
+</MudDialog>
