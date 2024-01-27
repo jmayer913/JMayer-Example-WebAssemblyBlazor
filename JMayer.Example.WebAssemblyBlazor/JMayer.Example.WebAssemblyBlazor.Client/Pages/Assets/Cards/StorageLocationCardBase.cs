@@ -8,6 +8,6 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards;
 /// <summary>
 /// The class manages user interactions with the StorageLocationCard.razor component.
 /// </summary>
-public class StorageLocationCardBase : GridCardBase<StorageLocation, IStorageLocationDataLayer, AddEditStorageLocationDialog>
+public class StorageLocationCardBase : AddEditCardBase<StorageLocation, Asset, IStorageLocationDataLayer, AddEditStorageLocationDialog>
 {
 }

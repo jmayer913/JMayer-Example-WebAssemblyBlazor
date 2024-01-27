@@ -11,6 +11,13 @@
                 <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.AssetOverviewCard @bind-DataObject="@DataObject" />
             </MudItem>
 
+            @if (DataObject.Type == AssetType.Area)
+            {
+                <MudItem xs="12">
+                    <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.StorageLocationCard @bind-DataObject="@DataObject" />
+                </MudItem>
+            }
+
         </MudGrid>
     }
     else

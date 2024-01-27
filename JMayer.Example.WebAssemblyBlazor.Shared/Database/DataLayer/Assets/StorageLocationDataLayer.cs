@@ -38,7 +38,7 @@ public class StorageLocationDataLayer : UserEditableMemoryDataLayer<StorageLocat
     {
         foreach (Asset asset in e.DataObjects.Cast<Asset>())
         {
-            List<StorageLocation> storageLocations = await GetAllAsync(obj => obj.AssetId == asset.Integer64ID);
+            List<StorageLocation> storageLocations = await GetAllAsync(obj => obj.OwnerInteger64ID == asset.Integer64ID);
             await DeleteAsync(storageLocations);
         }
     }
@@ -52,14 +52,14 @@ public class StorageLocationDataLayer : UserEditableMemoryDataLayer<StorageLocat
         ArgumentNullException.ThrowIfNull(dataObject);
         List<ValidationResult> validationResults = dataObject.Validate();
 
-        if (await _assetDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.AssetId, cancellationToken) == false)
+        if (await _assetDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.OwnerInteger64ID, cancellationToken) == false)
         {
-            validationResults.Add(new ValidationResult($"The {dataObject.AssetId} asset was not found in the data store.", [nameof(StorageLocation.AssetId)]));
+            validationResults.Add(new ValidationResult($"The {dataObject.OwnerInteger64ID} asset was not found in the data store.", [nameof(StorageLocation.OwnerInteger64ID)]));
         }
 
-        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.LocationA == dataObject.LocationA && obj.LocationB == dataObject.LocationB && obj.LocationC == dataObject.LocationC, cancellationToken) == false)
+        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.LocationA == dataObject.LocationA && obj.LocationB == dataObject.LocationB && obj.LocationC == dataObject.LocationC, cancellationToken) == true)
         {
-            validationResults.Add(new ValidationResult("The location A, B & C name already exists in the data store.", [nameof(StorageLocation.LocationA)]));
+            validationResults.Add(new ValidationResult("The location already exists in the data store.", [nameof(StorageLocation.LocationA)]));
         }
 
         return await Task.FromResult(validationResults);

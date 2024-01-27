@@ -9,13 +9,13 @@ using System.Net;
 namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 
 /// <summary>
-/// The class manages user interaction for an add/edit dialog associated with a grid card.
+/// The class manages user interaction for an add/edit dialog associated with a card.
 /// </summary>
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
-public class AddEditGridCardDialogBase<T, U> : ComponentBase
-    where T : UserEditableDataObject, new()
-    where U : IUserEditableDataLayer<T>
+public class AddEditCardDialogBase<T, U> : ComponentBase
+    where T : SubUserEditableDataObject, new()
+    where U : ISubUserEditableDataLayer<T>
 {
     /// <summary>
     /// The property gets/sets the data layer to be used by the dialog.
@@ -53,6 +53,15 @@ public class AddEditGridCardDialogBase<T, U> : ComponentBase
     protected MudDialogInstance MudDialog { get; set; } = null!;
 
     /// <summary>
+    /// The property gets/sets the id of who owns the created sub data object.
+    /// </summary>
+    /// <remarks>
+    /// This is only used when creating a new sub data object.
+    /// </remarks>
+    [Parameter]
+    public long OwnerId { get; set; }
+
+    /// <summary>
     /// The property gets/sets a reference to the server side validation.
     /// </summary>
     protected ServerSideValidation ServerSideValidation { get; set; } = null!;
@@ -60,10 +69,15 @@ public class AddEditGridCardDialogBase<T, U> : ComponentBase
     /// <summary>
     /// The method initializes the component.
     /// </summary>
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
+        if (DataObject.OwnerInteger64ID == 0)
+        {
+            DataObject.OwnerInteger64ID = OwnerId;
+        }
+
         EditContext = new(DataObject);
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     /// <summary>

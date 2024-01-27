@@ -6,13 +6,11 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 /// <summary>
 /// The class represents a storage location for an area asset.
 /// </summary>
-public class StorageLocation : UserEditableDataObject
+/// <remarks>
+/// The OwnerId in the SubUserEditableDataObject will represent an asset.
+/// </remarks>
+public class StorageLocation : SubUserEditableDataObject
 {
-    /// <summary>
-    /// The property gets/sets the id for the area asset which owns this storage location.
-    /// </summary>
-    public long AssetId { get; set; }
-
     /// <summary>
     /// The property gets/sets the friendly name (locations concatenated).
     /// </summary>
@@ -50,7 +48,6 @@ public class StorageLocation : UserEditableDataObject
 
         if (dataObject is  StorageLocation storageLocation)
         {
-            AssetId = storageLocation.AssetId;
             LocationA = storageLocation.LocationA;
             LocationB = storageLocation.LocationB;
             LocationC = storageLocation.LocationC;

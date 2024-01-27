@@ -4,38 +4,37 @@ using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-#warning I need to create a base Interface in the data library which has the filter parameter.
-
 namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 
 /// <summary>
-/// The class manages user interaction for an editable grid card.
+/// The class manages user interaction for an editable card.
 /// </summary>
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 /// <typeparam name="V">Must be a component that's also a dialog.</typeparam>
-public class GridCardBase<T, U, V> : ComponentBase
-    where T : UserEditableDataObject
-    where U : IUserEditableDataLayer<T>
-    where V : ComponentBase
+public class AddEditCardBase<T, U, V, X> : ComponentBase
+    where T : SubUserEditableDataObject
+    where U : UserEditableDataObject
+    where V : ISubUserEditableDataLayer<T>
+    where X : ComponentBase
 {
     /// <summary>
     /// The property gets/sets the data layer to used by the card.
     /// </summary>
     [Inject]
-    protected U DataLayer { get; set; }
+    protected V DataLayer { get; set; }
 
     /// <summary>
     /// The property gets/sets the data object the card will display information for.
     /// </summary>
     [Parameter]
-    public T DataObject { get; set; } = null!;
+    public U DataObject { get; set; } = null!;
 
     /// <summary>
     /// The property gets/sets a change event for the data object.
     /// </summary>
     [Parameter]
-    public EventCallback<T> DataObjectChanged { get; set; }
+    public EventCallback<U> DataObjectChanged { get; set; }
 
     /// <summary>
     /// The name of the data object.
@@ -68,7 +67,7 @@ public class GridCardBase<T, U, V> : ComponentBase
     {
         try
         {
-            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(gridState.ToQueryDefinition());
+            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(DataObject.Integer64ID.ToString(), gridState.ToQueryDefinition());
 
             if (pagedDataObjects != null)
             {
@@ -126,10 +125,10 @@ public class GridCardBase<T, U, V> : ComponentBase
     {
         DialogParameters dialogParameters = new()
         {
-            { "DataObject", DataObject },
-            { "IsNewRecord", false }
+            { "DataObject", dataObject },
+            { "IsNewRecord", false },
         };
-        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Edit the {DataObjectTypeName}", dialogParameters);
+        IDialogReference dialogReference = await DialogService.ShowAsync<X>($"Edit the {DataObjectTypeName}", dialogParameters);
         DialogResult dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)
@@ -146,9 +145,10 @@ public class GridCardBase<T, U, V> : ComponentBase
     {
         DialogParameters dialogParameters = new()
         {
-            { "IsNewRecord", false }
+            { "IsNewRecord", true },
+            { "OwnerId", DataObject.Integer64ID },
         };
-        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName}", dialogParameters);
+        IDialogReference dialogReference = await DialogService.ShowAsync<X>($"Create a New {DataObjectTypeName}", dialogParameters);
         DialogResult dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)
