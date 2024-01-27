@@ -12,6 +12,7 @@ builder.Services.AddMudServices();
 builder.Services.AddHttpClient<IAssetDataLayer, AssetDataLayer>(httpClient => httpClient.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 builder.Services.AddHttpClient<IStorageLocationDataLayer, StorageLocationDataLayer>(httpClient => httpClient.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 builder.Services.AddHttpClient<IPartDataLayer, PartDataLayer>(httpClient => httpClient.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddHttpClient<IStockDataLayer, StockDataLayer>(httpClient => httpClient.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 #endregion
 

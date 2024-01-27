@@ -28,12 +28,14 @@ builder.Services.AddSingleton<IAssetDataLayer, AssetDataLayer>(factory =>
 });
 builder.Services.AddSingleton<IStorageLocationDataLayer, StorageLocationDataLayer>();
 builder.Services.AddSingleton<IPartDataLayer, PartDataLayer>();
+builder.Services.AddSingleton<IStockDataLayer, StockDataLayer>();
 
 #warning This is a bad solution. I either need to disable prerendering or determine how to find the base address when registering on the server.
 //Because of prerendering, register the HTTP clients on the server.
 builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IAssetDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.AssetDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
 builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IStorageLocationDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.StorageLocationDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
 builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.IPartDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.PartDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
+builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.IStockDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.StockDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
 
 #endregion
 
