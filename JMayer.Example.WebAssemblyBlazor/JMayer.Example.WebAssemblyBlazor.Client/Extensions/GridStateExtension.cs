@@ -35,12 +35,23 @@ public static class GridStateExtension
 
         foreach (var filterDefinition in gridState.FilterDefinitions)
         {
-            queryDefinition.FilterDefinitions.Add(new FilterDefinition()
+            string value = string.Empty;
+
+            if (filterDefinition.Value != null && !string.IsNullOrWhiteSpace(filterDefinition.Value.ToString()))
             {
-                FilterOn = filterDefinition.Column?.PropertyName ?? string.Empty,
-                Operator = filterDefinition.Operator ?? FilterDefinition.ContainsOperator,
-                Value = filterDefinition.Value?.ToString() ?? string.Empty,
-            });
+                value = filterDefinition.Value.ToString() ?? string.Empty;
+            }
+
+            //Do not include an empty value else an empty table will be displayed.
+            if (value != string.Empty)
+            {
+                queryDefinition.FilterDefinitions.Add(new FilterDefinition()
+                {
+                    FilterOn = filterDefinition.Column?.PropertyName ?? string.Empty,
+                    Operator = filterDefinition.Operator ?? FilterDefinition.ContainsOperator,
+                    Value = value,
+                });
+            }
         }
 
         return queryDefinition;
