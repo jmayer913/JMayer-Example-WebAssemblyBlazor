@@ -1,5 +1,6 @@
 using JMayer.Example.WebAssemblyBlazor.Client.Layout;
 using JMayer.Example.WebAssemblyBlazor.Components;
+using JMayer.Example.WebAssemblyBlazor.Shared.Database;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -10,27 +11,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Setup Database, Data Layers & Logging
 
+#warning Need to add actual logging.
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole(); //Temp for now.
+builder.Logging.AddConsole();
 
-//Add the data layers and build example data for the application.
-builder.Services.AddSingleton<IAssetDataLayer, AssetDataLayer>(factory =>
-{
-    AssetDataLayer dataLayer = new();
+//Build the example data.
+BHSExampleBuilder bhsExampleBuilder = new();
+bhsExampleBuilder.Build();
 
-    AssetBHSExampleBuilder builder = new()
-    {
-        DataLayer = dataLayer,
-    };
-    builder.Build();
-
-    return dataLayer;
-});
-builder.Services.AddSingleton<IStorageLocationDataLayer, StorageLocationDataLayer>();
-builder.Services.AddSingleton<IPartDataLayer, PartDataLayer>();
-builder.Services.AddSingleton<IStockDataLayer, StockDataLayer>();
+//Add the data layers. Because the example data needs to be built before registration and the data
+//layers are memory based, dependency injection is not being used which is awkward but on a normal website,
+//the middleware would handle the dependency injection.
+builder.Services.AddSingleton<IAssetDataLayer, AssetDataLayer>(factory => (AssetDataLayer)bhsExampleBuilder.AssetDataLayer);
+builder.Services.AddSingleton<IStorageLocationDataLayer, StorageLocationDataLayer>(factory => (StorageLocationDataLayer)bhsExampleBuilder.StorageLocationDataLayer);
+builder.Services.AddSingleton<IPartDataLayer, PartDataLayer>(factory => (PartDataLayer)bhsExampleBuilder.PartDataLayer);
+builder.Services.AddSingleton<IStockDataLayer, StockDataLayer>(factory => (StockDataLayer)bhsExampleBuilder.StockDataLayer);
 
 #warning This is a bad solution. I either need to disable prerendering or determine how to find the base address when registering on the server.
+#warning Another alterative is build a service which refers both HTTP and database data layers and determines which should be accessed.
 //Because of prerendering, register the HTTP clients on the server.
 builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IAssetDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.AssetDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
 builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IStorageLocationDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.StorageLocationDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));

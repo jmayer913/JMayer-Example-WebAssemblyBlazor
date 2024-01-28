@@ -16,7 +16,7 @@ public class StorageLocation : SubUserEditableDataObject
     /// </summary>
     public string FriendlyName
     {
-        get => $"{LocationA}{(string.IsNullOrWhiteSpace(LocationB) ? $" {LocationB}" : string.Empty)}{(string.IsNullOrWhiteSpace(LocationC) ? $" {LocationC}" : string.Empty)}";
+        get => $"{LocationA}{(!string.IsNullOrWhiteSpace(LocationB) ? $" {LocationB}" : string.Empty)}{(!string.IsNullOrWhiteSpace(LocationC) ? $" {LocationC}" : string.Empty)}";
     }
 
     /// <summary>
