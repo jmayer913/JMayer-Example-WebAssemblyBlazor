@@ -64,7 +64,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
         else if (operationResult.DataObject is Part returnedDataObject)
         {
-            Part? databaseDataObject = await dataLayer.GetSingleAsync(returnedDataObject.Integer64ID.ToString() ?? string.Empty);
+            Part? databaseDataObject = await dataLayer.GetSingleAsync(returnedDataObject.Integer64ID);
 
             if (databaseDataObject == null)
             {
@@ -133,7 +133,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         await MassCreateGenericPartsAsync(dataLayer);
 
-        Part? dataObject = await dataLayer.GetSingleAsync(id.ToString());
+        Part? dataObject = await dataLayer.GetSingleAsync(id);
         Assert.NotNull(dataObject);
     }
 
@@ -176,7 +176,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         await MassCreateGenericPartsAsync(dataLayer);
 
-        Part? dataObject = await dataLayer.GetSingleAsync(id.ToString());
+        Part? dataObject = await dataLayer.GetSingleAsync(id);
 
         if (dataObject == null)
         {
@@ -200,7 +200,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             }
             else if (operationResult.DataObject is Part returnedDataObject)
             {
-                Part? databaseDataObject = await dataLayer.GetSingleAsync(id.ToString());
+                Part? databaseDataObject = await dataLayer.GetSingleAsync(id);
 
                 if (databaseDataObject == null)
                 {

@@ -41,7 +41,7 @@ public class InspectorBase<T, U> : ComponentBase
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        DataObject = await DataLayer.GetSingleAsync(IndexKey.ToString());
+        DataObject = await DataLayer.GetSingleAsync(IndexKey);
         await base.OnParametersSetAsync();
         Initialized = true;
     }

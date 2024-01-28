@@ -50,7 +50,7 @@ public class AssetOverviewCardBase : OverviewCardBase<Asset, IAssetDataLayer>
 
         if (DataObject.ParentID != null)
         {
-            Asset? parent = await DataLayer.GetSingleAsync($"{DataObject.ParentID}");
+            Asset? parent = await DataLayer.GetSingleAsync(DataObject.ParentID ?? 0);
 
             if (parent != null)
             {

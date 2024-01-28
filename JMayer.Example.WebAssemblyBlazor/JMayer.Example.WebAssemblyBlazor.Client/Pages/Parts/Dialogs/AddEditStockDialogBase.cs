@@ -66,7 +66,7 @@ public class AddEditStockDialogBase : AddEditCardDialogBase<Stock, IStockDataLay
 
         if (!IsNewRecord)
         {
-            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync($"{DataObject.StorageLocationId}");
+            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationId);
 
             if (storageLocation != null)
             {
