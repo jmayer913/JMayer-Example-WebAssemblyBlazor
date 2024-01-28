@@ -42,8 +42,9 @@ public static class GridStateExtension
                 value = filterDefinition.Value.ToString() ?? string.Empty;
             }
 
-            //Do not include an empty value else an empty table will be displayed.
-            if (value != string.Empty)
+            //Do not include an empty value (table will be empty) unless on
+            //certain operators which do not care about the value.
+            if (value != string.Empty || filterDefinition.Operator is FilterDefinition.IsEmptyOperator or FilterDefinition.IsNotEmptyOperator)
             {
                 queryDefinition.FilterDefinitions.Add(new FilterDefinition()
                 {
