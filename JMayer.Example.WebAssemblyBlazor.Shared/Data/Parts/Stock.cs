@@ -16,13 +16,21 @@ public class Stock : SubUserEditableDataObject
     /// </summary>
     [Required]
     [Range(0, int.MaxValue)]
-    public int Amount { get; set; }
+    public decimal Amount { get; set; }
 
     /// <summary>
     /// The property gets/sets the id for the storage location the part is stored at.
     /// </summary>
     [Required]
     public long StorageLocationId { get; set; }
+
+    /// <summary>
+    /// The property gets/sets the name for the storage location the part is stored at.
+    /// </summary>
+    /// <remarks>
+    /// This is only used to display the storage location name in the card grid.
+    /// </remarks>
+    public string StorageLocationName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
     public Stock() : base() { }
@@ -39,6 +47,7 @@ public class Stock : SubUserEditableDataObject
         {
             Amount = stock.Amount;
             StorageLocationId = stock.StorageLocationId;
+            StorageLocationName = stock.StorageLocationName;
         }
     }
 }

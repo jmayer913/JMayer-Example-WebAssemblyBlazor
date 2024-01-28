@@ -1,4 +1,5 @@
-﻿using JMayer.Data.Database.DataLayer;
+﻿using JMayer.Data.Data;
+using JMayer.Data.Database.DataLayer;
 using JMayer.Data.Database.DataLayer.MemoryStorage;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using System.ComponentModel.DataAnnotations;
@@ -45,7 +46,9 @@ public class StorageLocationDataLayer : UserEditableMemoryDataLayer<StorageLocat
 
     /// <inheritdoc/>
     /// <remarks>
-    /// Overriding because the parent class forces the Name property to be unique but the property will not be set.
+    /// Overriding and not calling the base because the parent class forces the Name property 
+    /// to be unique but the property is not used. Also, added additional server-side validation
+    /// unique to the storage location.
     /// </remarks>
     public override async Task<List<ValidationResult>> ValidateAsync(StorageLocation dataObject, CancellationToken cancellationToken = default)
     {

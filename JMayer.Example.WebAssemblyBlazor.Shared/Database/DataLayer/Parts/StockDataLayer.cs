@@ -41,6 +41,7 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
 
         _storageLocationDataLayer = storageLocationDataLayer;
         _storageLocationDataLayer.Deleted += StorageLocationDataLayer_Deleted;
+        _storageLocationDataLayer.Updated += StorageLocationDataLayer_Updated;
     }
 
     /// <summary>
@@ -71,9 +72,41 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
         }
     }
 
+    /// <summary>
+    /// The method updates the storage location name on the stock if the storage location name was updated on the storage location object.
+    /// </summary>
+    /// <param name="sender">The storage location data layer.</param>
+    /// <param name="e">The arguments which contain the updated storage locations.</param>
+    private async void StorageLocationDataLayer_Updated(object? sender, JMayer.Data.Database.DataLayer.UpdatedEventArgs e)
+    {
+        List<Stock> stockUpdateList = [];
+
+        foreach (StorageLocation storageLocation in e.DataObjects.Cast<StorageLocation>())
+        {
+            List<Stock> stocks = await GetAllAsync(obj => obj.StorageLocationId == storageLocation.Integer64ID);
+
+            if (stocks.Count > 0 && stocks[0].StorageLocationName != storageLocation.Name)
+            {
+                foreach (Stock stock in stocks)
+                {
+                    stock.StorageLocationName = storageLocation.Name;
+                }
+
+                stockUpdateList.AddRange(stocks);
+            }
+        }
+
+        if (stockUpdateList.Count > 0)
+        {
+            await UpdateAsync(stockUpdateList);
+        }
+    }
+
     /// <inheritdoc/>
     /// <remarks>
-    /// Overriding because the parent class forces the Name property to be unique but the property will not be set.
+    /// Overriding and not calling the base because the parent class forces the Name property 
+    /// to be unique but the property is not used. Also, added additional server-side validation
+    /// unique to the stock.
     /// </remarks>
     public override async Task<List<ValidationResult>> ValidateAsync(Stock dataObject, CancellationToken cancellationToken = default)
     {

@@ -19,4 +19,14 @@ public class AddEditStorageLocationDialogBase : AddEditCardDialogBase<StorageLoc
         DataObject.Name = "A Name";
         return base.SetParametersAsync(parameters);
     }
+
+    /// <inheritdoc/>
+    protected override async Task OnSubmitEditFormAsync()
+    {
+        //The Name property is used for the ListView and
+        //this ensures the ListView displays the friendly
+        //name.
+        DataObject.Name = DataObject.FriendlyName;
+        await base.OnSubmitEditFormAsync();
+    }
 }

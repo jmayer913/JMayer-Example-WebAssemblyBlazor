@@ -42,7 +42,7 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     /// <summary>
     /// The method sets up the component after the parameters are set.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
         Assets = await DataLayer.GetAllListViewAsync() ?? [];
@@ -51,7 +51,7 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     }
 
     /// <summary>
-    /// The method returns the list based on what the user has typed in.
+    /// The method returns the asset list based on what the user has typed in.
     /// </summary>
     /// <param name="value">The value to search for.</param>
     /// <returns>A list of acceptable categories.</returns>
@@ -68,7 +68,7 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     }
 
     /// <summary>
-    /// The method returns the list based on what the user has typed in.
+    /// The method returns the category list based on what the user has typed in.
     /// </summary>
     /// <param name="value">The value to search for.</param>
     /// <returns>A list of acceptable categories.</returns>

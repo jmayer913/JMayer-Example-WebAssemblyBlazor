@@ -1,0 +1,32 @@
+﻿@inherits AddEditStockDialogBase
+
+<MudDialog>
+
+    <DialogContent>
+        <EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitEditFormAsync">
+            <DataAnnotationsValidator />
+            <ServerSideValidation @ref="@ServerSideValidation" />
+
+            <MudCard Elevation="0">
+                <MudCardContent>
+                    @if (IsNewRecord) 
+                    {
+                        <MudAutocomplete @bind-Value="@SelectedStorageLocation" T="ListView" CoerceText="true" CoerceValue="true" Label="Storage Location" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnStorageLocationAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />
+                    }
+                    else
+                    {
+                        <MudTextField @bind-Value="@SelectedStorageLocation.Name" Label="Storage Location" ReadOnly="true" />
+                    }
+
+                    <MudNumericField @bind-Value="@DataObject.Amount" For="@(() => DataObject.Amount)" Label="Amount" Min="0" Max="@int.MaxValue" />
+                </MudCardContent>
+
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit">Create</MudButton>
+                    <MudButton OnClick="@OnCancelButtonClick">Cancel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </DialogContent>
+
+</MudDialog>
