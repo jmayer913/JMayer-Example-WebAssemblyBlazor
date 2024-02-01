@@ -67,7 +67,7 @@ public class AddEditCardBase<T, U, V, X> : ComponentBase
     {
         try
         {
-            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(DataObject.Integer64ID.ToString(), gridState.ToQueryDefinition());
+            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(DataObject.Integer64ID, gridState.ToQueryDefinition());
 
             if (pagedDataObjects != null)
             {
