@@ -16,8 +16,6 @@ public static class GridStateExtension
     /// <returns>A query definition.</returns>
     public static QueryDefinition ToQueryDefinition<T>(this GridState<T> gridState)
     {
-#warning Mudblazor has multiple filter operators; I need to support all.
-
         QueryDefinition queryDefinition = new()
         {
             Skip = gridState.Page,
