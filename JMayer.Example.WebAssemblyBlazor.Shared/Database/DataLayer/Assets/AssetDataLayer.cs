@@ -54,7 +54,7 @@ public class AssetDataLayer : UserEditableMemoryDataLayer<Asset>, IAssetDataLaye
     private async Task<List<Asset>> GetChildrenAsync(Asset parent, CancellationToken cancellationToken)
     {
         List<Asset> returnList = [];
-        List<Asset> children = await GetAllAsync(obj => obj.ParentID == parent.Integer64ID, cancellationToken);
+        List<Asset> children = await GetAllAsync(obj => obj.ParentID == parent.Integer64ID, cancellationToken: cancellationToken);
 
         if (children.Count > 0)
         {
@@ -120,7 +120,7 @@ public class AssetDataLayer : UserEditableMemoryDataLayer<Asset>, IAssetDataLaye
     /// <returns>A Task object for the async.</returns>
     private async Task UpdateParentPathAsync(string? parentPath, Asset parentAsset, CancellationToken cancellationToken)
     {
-        List<Asset> children = await GetAllAsync(obj => obj.ParentID == parentAsset.Integer64ID, cancellationToken);
+        List<Asset> children = await GetAllAsync(obj => obj.ParentID == parentAsset.Integer64ID, cancellationToken: cancellationToken);
 
         if (children.Count > 0)
         {
