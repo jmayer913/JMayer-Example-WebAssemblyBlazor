@@ -1,11 +1,13 @@
 ﻿@page "/Asset/{indexKey:long}"
 @inherits AssetInspectorBase
 
+<PageTitle>Asset Insepctor</PageTitle>
+
 @if (Initialized)
 {
     @if (DataObject != null)
     {
-        <MudGrid>
+        <MudGrid Class="px-2 py-2">
 
             <MudItem xs="12">
                 <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.AssetOverviewCard @bind-DataObject="@DataObject" />

@@ -23,11 +23,11 @@
                         </MudStack>
                     </CellTemplate>
                 </TemplateColumn>
-                <PropertyColumn Property="x => x.LocationA" />
-                <PropertyColumn Property="x => x.LocationB" />
-                <PropertyColumn Property="x => x.LocationC" />
-                <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" />
-                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" />
+                <PropertyColumn Property="x => x.LocationA" Title="Location A" />
+                <PropertyColumn Property="x => x.LocationB" Title="Location B" />
+                <PropertyColumn Property="x => x.LocationC" Title="Location C" />
+                <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" Title="Created" />
+                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" Title="Last Edited" />
             </Columns>
 
             <PagerContent>

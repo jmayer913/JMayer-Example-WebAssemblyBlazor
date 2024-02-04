@@ -1,11 +1,13 @@
 ﻿@page "/Assets"
 @inherits AssetSearchBase
 
-<MudStack>
+<PageTitle>Assets</PageTitle>
+
+<MudStack Class="px-2 py-2">
 
     <MudText Typo="Typo.h5">Asset Search</MudText>
 
-    <MudDataGrid @ref="@MudDataGrid" T="Asset" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" ServerData="@OnDataGridStateChangedAsync" SortMode="SortMode.Single">
+    <MudDataGrid @ref="@MudDataGrid" T="Asset" ColumnsPanelReordering="false" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="false" SortMode="SortMode.Single">
         <ToolBarContent>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
         </ToolBarContent>
@@ -19,18 +21,18 @@
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
-            <PropertyColumn Property="x => x.ParentPath" Grouping="true" />
+            <PropertyColumn Property="x => x.ParentPath" Title="Parent Path" />
             <PropertyColumn Property="x => x.Name" />
             <PropertyColumn Property="x => x.Category" />
             <PropertyColumn Property="x => x.Type" Hidden="true" />
             <PropertyColumn Property="x => x.Manufacturer" Hidden="true" />
-            <PropertyColumn Property="x => x.ManufacturerNumber" Hidden="true" />
+            <PropertyColumn Property="x => x.ManufacturerNumber" Hidden="true" Title="Manufacturer Number" />
             <PropertyColumn Property="x => x.Make" Hidden="true" />
             <PropertyColumn Property="x => x.Model" Hidden="true" />
             <PropertyColumn Property="x => x.Priority" Hidden="true" />
-            <PropertyColumn Property="x => x.IsOnline" />
-            <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" />
-            <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" />
+            <PropertyColumn Property="x => x.IsOnline" Title="Online" />
+            <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" Title="Created" />
+            <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" Title="Last Edited" />
         </Columns>
 
         <PagerContent>

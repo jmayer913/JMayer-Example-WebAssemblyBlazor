@@ -23,10 +23,10 @@
                         </MudStack>
                     </CellTemplate>
                 </TemplateColumn>
-                <PropertyColumn Property="x => x.StorageLocationName" />
+                <PropertyColumn Property="x => x.StorageLocationName" Title="Storage Location" />
                 <PropertyColumn Property="x => x.Amount" />
-                <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" />
-                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" />
+                <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" Title="Created" />
+                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" Title="Last Edited" />
             </Columns>
 
             <PagerContent>

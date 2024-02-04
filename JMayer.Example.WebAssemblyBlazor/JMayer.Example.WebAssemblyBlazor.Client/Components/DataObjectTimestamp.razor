@@ -1,0 +1,89 @@
+﻿@typeparam T where T : UserEditableDataObject
+@implements IDisposable
+
+@if (Updated)
+{
+    <MudIcon Icon="@Icons.Material.Outlined.AccessAlarm" />
+    <MudText Typo="Typo.caption">&nbsp;&nbsp;</MudText>
+}
+
+<MudText Inline="true" Typo="Typo.caption">Created: @DataObject.CreatedOn</MudText>
+
+@if (DataObject.LastEditedOn != null)
+{
+    <MudText Inline="true" Typo="Typo.caption">&nbsp;&nbsp;Last Edit: @DataObject.LastEditedOn</MudText>
+}
+
+@code {
+
+    /// <summary>
+    /// Used to display the update indicator.
+    /// </summary>
+    private bool _updated;
+
+    /// <summary>
+    /// Used to auto clear the Updated property.
+    /// </summary>
+    private readonly System.Timers.Timer _updatedTimer = new(5000)
+    {
+        AutoReset = false,
+    };
+
+    /// <summary>
+    /// The property gets/sets the data object to display the timestamp and an indicator when updated.
+    /// </summary>
+    [Parameter]
+    public T DataObject { get; set; } = default!;
+
+    /// <summary>
+    /// The property gets/sets the callback for when the DataObject property changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<T> DataObjectChanged { get; set; }
+
+    /// <summary>
+    /// The property gets/sets if the data object has been updated.
+    /// </summary>
+    [Parameter]
+    public bool Updated 
+    {
+        get => _updated;
+        set 
+        {
+            _updated = value;
+
+            if (_updated)
+            {
+                _updatedTimer.Start();
+            }
+        }
+    }
+
+    /// <summary>
+    /// The property gets/sets the callback for when the Updated property changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> UpdatedChanged { get; set; }
+
+    /// <summary>
+    /// The method sets up the component before the parameters are set.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        _updatedTimer.Elapsed += async (s, e) =>
+        {
+            Updated = true;
+            await UpdatedChanged.InvokeAsync();
+        };
+        base.OnInitialized();
+    }
+
+    /// <summary>
+    /// The method handles any cleanup.
+    /// </summary>
+    public void Dispose()
+    {
+        _updatedTimer?.Stop();
+        _updatedTimer?.Dispose();
+    }
+}

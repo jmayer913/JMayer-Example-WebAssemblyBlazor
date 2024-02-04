@@ -1,7 +1,9 @@
 ﻿@page "/Parts"
 @inherits PartSearchBase
 
-<MudStack>
+<PageTitle>Parts</PageTitle>
+
+<MudStack Class="px-2 py-2">
 
     <MudText Typo="Typo.h5">Part Search</MudText>
 
@@ -22,12 +24,12 @@
             <PropertyColumn Property="x => x.Name" />
             <PropertyColumn Property="x => x.Category" />
             <PropertyColumn Property="x => x.Manufacturer" />
-            <PropertyColumn Property="x => x.ManufacturerNumber" />
+            <PropertyColumn Property="x => x.ManufacturerNumber" Title="Manufacturer Number" />
             <PropertyColumn Property="x => x.Make" Hidden="true" />
             <PropertyColumn Property="x => x.Model" Hidden="true" />
             <PropertyColumn Property="x => x.Obsolete" Hidden="true" />
-            <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" />
-            <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" />
+            <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" Title="Created" />
+            <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" Title="Last Edited" />
         </Columns>
 
         <PagerContent>

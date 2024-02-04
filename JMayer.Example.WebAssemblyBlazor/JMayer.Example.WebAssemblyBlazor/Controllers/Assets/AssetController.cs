@@ -24,7 +24,7 @@ public class AssetController : UserEditableController<Asset, IAssetDataLayer>
     {
         try
         {
-            List<Asset> dataObjects = await DataLayer.GetAllAsync();
+            List<Asset> dataObjects = await DataLayer.GetAllAsync(obj => !string.IsNullOrWhiteSpace(obj.Category));
             List<string?> categories = [.. dataObjects.Select(obj => obj.Category).Distinct().OrderBy(s => s)];
             return Ok(categories);
         }

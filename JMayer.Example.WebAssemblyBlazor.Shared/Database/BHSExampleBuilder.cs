@@ -243,6 +243,7 @@ public class BHSExampleBuilder
     {
         Asset asset = AssetDataLayer.CreateAsync(new Asset()
         {
+            Category = "Storage",
             Description = "The main part storage for the BHS.",
             Name = "Main Part Storage",
             Type = AssetType.Area,

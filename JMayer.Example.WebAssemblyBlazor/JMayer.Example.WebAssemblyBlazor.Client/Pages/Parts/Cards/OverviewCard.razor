@@ -7,7 +7,10 @@
     <MudCard>
         <MudCardHeader>
             <CardHeaderContent>
-                <MudText Typo="Typo.h6">Overview</MudText>
+                <div class="d-flex flex-row">
+                    <MudText Class="flex-grow-1" Inline="true" Typo="Typo.h6">Overview</MudText>
+                    <DataObjectTimestamp @bind-DataObject="@DataObject" @bind-Updated="@Updated" />
+                </div>
             </CardHeaderContent>
         </MudCardHeader>
 
@@ -53,7 +56,7 @@
 
         <MudCardActions>
             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Text">Update</MudButton>
-            <MudButton OnClick="@OnCancelClick">Cancel</MudButton>
+            <MudButton OnClick="@OnResetClick">Reset</MudButton>
         </MudCardActions>
     </MudCard>
 </EditForm>

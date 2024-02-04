@@ -17,7 +17,7 @@ public class InspectorBase<T, U> : ComponentBase
     /// The property gets/sets the data layer to used by the page.
     /// </summary>
     [Inject]
-    protected U DataLayer { get; set; }
+    protected U DataLayer { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the data object being inspected.

@@ -21,7 +21,7 @@ public class AddEditCardDialogBase<T, U> : ComponentBase
     /// The property gets/sets the data layer to be used by the dialog.
     /// </summary>
     [Inject]
-    protected U DataLayer { get; set; }
+    protected U DataLayer { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the data object to add/edit.
@@ -33,12 +33,12 @@ public class AddEditCardDialogBase<T, U> : ComponentBase
     /// The property gets/sets the dialog service used for managing MudDialogs.
     /// </summary>
     [Inject]
-    protected IDialogService DialogService { get; set; } = null!;
+    protected IDialogService DialogService { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the edit context associated with the edit form.
     /// </summary>
-    protected EditContext EditContext { get; set; } = null!;
+    protected EditContext EditContext { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets if the data object is a new record.
@@ -50,7 +50,7 @@ public class AddEditCardDialogBase<T, U> : ComponentBase
     /// The property gets/sets a reference to the mud dialog.
     /// </summary>
     [CascadingParameter]
-    protected MudDialogInstance MudDialog { get; set; } = null!;
+    protected MudDialogInstance MudDialog { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the id of who owns the created sub data object.
@@ -64,13 +64,14 @@ public class AddEditCardDialogBase<T, U> : ComponentBase
     /// <summary>
     /// The property gets/sets a reference to the server side validation.
     /// </summary>
-    protected ServerSideValidation ServerSideValidation { get; set; } = null!;
+    protected ServerSideValidation ServerSideValidation { get; set; } = default!;
 
     /// <summary>
     /// The method initializes the component.
     /// </summary>
     protected override void OnParametersSet()
     {
+        //For new records, set the owner to the value set when the dialog is opened.
         if (DataObject.OwnerInteger64ID == 0)
         {
             DataObject.OwnerInteger64ID = OwnerId;

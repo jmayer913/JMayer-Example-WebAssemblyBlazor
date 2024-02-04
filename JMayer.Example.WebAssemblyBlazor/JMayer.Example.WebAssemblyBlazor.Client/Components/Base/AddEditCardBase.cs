@@ -22,13 +22,13 @@ public class AddEditCardBase<T, U, V, X> : ComponentBase
     /// The property gets/sets the data layer to used by the card.
     /// </summary>
     [Inject]
-    protected V DataLayer { get; set; }
+    protected V DataLayer { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the data object the card will display information for.
     /// </summary>
     [Parameter]
-    public U DataObject { get; set; } = null!;
+    public U DataObject { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets a change event for the data object.
@@ -45,18 +45,18 @@ public class AddEditCardBase<T, U, V, X> : ComponentBase
     /// The property gets/sets the dialog service used for managing MudDialogs.
     /// </summary>
     [Inject]
-    protected IDialogService DialogService { get; set; } = null!;
+    protected IDialogService DialogService { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets a reference to the UI data grid.
     /// </summary>
-    protected MudDataGrid<T> MudDataGrid { get; set; } = null!;
+    protected MudDataGrid<T> MudDataGrid { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the navigation manager which is used to navigate to the inspector.
     /// </summary>
     [Inject]
-    protected NavigationManager NavigationManager { get; set; } = null!;
+    protected NavigationManager NavigationManager { get; set; } = default!;
 
     /// <summary>
     /// The method queries a page of data objects based on user interactions with the grid.

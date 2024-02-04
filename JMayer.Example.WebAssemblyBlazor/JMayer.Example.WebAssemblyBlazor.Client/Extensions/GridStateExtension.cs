@@ -67,7 +67,14 @@ public static class GridStateExtension
 
             if (filterDefinition.Value != null && !string.IsNullOrWhiteSpace(filterDefinition.Value.ToString()))
             {
-                value = filterDefinition.Value.ToString() ?? string.Empty;
+                if (filterDefinition.Value is DateTime dateTime)
+                {
+                    value = $"{dateTime:yyyy-MM-ddTHH:mm:ss}";
+                }
+                else
+                {
+                    value = filterDefinition.Value.ToString() ?? string.Empty;
+                }
             }
 
             //Do not include an empty value (table will be empty) unless on

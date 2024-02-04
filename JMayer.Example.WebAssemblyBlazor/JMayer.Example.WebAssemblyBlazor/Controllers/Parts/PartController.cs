@@ -24,7 +24,7 @@ public class PartController : StandardCRUDController<Part, IPartDataLayer>
     {
         try
         {
-            List<Part> dataObjects = await DataLayer.GetAllAsync();
+            List<Part> dataObjects = await DataLayer.GetAllAsync(obj => !string.IsNullOrWhiteSpace(obj.Category));
             List<string?> categories = [.. dataObjects.Select(obj => obj.Category).Distinct().OrderBy(s => s)];
             return Ok(categories);
         }

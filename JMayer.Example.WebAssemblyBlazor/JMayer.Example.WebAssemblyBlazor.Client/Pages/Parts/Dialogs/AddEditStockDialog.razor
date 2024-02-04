@@ -13,7 +13,7 @@
                     {
                         <MudAutocomplete @bind-Value="@SelectedStorageLocation" T="ListView" CoerceText="true" CoerceValue="true" Label="Storage Location" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnStorageLocationAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />
                     }
-                    else
+                    else if (SelectedStorageLocation != null)
                     {
                         <MudTextField @bind-Value="@SelectedStorageLocation.Name" Label="Storage Location" ReadOnly="true" />
                     }

@@ -21,7 +21,7 @@ public class SearchBase<T, U, V> : ComponentBase
     /// The property gets/sets the data layer to used by the page.
     /// </summary>
     [Inject]
-    protected U DataLayer { get; set; }
+    protected U DataLayer { get; set; } = default!;
 
     /// <summary>
     /// The name of the data object.
@@ -32,18 +32,18 @@ public class SearchBase<T, U, V> : ComponentBase
     /// The property gets/sets the dialog service used for managing MudDialogs.
     /// </summary>
     [Inject]
-    protected IDialogService DialogService { get; set; } = null!;
+    protected IDialogService DialogService { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets a reference to the UI data grid.
     /// </summary>
-    protected MudDataGrid<T> MudDataGrid { get; set; } = null!;
+    protected MudDataGrid<T> MudDataGrid { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the navigation manager which is used to navigate to the inspector.
     /// </summary>
     [Inject]
-    protected NavigationManager NavigationManager { get; set; } = null!;
+    protected NavigationManager NavigationManager { get; set; } = default!;
 
     /// <summary>
     /// The method queries a page of data objects based on user interactions with the grid.

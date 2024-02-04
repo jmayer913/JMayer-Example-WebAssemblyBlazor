@@ -21,7 +21,7 @@ public class OverviewCardBase<T, U> : ComponentBase
     /// The property gets/sets the data layer to used by the page.
     /// </summary>
     [Inject]
-    protected U DataLayer { get; set; }
+    protected U DataLayer { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the data object the overview will display information on.
@@ -39,12 +39,12 @@ public class OverviewCardBase<T, U> : ComponentBase
     /// The property gets/sets the dialog service used for managing MudDialogs.
     /// </summary>
     [Inject]
-    protected IDialogService DialogService { get; set; } = null!;
+    protected IDialogService DialogService { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the edit context associated with the edit form.
     /// </summary>
-    protected EditContext EditContext { get; set; } = null!;
+    protected EditContext EditContext { get; set; } = default!;
 
     /// <summary>
     /// The original data object before edits.
@@ -54,7 +54,12 @@ public class OverviewCardBase<T, U> : ComponentBase
     /// <summary>
     /// The property gets/sets a reference to the server side validation.
     /// </summary>
-    protected ServerSideValidation ServerSideValidation { get; set; } = null!;
+    protected ServerSideValidation ServerSideValidation { get; set; } = default!;
+
+    /// <summary>
+    /// The property gets/sets if the data object has been updated.
+    /// </summary>
+    protected bool Updated { get; set; }
 
     /// <summary>
     /// The method sets up the component after the parameters are set.
@@ -69,8 +74,7 @@ public class OverviewCardBase<T, U> : ComponentBase
     /// <summary>
     /// The method resets the user's edits.
     /// </summary>
-    /// <returns></returns>
-    protected virtual void OnCancelClick()
+    protected virtual void OnResetClick()
     {
         DataObject.MapProperties(OriginalDataObject);
         EditContext.MarkAsUnmodified();
@@ -86,8 +90,10 @@ public class OverviewCardBase<T, U> : ComponentBase
         {
             OperationResult operationResult = await DataLayer.UpdateAsync(DataObject);
 
-            if (operationResult.IsSuccessStatusCode)
+            if (operationResult.IsSuccessStatusCode && operationResult.DataObject != null)
             {
+                Updated = true;
+                DataObject.MapProperties((T)operationResult.DataObject);
                 OriginalDataObject.MapProperties(DataObject);
                 EditContext.MarkAsUnmodified();
             }
