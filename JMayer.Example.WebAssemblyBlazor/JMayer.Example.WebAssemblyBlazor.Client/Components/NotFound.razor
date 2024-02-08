@@ -1,0 +1,14 @@
+﻿
+<MudText Class="d-flex align-center justify-center" Typo="Typo.h3">
+    <MudIcon Color="Color.Error" Icon="@Icons.Material.Outlined.Warning" Size="Size.Large" /> @ObjectTypeName Not Found
+</MudText>
+
+@code {
+    
+    /// <summary>
+    /// The property gets/sets the name of what was not found.
+    /// </summary>
+    [Parameter]
+    public string ObjectTypeName { get; set; } = string.Empty;
+
+}

@@ -1,0 +1,25 @@
+﻿@inherits NewPartDialogBase
+
+<MudDialog>
+    
+    <DialogContent>
+        <EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitEditFormAsync">
+            <DataAnnotationsValidator />
+            <ServerSideValidation @ref="@ServerSideValidation" />
+
+            <MudCard Elevation="0">
+                <MudCardContent>
+                    <MudTextField @bind-Value="@DataObject.Name" Label="Name" For="@(() => DataObject.Name)" />
+                    <MudTextField @bind-Value="@DataObject.Description" Label="Description" Lines="5" For="@(() => DataObject.Description)" />
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" For="@(() => DataObject.Category)" Label="Category" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnCategoryAutoCompleteSearchAsync" />
+                </MudCardContent>
+
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit">Create</MudButton>
+                    <MudButton OnClick="@OnCancelButtonClick">Cancel</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </DialogContent>
+
+</MudDialog>

@@ -1,0 +1,29 @@
+﻿@page "/Asset/{indexKey:long}"
+@inherits AssetInspectorBase
+
+<PageTitle>Asset Insepctor</PageTitle>
+
+@if (Initialized)
+{
+    @if (DataObject != null)
+    {
+        <MudGrid Class="px-2 py-2">
+
+            <MudItem xs="12">
+                <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.OverviewCard @bind-DataObject="@DataObject" />
+            </MudItem>
+
+            @if (DataObject.Type == AssetType.Area)
+            {
+                <MudItem xs="12">
+                    <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.StorageLocationCard OwnerID="@DataObject.Integer64ID" />
+                </MudItem>
+            }
+
+        </MudGrid>
+    }
+    else
+    {
+        <NotFound ObjectTypeName="Asset" />
+    }
+}

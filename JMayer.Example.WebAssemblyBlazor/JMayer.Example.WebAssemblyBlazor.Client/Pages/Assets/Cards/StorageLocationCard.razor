@@ -1,0 +1,40 @@
+﻿@inherits StorageLocationCardBase
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Storage Locations</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+    <MudCardContent>
+
+        <MudDataGrid @ref="@MudDataGrid" T="StorageLocation" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" ServerData="@OnDataGridStateChangedAsync" SortMode="SortMode.Single">
+            <ToolBarContent>
+                <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
+            </ToolBarContent>
+
+            <Columns>
+                <TemplateColumn IsEditable="false" Filterable="false" Sortable="false">
+                    <CellTemplate>
+                        <MudStack Row="true">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteButtonClickAsync(context.Item))" />
+                            <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="@(() => OnEditButtonClickAsync(context.Item))" />
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.LocationA" Title="Location A" />
+                <PropertyColumn Property="x => x.LocationB" Title="Location B" />
+                <PropertyColumn Property="x => x.LocationC" Title="Location C" />
+                <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" Title="Created" />
+                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" Title="Last Edited" />
+            </Columns>
+
+            <PagerContent>
+                <MudDataGridPager T="StorageLocation" />
+            </PagerContent>
+        </MudDataGrid>
+
+    </MudCardContent>
+
+</MudCard>

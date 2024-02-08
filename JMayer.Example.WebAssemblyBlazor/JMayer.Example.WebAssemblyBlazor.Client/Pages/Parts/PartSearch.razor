@@ -1,0 +1,40 @@
+﻿@page "/Parts"
+@inherits PartSearchBase
+
+<PageTitle>Parts</PageTitle>
+
+<MudStack Class="px-2 py-2">
+
+    <MudText Typo="Typo.h5">Part Search</MudText>
+
+    <MudDataGrid @ref="@MudDataGrid" T="Part" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" ServerData="@OnDataGridStateChangedAsync" SortMode="SortMode.Single">
+        <ToolBarContent>
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
+        </ToolBarContent>
+
+        <Columns>
+            <TemplateColumn IsEditable="false" Filterable="false" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteButtonClickAsync(context.Item))" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="@(() => OnEditButtonClick(context.Item))" />
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Category" />
+            <PropertyColumn Property="x => x.Manufacturer" />
+            <PropertyColumn Property="x => x.ManufacturerNumber" Title="Manufacturer Number" />
+            <PropertyColumn Property="x => x.Make" Hidden="true" />
+            <PropertyColumn Property="x => x.Model" Hidden="true" />
+            <PropertyColumn Property="x => x.Obsolete" Hidden="true" />
+            <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" Title="Created" />
+            <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" Title="Last Edited" />
+        </Columns>
+
+        <PagerContent>
+            <MudDataGridPager T="Part" />
+        </PagerContent>
+    </MudDataGrid>
+
+</MudStack>

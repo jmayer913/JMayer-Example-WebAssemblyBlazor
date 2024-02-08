@@ -1,0 +1,62 @@
+﻿@inherits OverviewCardBase
+
+<EditForm EditContext="@EditContext" OnValidSubmit="@OnSubmitFormAsync">
+    <DataAnnotationsValidator />
+    <ServerSideValidation @ref="@ServerSideValidation" />
+
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <div class="d-flex flex-row">
+                    <MudText Class="flex-grow-1" Inline="true" Typo="Typo.h6">Overview</MudText>
+                    <DataObjectTimestamp @bind-DataObject="@DataObject" @bind-Updated="@Updated" />
+                </div>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+
+            <MudGrid>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@DataObject.Name" Label="Name" For="@(() => DataObject.Name)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudAutocomplete @bind-Value="@DataObject.Category" T="string" CoerceText="true" CoerceValue="true" For="@(() => DataObject.Category)" Label="Category" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnCategoryAutoCompleteSearch" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@DataObject.Manufacturer" Label="Manufacturer" For="@(() => DataObject.Manufacturer)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@DataObject.ManufacturerNumber" Label="Manufacturer #" For="@(() => DataObject.ManufacturerNumber)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@DataObject.Model" Label="Model" For="@(() => DataObject.Model)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@DataObject.Make" Label="Make" For="@(() => DataObject.Make)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="@DataObject.Description" Label="Description" Lines="5" For="@(() => DataObject.Description)" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudCheckBox @bind-Value="@DataObject.Obsolete" Label="Obsolete" For="@(() => DataObject.Obsolete)" />
+                </MudItem>
+
+            </MudGrid>
+            
+        </MudCardContent>
+
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Text">Update</MudButton>
+            <MudButton OnClick="@OnResetClick">Reset</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
