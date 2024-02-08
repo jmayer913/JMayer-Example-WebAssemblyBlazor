@@ -54,7 +54,11 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
         foreach (Part part in e.DataObjects.Cast<Part>())
         {
             List<Stock> stocks = await GetAllAsync(obj => obj.OwnerInteger64ID == part.Integer64ID);
-            await DeleteAsync(stocks);
+
+            if (stocks.Count > 0)
+            {
+                await DeleteAsync(stocks);
+            }
         }
     }
 
@@ -68,7 +72,11 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
         foreach (StorageLocation storageLocation in e.DataObjects.Cast<StorageLocation>())
         {
             List<Stock> stocks = await GetAllAsync(obj => obj.StorageLocationId == storageLocation.Integer64ID);
-            await DeleteAsync(stocks);
+
+            if (stocks.Count > 0)
+            {
+                await DeleteAsync(stocks);
+            }
         }
     }
 

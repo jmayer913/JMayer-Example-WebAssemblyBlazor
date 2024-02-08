@@ -1,5 +1,4 @@
-﻿using JMayer.Data.Data;
-using JMayer.Data.Database.DataLayer;
+﻿using JMayer.Data.Database.DataLayer;
 using JMayer.Data.Database.DataLayer.MemoryStorage;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using System.ComponentModel.DataAnnotations;
@@ -40,7 +39,11 @@ public class StorageLocationDataLayer : UserEditableMemoryDataLayer<StorageLocat
         foreach (Asset asset in e.DataObjects.Cast<Asset>())
         {
             List<StorageLocation> storageLocations = await GetAllAsync(obj => obj.OwnerInteger64ID == asset.Integer64ID);
-            await DeleteAsync(storageLocations);
+
+            if (storageLocations.Count > 0)
+            {
+                await DeleteAsync(storageLocations);
+            }
         }
     }
 

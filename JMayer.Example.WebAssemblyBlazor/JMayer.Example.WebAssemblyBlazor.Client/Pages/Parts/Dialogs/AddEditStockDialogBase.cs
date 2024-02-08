@@ -38,8 +38,9 @@ public class AddEditStockDialogBase : AddEditCardDialogBase<Stock, IStockDataLay
         set
         {
             _selectedStorageLocation = value;
-            //Map any selection changes to the StorageLocationId property.
+            //Map any selection changes to the StorageLocationId and StorageLocationName property.
             DataObject.StorageLocationId = value?.Integer64ID ?? 0;
+            DataObject.StorageLocationName = value?.Name ?? string.Empty;
         }
     }
 

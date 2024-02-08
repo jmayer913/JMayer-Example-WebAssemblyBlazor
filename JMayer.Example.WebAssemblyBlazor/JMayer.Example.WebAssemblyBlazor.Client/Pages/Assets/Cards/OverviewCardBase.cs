@@ -1,5 +1,4 @@
 ﻿using JMayer.Data.Data;
-using JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 
@@ -8,7 +7,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards;
 /// <summary>
 /// The class manages user interactions with the AssetOverviewCard.razor component.
 /// </summary>
-public class AssetOverviewCardBase : OverviewCardBase<Asset, IAssetDataLayer>
+public class OverviewCardBase : Components.Base.OverviewCardBase<Asset, IAssetDataLayer>
 {
     /// <summary>
     /// The selected asset parent.

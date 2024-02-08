@@ -10,13 +10,13 @@
         <MudGrid Class="px-2 py-2">
 
             <MudItem xs="12">
-                <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.AssetOverviewCard @bind-DataObject="@DataObject" />
+                <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.OverviewCard @bind-DataObject="@DataObject" />
             </MudItem>
 
             @if (DataObject.Type == AssetType.Area)
             {
                 <MudItem xs="12">
-                    <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.StorageLocationCard @bind-DataObject="@DataObject" />
+                    <JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards.StorageLocationCard OwnerID="@DataObject.Integer64ID" />
                 </MudItem>
             }
 

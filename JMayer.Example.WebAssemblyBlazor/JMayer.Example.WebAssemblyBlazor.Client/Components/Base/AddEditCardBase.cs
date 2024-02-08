@@ -9,32 +9,19 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <summary>
 /// The class manages user interaction for an editable card.
 /// </summary>
-/// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
-/// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
+/// <typeparam name="T">Must be a SubUserEditableDataObject.</typeparam>
+/// <typeparam name="U">Must be a ISubUserEditableDataLayer.</typeparam>
 /// <typeparam name="V">Must be a component that's also a dialog.</typeparam>
-public class AddEditCardBase<T, U, V, X> : ComponentBase
+public class AddEditCardBase<T, U, V> : ComponentBase
     where T : SubUserEditableDataObject
-    where U : UserEditableDataObject
-    where V : ISubUserEditableDataLayer<T>
-    where X : ComponentBase
+    where U : ISubUserEditableDataLayer<T>
+    where V : ComponentBase
 {
     /// <summary>
     /// The property gets/sets the data layer to used by the card.
     /// </summary>
     [Inject]
-    protected V DataLayer { get; set; } = default!;
-
-    /// <summary>
-    /// The property gets/sets the data object the card will display information for.
-    /// </summary>
-    [Parameter]
-    public U DataObject { get; set; } = default!;
-
-    /// <summary>
-    /// The property gets/sets a change event for the data object.
-    /// </summary>
-    [Parameter]
-    public EventCallback<U> DataObjectChanged { get; set; }
+    protected U DataLayer { get; set; } = default!;
 
     /// <summary>
     /// The name of the data object.
@@ -59,6 +46,12 @@ public class AddEditCardBase<T, U, V, X> : ComponentBase
     protected NavigationManager NavigationManager { get; set; } = default!;
 
     /// <summary>
+    /// The property gets/sets the id of the owner of this card.
+    /// </summary>
+    [Parameter]
+    public long OwnerID { get; set; }
+
+    /// <summary>
     /// The method queries a page of data objects based on user interactions with the grid.
     /// </summary>
     /// <param name="gridState">Tells the server how to query data.</param>
@@ -67,7 +60,7 @@ public class AddEditCardBase<T, U, V, X> : ComponentBase
     {
         try
         {
-            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(DataObject.Integer64ID, gridState.ToQueryDefinition());
+            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(OwnerID, gridState.ToQueryDefinition());
 
             if (pagedDataObjects != null)
             {
@@ -128,7 +121,7 @@ public class AddEditCardBase<T, U, V, X> : ComponentBase
             { "DataObject", dataObject },
             { "IsNewRecord", false },
         };
-        IDialogReference dialogReference = await DialogService.ShowAsync<X>($"Edit the {DataObjectTypeName}", dialogParameters);
+        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Edit the {DataObjectTypeName}", dialogParameters);
         DialogResult dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)
@@ -146,9 +139,9 @@ public class AddEditCardBase<T, U, V, X> : ComponentBase
         DialogParameters dialogParameters = new()
         {
             { "IsNewRecord", true },
-            { "OwnerId", DataObject.Integer64ID },
+            { "OwnerId", OwnerID },
         };
-        IDialogReference dialogReference = await DialogService.ShowAsync<X>($"Create a New {DataObjectTypeName}", dialogParameters);
+        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName}", dialogParameters);
         DialogResult dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)
