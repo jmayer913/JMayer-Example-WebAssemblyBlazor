@@ -27,13 +27,11 @@ builder.Services.AddSingleton<IStorageLocationDataLayer, StorageLocationDataLaye
 builder.Services.AddSingleton<IPartDataLayer, PartDataLayer>(factory => (PartDataLayer)bhsExampleBuilder.PartDataLayer);
 builder.Services.AddSingleton<IStockDataLayer, StockDataLayer>(factory => (StockDataLayer)bhsExampleBuilder.StockDataLayer);
 
-#warning This is a bad solution. I either need to disable prerendering or determine how to find the base address when registering on the server.
-#warning Another alterative is build a service which refers both HTTP and database data layers and determines which should be accessed.
 //Because of prerendering, register the HTTP clients on the server.
-builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IAssetDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.AssetDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
-builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IStorageLocationDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.StorageLocationDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
-builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.IPartDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.PartDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
-builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.IStockDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.StockDataLayer>(httpClient => httpClient.BaseAddress = new Uri("https://localhost:7062/"));
+builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IAssetDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.AssetDataLayer>();
+builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.IStorageLocationDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets.StorageLocationDataLayer>();
+builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.IPartDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.PartDataLayer>();
+builder.Services.AddHttpClient<JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.IStockDataLayer, JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts.StockDataLayer>();
 
 #endregion
 
