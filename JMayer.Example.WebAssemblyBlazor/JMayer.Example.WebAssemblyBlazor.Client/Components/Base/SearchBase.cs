@@ -119,7 +119,7 @@ public class SearchBase<T, U, V> : ComponentBase
     /// <returns>A Task object for the async.</returns>
     protected virtual async Task OnNewButtonClickAsync()
     {
-        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName}");
+        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName.SpaceCapitalLetters()}");
         DialogResult dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)

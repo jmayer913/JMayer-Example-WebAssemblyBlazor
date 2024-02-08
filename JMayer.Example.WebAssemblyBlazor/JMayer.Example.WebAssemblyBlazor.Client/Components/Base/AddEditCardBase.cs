@@ -121,7 +121,7 @@ public class AddEditCardBase<T, U, V> : ComponentBase
             { "DataObject", dataObject },
             { "IsNewRecord", false },
         };
-        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Edit the {DataObjectTypeName}", dialogParameters);
+        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Edit the {DataObjectTypeName.SpaceCapitalLetters()}", dialogParameters);
         DialogResult dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)
@@ -141,7 +141,7 @@ public class AddEditCardBase<T, U, V> : ComponentBase
             { "IsNewRecord", true },
             { "OwnerId", OwnerID },
         };
-        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName}", dialogParameters);
+        IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName.SpaceCapitalLetters()}", dialogParameters);
         DialogResult dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)
