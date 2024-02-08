@@ -8,6 +8,6 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Cards;
 /// <summary>
 /// The class manages user interactions with the StockCard.razor component.
 /// </summary>
-public class StockCardBase : AddEditCardBase<Stock, IStockDataLayer, AddEditStockDialog>
+public class StockCardBase : EditableCardBase<Stock, IStockDataLayer, StockDialog>
 {
 }

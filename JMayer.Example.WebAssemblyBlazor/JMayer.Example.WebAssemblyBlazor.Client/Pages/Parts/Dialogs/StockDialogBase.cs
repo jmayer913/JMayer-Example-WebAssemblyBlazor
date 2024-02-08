@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Components;
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Dialogs;
 
 /// <summary>
-/// The class manages user interactions with the AddEditStockDialog.razor dialog.
+/// The class manages user interactions with the StockDialog.razor dialog.
 /// </summary>
-public class AddEditStockDialogBase : AddEditCardDialogBase<Stock, IStockDataLayer>
+public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
 {
     /// <summary>
     /// The selected storage location.

@@ -8,11 +8,7 @@
 }
 
 <MudText Inline="true" Typo="Typo.caption">Created: @DataObject.CreatedOn</MudText>
-
-@if (DataObject.LastEditedOn != null)
-{
-    <MudText Inline="true" Typo="Typo.caption">&nbsp;&nbsp;Last Edit: @DataObject.LastEditedOn</MudText>
-}
+<MudText Inline="true" Typo="Typo.caption">&nbsp;&nbsp;Last Edit: @DataObject.LastEditedOn</MudText>
 
 @code {
 

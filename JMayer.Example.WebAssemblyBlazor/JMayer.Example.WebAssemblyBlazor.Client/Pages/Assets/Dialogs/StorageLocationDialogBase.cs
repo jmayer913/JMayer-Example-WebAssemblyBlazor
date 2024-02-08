@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Components;
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Dialogs;
 
 /// <summary>
-/// The class manages user interactions with the AddEditStorageLocationDialog.razor dialog.
+/// The class manages user interactions with the StorageLocationDialog.razor dialog.
 /// </summary>
-public class AddEditStorageLocationDialogBase : AddEditCardDialogBase<StorageLocation, IStorageLocationDataLayer>
+public class StorageLocationDialogBase : CardDialogBase<StorageLocation, IStorageLocationDataLayer>
 {
     /// <inheritdoc/>
     public override Task SetParametersAsync(ParameterView parameters)

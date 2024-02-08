@@ -5,7 +5,7 @@ using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Cards;
 
 /// <summary>
-/// The class manages user interactions with the AssetOverviewCard.razor component.
+/// The class manages user interactions with the OverviewCard.razor component.
 /// </summary>
 public class OverviewCardBase : Components.Base.OverviewCardBase<Asset, IAssetDataLayer>
 {

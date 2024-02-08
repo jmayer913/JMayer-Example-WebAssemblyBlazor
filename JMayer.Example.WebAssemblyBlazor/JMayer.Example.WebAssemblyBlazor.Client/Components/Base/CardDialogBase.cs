@@ -13,7 +13,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// </summary>
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
-public class AddEditCardDialogBase<T, U> : ComponentBase
+public class CardDialogBase<T, U> : ComponentBase
     where T : SubUserEditableDataObject, new()
     where U : ISubUserEditableDataLayer<T>
 {

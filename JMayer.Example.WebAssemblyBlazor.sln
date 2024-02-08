@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JMayer.Data", "..\JMayer-Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JMayer.Web.Mvc", "..\JMayer-Web-Mvc-Library\JMayer.Web.Mvc\JMayer.Web.Mvc.csproj", "{4A629675-978A-4133-B393-45728E80E04F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestProject\TestProject.csproj", "{82ED0455-2AE7-43E5-AE34-2EFC6B508815}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +39,6 @@ Global
 		{4A629675-978A-4133-B393-45728E80E04F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A629675-978A-4133-B393-45728E80E04F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A629675-978A-4133-B393-45728E80E04F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82ED0455-2AE7-43E5-AE34-2EFC6B508815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82ED0455-2AE7-43E5-AE34-2EFC6B508815}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82ED0455-2AE7-43E5-AE34-2EFC6B508815}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82ED0455-2AE7-43E5-AE34-2EFC6B508815}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
