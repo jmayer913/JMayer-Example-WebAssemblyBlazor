@@ -91,7 +91,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
         else
         {
-            Assert.Fail("Creating the part for the Delete test failed.");
+            Assert.Fail("Failed to create the part.");
         }
     }
 
@@ -170,7 +170,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
         else
         {
-            Assert.Fail("Creating the part for the Get Single with an Id test.");
+            Assert.Fail("Failed to create the part.");
         }
     }
 

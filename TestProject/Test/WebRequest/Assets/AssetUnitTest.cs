@@ -114,7 +114,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
         else
         {
-            Assert.Fail("Creating the asset for the Delete test failed.");
+            Assert.Fail("Failed to create the asset.");
         }
     }
 
@@ -232,7 +232,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
         else
         {
-            Assert.Fail("Creating the asset for the Get Single with an Id test.");
+            Assert.Fail("Failed to create the asset.");
         }
     }
 }
