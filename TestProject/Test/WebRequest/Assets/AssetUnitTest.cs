@@ -1,5 +1,6 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Data.HTTP.DataLayer;
+using JMayer.Example.WebAssemblyBlazor.Shared.Data;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
@@ -94,7 +95,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         (
             operationResult.IsSuccessStatusCode //The operation must have been successful.
             && operationResult.DataObject is Asset returnedDataObject //An asset must have been returned.
-            && new AssetEqualityComparer(true).Equals(returnedDataObject, originalDataObject) //Original and return must be equal.
+            && new AssetEqualityComparer(true, true, true).Equals(returnedDataObject, originalDataObject) //Original and return must be equal.
         );
     }
 
@@ -272,5 +273,248 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         {
             Assert.Fail("Failed to create the asset.");
         }
+    }
+
+    /// <summary>
+    /// The method confirms the HTTP data layer can request an asset to be updated by the server and the server can successfully process the request.
+    /// </summary>
+    /// <param name="originalName">The orginal name of the asset.</param>
+    /// <param name="name">The name of the asset.</param>
+    /// <param name="description">The description for the asset.</param>
+    /// <param name="category">The common category for the asset.</param>
+    /// <param name="make">The make of the asset.</param>
+    /// <param name="model">The model for the asset.</param>
+    /// <param name="manufacturer">Who makes the asset.</param>
+    /// <param name="manufacturerNumber">The identifier the manufacturer uses for the asset.</param>
+    /// <param name="online">Marks the asset as obsolete.</param>
+    /// <returns>A Task object for the async.</returns>
+    [Theory]
+    [InlineData("Test Asset 1", "Test AL1", null, null, null, null, null, null, Priority.Low, false)]
+    [InlineData("Test Asset 2", "Test AL1-01", "Test AL1-02", null, null, null, null, null, Priority.Medium, false)]
+    [InlineData("Test Asset 3", "Test AL1-02", "Test AL1-02", "Conveyor", null, null, null, null, Priority.High, false)]
+    [InlineData("Test Asset 4", "Test AL1-03", "Test AL1-03", "Conveyor", "Make", null, null, null, Priority.Medium, false)]
+    [InlineData("Test Asset 5", "Test AL1-04", "Test AL1-04", "Conveyor", "Make", "Model", null, null, Priority.Medium, false)]
+    [InlineData("Test Asset 6", "Test AL1-05", "Test AL1-05", "Conveyor", "Make", "Model", "Manufacturer", null, Priority.Medium, false)]
+    [InlineData("Test Asset 7", "Test AL1-05-BSD", "Test AL1-05-BSD", "BSD", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, false)]
+    [InlineData("Test Asset 8", "Test AL1-VSU", "Test AL1-VSU", "VSU", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, true)]
+    public async Task UpdateAssetAsync(string originalName, string name, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, Priority priority, bool online)
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = originalName });
+
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdDataObject)
+        {
+            Asset updatedDataObject = new(createdDataObject)
+            {
+                Category = category,
+                Description = description,
+                IsOnline = online,
+                Make = make,
+                Manufacturer = manufacturer,
+                ManufacturerNumber = manufacturerNumber,
+                Model = model,
+                Name = name,
+                Priority = priority,
+                Type = AssetType.Equipment,
+            };
+            operationResult = await dataLayer.UpdateAsync(updatedDataObject);
+
+            Assert.True
+            (
+                operationResult.IsSuccessStatusCode //The operation must have been successful.
+                && operationResult.DataObject is Asset returnedDataObject //An asset must have been returned.
+                && new AssetEqualityComparer(false, false, true).Equals(returnedDataObject, updatedDataObject) //The original data matches the returned data.
+            );
+        }
+        else
+        {
+            Assert.Fail("Failed to create the asset.");
+        }
+    }
+
+    /// <summary>
+    /// The method confirms the server will return a failure if the asset being updated is old.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task UpdateAssetOldDataAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset()
+        {
+            Name = "Old Data Asset Test",
+        });
+        Asset? firstDataObject = operationResult.DataObject as Asset;
+
+        if (firstDataObject == null)
+        {
+            Assert.Fail("Failed to create the asset.");
+            return;
+        }
+
+        Asset secondDataObject = new(firstDataObject);
+
+        firstDataObject.Description = "A description";
+        secondDataObject.Category = "A Category";
+
+        operationResult = await dataLayer.UpdateAsync(secondDataObject);
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to update the second asset.");
+            return;
+        }
+
+        operationResult = await dataLayer.UpdateAsync(firstDataObject);
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No asset was returned.
+            && operationResult.StatusCode == HttpStatusCode.Conflict //A conflict status was returned.
+        );
+    }
+
+    /// <summary>
+    /// The method confirms the parent path is updated when the root asset is changed to a different asset.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task UpdateAssetTreeStructureAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset" });
+        Asset? rootAsset = operationResult.DataObject as Asset;
+
+        if (rootAsset == null)
+        {
+            Assert.Fail("Failed to create the root asset");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Other Root Asset" });
+        Asset? otherRootAsset = operationResult.DataObject as Asset;
+
+        if (otherRootAsset == null)
+        {
+            Assert.Fail("Failed to create the other root asset");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset", ParentID = rootAsset.Integer64ID });
+        Asset? middleAsset = operationResult.DataObject as Asset;
+
+        if (middleAsset == null)
+        {
+            Assert.Fail("Failed to create the middle asset.");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 1", ParentID = middleAsset.Integer64ID });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the first leaf asset.");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 2", ParentID = middleAsset.Integer64ID });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the second leaf asset.");
+            return;
+        }
+
+        middleAsset.ParentID = otherRootAsset.Integer64ID;
+        operationResult = await dataLayer.UpdateAsync(middleAsset);
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to update the parent of the middle asset.");
+            return;
+        }
+
+        List<Asset>? allAssets = await dataLayer.GetAllAsync();
+
+        if (allAssets == null)
+        {
+            Assert.Fail("Failed to retrieve the assets.");
+            return;
+        }
+
+        List<Asset> testTreeAssets = allAssets.Where(obj => obj.Integer64ID == middleAsset.Integer64ID || obj.ParentID == middleAsset.Integer64ID).ToList();
+        Assert.True(testTreeAssets.All(obj => obj.ParentPath != null && obj.ParentPath.Contains(otherRootAsset.Name)));
+    }
+
+    /// <summary>
+    /// The method confirms the parent path is updated when the root asset is renamed.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task UpdateRootAssetNameAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset" });
+        Asset? rootAsset = operationResult.DataObject as Asset;
+
+        if (rootAsset == null)
+        {
+            Assert.Fail("Failed to create the root asset");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset", ParentID = rootAsset.Integer64ID });
+        Asset? middleAsset = operationResult.DataObject as Asset;
+
+        if (middleAsset == null)
+        {
+            Assert.Fail("Failed to create the middle asset.");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 1", ParentID = middleAsset.Integer64ID });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the first leaf asset.");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 2", ParentID = middleAsset.Integer64ID });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the second leaf asset.");
+            return;
+        }
+
+        rootAsset.Name = "New Root Asset Name";
+        operationResult = await dataLayer.UpdateAsync(rootAsset);
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to rename of the root asset.");
+            return;
+        }
+
+        List<Asset>? allAssets = await dataLayer.GetAllAsync();
+
+        if (allAssets == null)
+        {
+            Assert.Fail("Failed to retrieve the assets.");
+            return;
+        }
+
+        List<Asset> testTreeAssets = allAssets.Where(obj => obj.Integer64ID == middleAsset.Integer64ID || obj.ParentID ==  middleAsset.Integer64ID).ToList();
+        Assert.True(testTreeAssets.All(obj => obj.ParentPath != null && obj.ParentPath.Contains(rootAsset.Name)));
     }
 }
