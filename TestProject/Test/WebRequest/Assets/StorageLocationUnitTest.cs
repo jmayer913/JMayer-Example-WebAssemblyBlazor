@@ -42,23 +42,81 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request a storage location to be created by the server and the server can successfully process the request.
+    /// The method confirms the server will return a failure if the storage location already exists when adding a new asset.
     /// </summary>
-    /// <param name="areaName">The name of the area asset.</param>
     /// <param name="locationA">The name of the A location.</param>
     /// <param name="locationB">The name of the B location.</param>
     /// <param name="locationC">The name of the C location.</param>
     /// <returns>A Task object for the async.</returns>
     [Theory]
-    [InlineData("Test Area 1", "Test Location A", "", "")]
-    [InlineData("Test Area 2", "Test Location A", "Test Location B", "")]
-    [InlineData("Test Area 3", "Test Location A", "Test Location B", "Test Location C")]
-    public async Task AddStorageLocationAsync(string areaName, string locationA, string locationB, string locationC)
+    [InlineData("Duplicate Storage Location Test A", "", "")]
+    [InlineData("Duplicate Storage Location Test A", "Duplicate Storage Location Test B", "")]
+    [InlineData("Duplicate Storage Location Test A", "Duplicate Storage Location Test B", "Duplicate Storage Location Test C")]
+    public async Task AddDuplicateStorageLocationAsync(string locationA, string locationB, string locationC)
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        Asset? areaAsset = await GetOrCreateAreaAssetAsync(client, areaName);
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
+
+        if (areaAsset == null)
+        {
+            Assert.Fail("Failed to retrieve or create the area asset.");
+        }
+
+        StorageLocation storageLocation = new()
+        {
+            LocationA = locationA,
+            LocationB = locationB,
+            LocationC = locationC,
+            OwnerInteger64ID = areaAsset.Integer64ID,
+        };
+        storageLocation.Name = storageLocation.FriendlyName;
+        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation);
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the first asset.");
+        }
+
+        storageLocation = new()
+        {
+            LocationA = locationA,
+            LocationB = locationB,
+            LocationC = locationC,
+            OwnerInteger64ID = areaAsset.Integer64ID,
+        };
+        storageLocation.Name = storageLocation.FriendlyName;
+        operationResult = await dataLayer.CreateAsync(storageLocation);
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No storage location was returned.
+            && operationResult.ServerSideValidationResult != null //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("location already exists") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(StorageLocation.LocationA) //The correct error was returned.
+        );
+    }
+
+    /// <summary>
+    /// The method confirms the HTTP data layer can request a storage location to be created by the server and the server can successfully process the request.
+    /// </summary>
+    /// <param name="locationA">The name of the A location.</param>
+    /// <param name="locationB">The name of the B location.</param>
+    /// <param name="locationC">The name of the C location.</param>
+    /// <returns>A Task object for the async.</returns>
+    [Theory]
+    [InlineData("Test Location A", "", "")]
+    [InlineData("Test Location A", "Test Location B", "")]
+    [InlineData("Test Location A", "Test Location B", "Test Location C")]
+    public async Task AddStorageLocationAsync(string locationA, string locationB, string locationC)
+    {
+        HttpClient client = _factory.CreateClient();
+        StorageLocationDataLayer dataLayer = new(client);
+
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
         if (areaAsset == null)
         {
@@ -84,6 +142,29 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     }
 
     /// <summary>
+    /// The method confirms the server will return a failure if the area asset doesn't exists when adding a new storage location.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task AddStorageLocationDependenciesNotExistsAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        StorageLocationDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Dependencies Not Exists Storage Location Test", Name = "Owner Not Exists Storage Location Test", OwnerInteger64ID = 0 });
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No storage location was returned.
+            && operationResult.ServerSideValidationResult != null //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("asset was not found") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(StorageLocation.OwnerInteger64ID) //The correct error was returned.
+        );
+    }
+
+    /// <summary>
     /// The method confirms on the server-side if an area asset is deleted, the associated storage locations are also deleted.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
@@ -93,28 +174,28 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        Asset? areaAsset = await GetOrCreateAreaAssetAsync(client, "Cascade Storage Location Delete Test");
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, "Cascade Area Asset-Storage Location Delete Test");
 
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Storage Location Delete Test 1", Name = "Cascade Storage Location Delete Test 1", OwnerInteger64ID = areaAsset.Integer64ID });
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 1", Name = "Cascade Storage Location Delete Test 1", OwnerInteger64ID = areaAsset.Integer64ID });
 
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the storage location.");
         }
 
-        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Storage Location Delete Test 2", Name = "Cascade Storage Location Delete Test 2", OwnerInteger64ID = areaAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 2", Name = "Cascade Storage Location Delete Test 2", OwnerInteger64ID = areaAsset.Integer64ID });
 
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the storage location.");
         }
 
-        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Storage Location Delete Test 3", Name = "Cascade Storage Location Delete Test 3", OwnerInteger64ID = areaAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 3", Name = "Cascade Storage Location Delete Test 3", OwnerInteger64ID = areaAsset.Integer64ID });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -137,14 +218,14 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        Asset? areaAsset = await GetOrCreateAreaAssetAsync(client, "Storage Location Delete Test");
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Delete Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Delete Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
 
         if (operationResult.DataObject is StorageLocation dataObject)
         {
@@ -181,7 +262,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        Asset? areaAsset = await GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
 
         if (areaAsset == null)
         {
@@ -216,7 +297,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        Asset? areaAsset = await GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
 
         if (areaAsset == null)
         {
@@ -225,32 +306,6 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         List<StorageLocation>? dataObjects = await dataLayer.GetAllAsync(areaAsset.Integer64ID);
         Assert.True(dataObjects != null && dataObjects.Count > 0);
-    }
-
-    /// <summary>
-    /// The method either retrieves or creates an area asset.
-    /// </summary>
-    /// <param name="client">The client.</param>
-    /// <param name="areaName">The name of the area asset.</param>
-    /// <returns>An area asset or null.</returns>
-    private static async Task<Asset?> GetOrCreateAreaAssetAsync(HttpClient client, string areaName)
-    {
-        AssetDataLayer dataLayer = new(client);
-
-        List<Asset>? assets = await dataLayer.GetAllAsync();
-
-        if (assets != null)
-        {
-            Asset? areaAsset = assets.FirstOrDefault(obj => obj.Name == areaName && obj.Type == AssetType.Area);
-
-            if (areaAsset != null)
-            {
-                return areaAsset;
-            }
-        }
-
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = areaName, Type = AssetType.Area });
-        return operationResult.DataObject as Asset;
     }
 
     /// <summary>
@@ -277,14 +332,14 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        Asset? areaAsset = await GetOrCreateAreaAssetAsync(client, "Storage Location Single Test");
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Single Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Get Single Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
 
         if (operationResult.DataObject is StorageLocation storageLocation)
         {

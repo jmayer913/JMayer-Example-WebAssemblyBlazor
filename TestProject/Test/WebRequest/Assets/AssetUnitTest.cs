@@ -1,6 +1,7 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Data.HTTP.DataLayer;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
+using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -96,6 +97,36 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     /// <summary>
+    /// The method confirms the server will return a failure if the asset already exists when adding a new asset.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task AddDuplicateAssetAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the first asset.");
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No asset was returned.
+            && operationResult.ServerSideValidationResult != null //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(Asset.Name) //The correct error was returned.
+        );
+    }
+
+    /// <summary>
     /// The method confirms the HTTP data layer can request an asset to be deleted by the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
@@ -105,7 +136,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Asset Test" });
 
         if (operationResult.DataObject is Asset dataObject)
         {
@@ -129,7 +160,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         AssetDataLayer dataLayer = new(client);
 
         int preCount = await dataLayer.CountAsync();
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Parent" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Parent Test" });
         Asset? dataObject = operationResult.DataObject as Asset;
 
         if (dataObject == null)
@@ -223,7 +254,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Single Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Get Single Asset Test" });
 
         if (operationResult.DataObject is Asset assetDataObject)
         {

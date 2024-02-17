@@ -3,6 +3,7 @@ using JMayer.Data.HTTP.DataLayer;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Xml.Linq;
 
 namespace TestProject.Test.WebRequest.Parts;
 
@@ -38,6 +39,36 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         int count = await dataLayer.CountAsync();
         Assert.True(count > 0);
+    }
+
+    /// <summary>
+    /// The method confirms the server will return a failure if the part already exists when adding a new part.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task AddDuplicatePartAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        PartDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Duplicate Part Test" });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the first part.");
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Duplicate Part Test" });
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No part was returned.
+            && operationResult.ServerSideValidationResult != null //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(Part.Name) //The correct error was returned.
+        );
     }
 
     /// <summary>
@@ -82,7 +113,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Delete Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Delete Part Test" });
         
         if (operationResult.DataObject is Part partDataObject)
         {
@@ -161,7 +192,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Single Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Get Single Part Test" });
 
         if (operationResult.DataObject is Part partDataObject)
         {
