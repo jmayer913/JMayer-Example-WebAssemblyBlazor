@@ -5,6 +5,7 @@ using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
 
 namespace TestProject.Test.WebRequest.Parts;
 
@@ -57,6 +58,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
         }
 
         StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, Constants.TestStorageLocation, areaAsset.Integer64ID);
@@ -64,6 +66,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (storageLocation == null)
         {
             Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
         }
 
         Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
@@ -71,6 +74,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (part == null)
         {
             Assert.Fail("Failed to retrieve or create the part.");
+            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Duplicate Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
@@ -78,6 +82,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the first stock.");
+            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Duplicate Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
@@ -86,6 +91,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         (
             !operationResult.IsSuccessStatusCode //The operation must have failed.
             && operationResult.DataObject == null //No stock was returned.
+            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
             && operationResult.ServerSideValidationResult != null //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("stock location already exists") //The correct error was returned.
@@ -96,9 +102,9 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
     /// <summary>
     /// The method confirms the HTTP data layer can request a stock to be created by the server and the server can successfully process the request.
     /// </summary>
-    /// <param name="name">The name of the part.</param>
-    /// <param name="description">The description for the part.</param>
-    /// <param name="category">The common category for the part.</param>
+    /// <param name="locationName">The name of the storage location.</param>
+    /// <param name="partName">The name of the part for the storage location.</param>
+    /// <param name="amount">The amount of parts for the storage location.</param>
     /// <returns>A Task object for the async.</returns>
     [Theory]
     [InlineData("Test Location 1", "Stock Part 1", 10)]
@@ -114,6 +120,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
         }
 
         StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, locationName, areaAsset.Integer64ID);
@@ -121,6 +128,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (storageLocation == null)
         {
             Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
         }
 
         Part? part = await DataHelper.GetOrCreatePartAsync(client, partName);
@@ -128,6 +136,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (part == null)
         {
             Assert.Fail("Failed to retrieve or create the part.");
+            return;
         }
 
         Stock originalDataObject = new()
@@ -144,7 +153,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         (
             operationResult.IsSuccessStatusCode //The operation must have been successful.
             && operationResult.DataObject is Stock returnedDataObject //A stock must have been returned.
-            && new StockEqualityComparer(true).Equals(returnedDataObject, originalDataObject)
+            && new StockEqualityComparer(true, true, true).Equals(returnedDataObject, originalDataObject) //The original data matches the returned data.
         );
     }
 
@@ -163,7 +172,8 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         Assert.True
         (
             !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No storage location was returned.
+            && operationResult.DataObject == null //No stock was returned.
+            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
             && operationResult.ServerSideValidationResult != null //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors.Count == 2 //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("part was not found") //The correct error was returned.
@@ -188,6 +198,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
         }
 
         StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, "Cascade Asset-Stock Delete Test", areaAsset.Integer64ID);
@@ -195,6 +206,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (storageLocation == null)
         {
             Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
         }
 
         Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
@@ -202,6 +214,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (part == null)
         {
             Assert.Fail("Failed to retrieve or create the part.");
+            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Asset-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
@@ -209,6 +222,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the stock.");
+            return;
         }
 
         await new AssetDataLayer(client).DeleteAsync(areaAsset);
@@ -232,6 +246,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
         }
 
         StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, Constants.TestStorageLocation, areaAsset.Integer64ID);
@@ -239,6 +254,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (storageLocation == null)
         {
             Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
         }
 
         Part? part = await DataHelper.GetOrCreatePartAsync(client, "Cascade Part-Stock Delete Test");
@@ -246,6 +262,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (part == null)
         {
             Assert.Fail("Failed to retrieve or create the part.");
+            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Part-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
@@ -253,6 +270,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the stock.");
+            return;
         }
 
         await new PartDataLayer(client).DeleteAsync(part);
@@ -276,6 +294,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
         }
 
         StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, Constants.TestStorageLocation, areaAsset.Integer64ID);
@@ -283,6 +302,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (storageLocation == null)
         {
             Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
         }
 
         Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
@@ -290,6 +310,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (part == null)
         {
             Assert.Fail("Failed to retrieve or create the part.");
+            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
@@ -320,6 +341,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
         }
 
         StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, "Cascade Storage Location-Stock Delete Test", areaAsset.Integer64ID);
@@ -327,6 +349,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (storageLocation == null)
         {
             Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
         }
 
         Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
@@ -334,6 +357,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (part == null)
         {
             Assert.Fail("Failed to retrieve or create the part.");
+            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Storage Location-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
@@ -341,6 +365,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the stock.");
+            return;
         }
 
         await new StorageLocationDataLayer(client).DeleteAsync(storageLocation);
@@ -434,6 +459,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (areaAsset == null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
         }
 
         StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, Constants.TestStorageLocation, areaAsset.Integer64ID);
@@ -441,6 +467,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (storageLocation == null)
         {
             Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
         }
 
         Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
@@ -448,6 +475,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (part == null)
         {
             Assert.Fail("Failed to retrieve or create the part.");
+            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Get Single Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
@@ -461,5 +489,148 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         {
             Assert.Fail("Failed to crete the stock.");
         }
+    }
+
+    /// <summary>
+    /// The method confirms the HTTP data layer can request a stock to be updated by the server and the server can successfully process the request.
+    /// </summary>
+    /// <param name="locationName">The name of the storage location.</param>
+    /// <param name="partName">The name of the part for the storage location.</param>
+    /// <param name="amount">The amount of parts for the storage location.</param>
+    /// <returns>A Task object for the async.</returns>
+    [Theory]
+    [InlineData("Test Location 1", "Stock Part 1", 10)]
+    [InlineData("Test Location 2", "Stock Part 2", 0.25)]
+    [InlineData("Test Location 3", "Stock Part 3", 1234.673)]
+    public async Task UpdateStockAsync(string locationName, string partName, decimal amount)
+    {
+        HttpClient client = _factory.CreateClient();
+        StockDataLayer dataLayer = new(client);
+
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
+
+        if (areaAsset == null)
+        {
+            Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
+        }
+
+        StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, locationName, areaAsset.Integer64ID);
+
+        if (storageLocation == null)
+        {
+            Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
+        }
+
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, partName);
+
+        if (part == null)
+        {
+            Assert.Fail("Failed to retrieve or create the part.");
+            return;
+        }
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock()
+        {
+            Amount = 0,
+            Name = "Test",
+            OwnerInteger64ID = part.Integer64ID,
+            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationName = storageLocation.FriendlyName,
+        });
+
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Stock createdDataObject)
+        {
+            Stock updatedDataObject = new(createdDataObject)
+            {
+                Amount = amount
+            };
+            operationResult = await dataLayer.UpdateAsync(updatedDataObject);
+
+            Assert.True
+            (
+                operationResult.IsSuccessStatusCode //The operation must have been successful.
+                && operationResult.DataObject is Stock returnedDataObject //A stock must have been returned.
+                && new StockEqualityComparer(false, false, true).Equals(returnedDataObject, updatedDataObject) //The original data matches the returned data.
+            );
+        }
+        else
+        {
+            Assert.Fail("Failed to create the stock.");
+        }
+    }
+
+    /// <summary>
+    /// The method confirms the server will return a failure if the stock being updated is old.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task UpdateStockOldDataAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        StockDataLayer dataLayer = new(client);
+
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
+
+        if (areaAsset == null)
+        {
+            Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
+        }
+
+        StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, Constants.TestStorageLocation, areaAsset.Integer64ID);
+
+        if (storageLocation == null)
+        {
+            Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
+        }
+
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
+
+        if (part == null)
+        {
+            Assert.Fail("Failed to retrieve or create the part.");
+            return;
+        }
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock()
+        {
+            Amount = 0,
+            Name = "Test",
+            OwnerInteger64ID = part.Integer64ID,
+            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationName = storageLocation.FriendlyName,
+        });
+        Stock? firstDataObject = operationResult.DataObject as Stock;
+
+        if (firstDataObject == null)
+        {
+            Assert.Fail("Failed to create the stock.");
+            return;
+        }
+
+        Stock secondDataObject = new(firstDataObject);
+
+        firstDataObject.Amount = 5;
+        secondDataObject.Amount = 10;
+
+        operationResult = await dataLayer.UpdateAsync(secondDataObject);
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to update the second stock.");
+            return;
+        }
+
+        operationResult = await dataLayer.UpdateAsync(firstDataObject);
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No stock was returned.
+            && operationResult.StatusCode == HttpStatusCode.Conflict //A conflict status was returned.
+        );
     }
 }

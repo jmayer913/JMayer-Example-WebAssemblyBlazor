@@ -4,6 +4,7 @@ using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
 
 namespace TestProject.Test.WebRequest.Assets;
 
@@ -75,6 +76,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             if (parentID == null)
             {
                 Assert.Fail("The parent asset was not found.");
+                return;
             }
         }
 
@@ -111,6 +113,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the first asset.");
+            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
@@ -119,6 +122,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         (
             !operationResult.IsSuccessStatusCode //The operation must have failed.
             && operationResult.DataObject == null //No asset was returned.
+            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
             && operationResult.ServerSideValidationResult != null //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
@@ -166,6 +170,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (dataObject == null)
         {
             Assert.Fail("Failed to create the parent asset.");
+            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = dataObject.Integer64ID });
@@ -173,6 +178,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the child asset.");
+            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = dataObject.Integer64ID });
@@ -180,6 +186,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the child asset.");
+            return;
         }
 
         operationResult = await dataLayer.DeleteAsync(dataObject);

@@ -3,6 +3,7 @@ using JMayer.Data.HTTP.DataLayer;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
 using System.Xml.Linq;
 
 namespace TestProject.Test.WebRequest.Parts;
@@ -56,6 +57,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (!operationResult.IsSuccessStatusCode)
         {
             Assert.Fail("Failed to create the first part.");
+            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Part() { Name = "Duplicate Part Test" });
@@ -64,6 +66,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         (
             !operationResult.IsSuccessStatusCode //The operation must have failed.
             && operationResult.DataObject == null //No part was returned.
+            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
             && operationResult.ServerSideValidationResult != null //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
             && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
@@ -221,7 +224,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
     //[InlineData(1, "Motor", "Motor", null, null, null, null, null)]
     //[InlineData(25, "Push Button, Extended Head, with Guard, 12-130V AC/DC Green, 30mm", "AB Push Button", null, null, null, "AB", "800TC-QAH2G")]
     //[InlineData(50, "Mini-PS-100 230AC/10-15DC/8", "Phoenix Contact Power Supply", "Power Supply", null, null, "Phoenix Contact", "2866297")]
-    //public async Task UpdatePartAsync(int id, string name, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber)
+    //public async Task UpdatePartAsync(string name, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber)
     //{
     //    HttpClient client = _factory.CreateClient();
     //    PartDataLayer dataLayer = new(client);
