@@ -69,7 +69,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, "Duplicate Stock Test");
 
         if (part == null)
         {
@@ -305,7 +305,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, "Delete Stock Test");
 
         if (part == null)
         {
@@ -313,7 +313,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Delete Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         if (operationResult.DataObject is Stock stock)
         {
@@ -470,7 +470,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, "Get Single Stock Test");
 
         if (part == null)
         {
@@ -499,9 +499,9 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
     /// <param name="amount">The amount of parts for the storage location.</param>
     /// <returns>A Task object for the async.</returns>
     [Theory]
-    [InlineData("Test Location 1", "Stock Part 1", 10)]
-    [InlineData("Test Location 2", "Stock Part 2", 0.25)]
-    [InlineData("Test Location 3", "Stock Part 3", 1234.673)]
+    [InlineData("Test Location 10", "Stock Part 10", 10)]
+    [InlineData("Test Location 20", "Stock Part 20", 0.25)]
+    [InlineData("Test Location 30", "Stock Part 30", 1234.673)]
     public async Task UpdateStockAsync(string locationName, string partName, decimal amount)
     {
         HttpClient client = _factory.CreateClient();

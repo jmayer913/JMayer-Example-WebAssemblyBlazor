@@ -279,7 +279,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     /// The method confirms the HTTP data layer can request an asset to be updated by the server and the server can successfully process the request.
     /// </summary>
     /// <param name="originalName">The orginal name of the asset.</param>
-    /// <param name="name">The name of the asset.</param>
+    /// <param name="newName">The new name of the asset.</param>
     /// <param name="description">The description for the asset.</param>
     /// <param name="category">The common category for the asset.</param>
     /// <param name="make">The make of the asset.</param>
@@ -297,7 +297,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("Test Asset 6", "Test AL1-05", "Test AL1-05", "Conveyor", "Make", "Model", "Manufacturer", null, Priority.Medium, false)]
     [InlineData("Test Asset 7", "Test AL1-05-BSD", "Test AL1-05-BSD", "BSD", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, false)]
     [InlineData("Test Asset 8", "Test AL1-VSU", "Test AL1-VSU", "VSU", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, true)]
-    public async Task UpdateAssetAsync(string originalName, string name, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, Priority priority, bool online)
+    public async Task UpdateAssetAsync(string originalName, string newName, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, Priority priority, bool online)
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -315,7 +315,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 Manufacturer = manufacturer,
                 ManufacturerNumber = manufacturerNumber,
                 Model = model,
-                Name = name,
+                Name = newName,
                 Priority = priority,
                 Type = AssetType.Equipment,
             };
@@ -389,7 +389,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Tree Structure Test" });
         Asset? rootAsset = operationResult.DataObject as Asset;
 
         if (rootAsset == null)
@@ -398,7 +398,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Other Root Asset" });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Other Root Asset Tree Structure Test" });
         Asset? otherRootAsset = operationResult.DataObject as Asset;
 
         if (otherRootAsset == null)
@@ -407,7 +407,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset", ParentID = rootAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Tree Structure Test", ParentID = rootAsset.Integer64ID });
         Asset? middleAsset = operationResult.DataObject as Asset;
 
         if (middleAsset == null)
@@ -416,7 +416,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 1", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 1", ParentID = middleAsset.Integer64ID });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -424,7 +424,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 2", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 2", ParentID = middleAsset.Integer64ID });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -463,7 +463,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Rename Test" });
         Asset? rootAsset = operationResult.DataObject as Asset;
 
         if (rootAsset == null)
@@ -472,7 +472,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset", ParentID = rootAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Rename Test", ParentID = rootAsset.Integer64ID });
         Asset? middleAsset = operationResult.DataObject as Asset;
 
         if (middleAsset == null)
@@ -481,7 +481,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 1", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 1", ParentID = middleAsset.Integer64ID });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -489,7 +489,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset 2", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 2", ParentID = middleAsset.Integer64ID });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -497,7 +497,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        rootAsset.Name = "New Root Asset Name";
+        rootAsset.Name = "New Root Asset Rename Test";
         operationResult = await dataLayer.UpdateAsync(rootAsset);
 
         if (!operationResult.IsSuccessStatusCode)

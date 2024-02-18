@@ -375,9 +375,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     /// <param name="locationC">The name of the C location.</param>
     /// <returns>A Task object for the async.</returns>
     [Theory]
-    [InlineData("Test Location 1", "Test Location A", "", "")]
-    [InlineData("Test Location 2", "Test Location A", "Test Location B", "")]
-    [InlineData("Test Location 3", "Test Location A", "Test Location B", "Test Location C")]
+    [InlineData("Test Location 1", "Test Location X", "", "")]
+    [InlineData("Test Location 2", "Test Location X", "Test Location Y", "")]
+    [InlineData("Test Location 3", "Test Location X", "Test Location Y", "Test Location Z")]
     public async Task UpdateStorageLocationAsync(string originalLocationA, string locationA, string locationB, string locationC)
     {
         HttpClient client = _factory.CreateClient();

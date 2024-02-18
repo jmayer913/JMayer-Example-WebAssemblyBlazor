@@ -213,7 +213,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
     /// The method confirms the HTTP data layer can request a part to be updated by the server and the server can successfully process the request.
     /// </summary>
     /// <param name="originalName">The orginal name of the part.</param>
-    /// <param name="name">The name of the part.</param>
+    /// <param name="newName">The new name of the part.</param>
     /// <param name="description">The description for the part.</param>
     /// <param name="category">The common category for the part.</param>
     /// <param name="make">The make of the part.</param>
@@ -223,15 +223,15 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
     /// <param name="obsolete">Marks the part as obsolete.</param>
     /// <returns>A Task object for the async.</returns>
     [Theory]
-    [InlineData("Test Part 1", "Test Motor", null, null, null, null, null, null, false)]
-    [InlineData("Test Part 2", "Test Push Button", "Test Push Button", null, null, null, null, null, false)]
-    [InlineData("Test Part 3", "Test Contact", "Test Contact", "Contact", null, null, null, null, false)]
+    [InlineData("Test Part 1", "Test Encoder", null, null, null, null, null, null, false)]
+    [InlineData("Test Part 2", "Test Wire", "Test Wire", null, null, null, null, null, false)]
+    [InlineData("Test Part 3", "Test Photoeye", "Test Photoeye", "Photoeye", null, null, null, null, false)]
     [InlineData("Test Part 4", "Test Brake", "Test Brake", "Brake", "Make", null, null, null, false)]
     [InlineData("Test Part 5", "Test PLC", "Test PLC", "PLC", "Make", "Model", null, null, false)]
     [InlineData("Test Part 6", "Test Limit Switch", "Test Limit Switch", "Switch", "Make", "Model", "Manufacturer", null, false)]
     [InlineData("Test Part 7", "Test Belt", "Test Belt", "Belt", "Make", "Model", "Manufacturer", "Manufacturer Number", false)]
     [InlineData("Test Part 8", "Test VFD", "Test VFD", "VFD", "Make", "Model", "Manufacturer", "Manufacturer Number", true)]
-    public async Task UpdatePartAsync(string originalName, string name, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, bool obsolete)
+    public async Task UpdatePartAsync(string originalName, string newName, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, bool obsolete)
     {
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
@@ -248,7 +248,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 Manufacturer = manufacturer,
                 ManufacturerNumber = manufacturerNumber,
                 Model = model,
-                Name = name,
+                Name = newName,
                 Obsolete = obsolete,
             };
             operationResult = await dataLayer.UpdateAsync(updatedDataObject);
