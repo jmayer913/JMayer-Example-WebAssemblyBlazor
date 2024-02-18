@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
+namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 
 /// <summary>
-/// The class manages comparing two Asset objects.
+/// The class manages comparing two Stock objects.
 /// </summary>
-public class AssetEqualityComparer : IEqualityComparer<Asset>
+public class StockEqualityComparer : IEqualityComparer<Stock>
 {
     /// <summary>
     /// Excludes the CreatedOn property from the equals check.
@@ -28,7 +28,7 @@ public class AssetEqualityComparer : IEqualityComparer<Asset>
     /// <param name="excludeCreatedOn">Excludes the CreatedOn property from the equals check.</param>
     /// <param name="exlucdeID">Excludes the ID property from the equals check.</param>
     /// <param name="excludeLastEditedOn">Excludes the LastEditedOn property from the equals check.</param>
-    public AssetEqualityComparer(bool excludeCreatedOn, bool exlucdeID, bool excludeLastEditedOn)
+    public StockEqualityComparer(bool excludeCreatedOn, bool exlucdeID, bool excludeLastEditedOn)
     {
         _excludeCreatedOn = excludeCreatedOn;
         _exlucdeID = exlucdeID;
@@ -36,31 +36,26 @@ public class AssetEqualityComparer : IEqualityComparer<Asset>
     }
 
     /// <inheritdoc/>
-    public bool Equals(Asset? x, Asset? y)
+    public bool Equals(Stock? x, Stock? y)
     {
         if (x == null || y == null)
         {
             return false;
         }
 
-        return x.Category == y.Category
+        return x.Amount == y.Amount
             && (_excludeCreatedOn || x.CreatedOn == y.CreatedOn)
             && x.Description == y.Description
             && (_exlucdeID || x.Integer64ID == y.Integer64ID)
             && (_excludeLastEditedOn || x.LastEditedOn == y.LastEditedOn)
-            && x.IsOnline == y.IsOnline 
-            && x.Make == y.Make 
-            && x.Manufacturer == y.Manufacturer 
-            && x.ManufacturerNumber == y.ManufacturerNumber 
-            && x.Model == y.Model 
-            && x.Name == y.Name 
-            && x.ParentID == y.ParentID 
-            && x.Priority == y.Priority 
-            && x.Type == y.Type;
+            && x.Name == y.Name
+            && x.OwnerInteger64ID == y.OwnerInteger64ID
+            && x.StorageLocationId == y.StorageLocationId
+            && x.StorageLocationName == y.StorageLocationName;
     }
 
     /// <inheritdoc/>
-    public int GetHashCode([DisallowNull] Asset obj)
+    public int GetHashCode([DisallowNull] Stock obj)
     {
         throw new NotImplementedException();
     }

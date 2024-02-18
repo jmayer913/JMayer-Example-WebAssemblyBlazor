@@ -17,6 +17,11 @@ public class BHSExampleBuilder
     public IAssetDataLayer AssetDataLayer { get; set; }
 
     /// <summary>
+    /// The constant for the main part storage area asset name.
+    /// </summary>
+    public const string MainPartStorageAreaAssetName = "Main Part Storage";
+
+    /// <summary>
     /// The property gets/sets the data layer used to interact with parts.
     /// </summary>
     public IPartDataLayer PartDataLayer { get; set; }
@@ -245,7 +250,7 @@ public class BHSExampleBuilder
         {
             Category = "Storage",
             Description = "The main part storage for the BHS.",
-            Name = "Main Part Storage",
+            Name = MainPartStorageAreaAssetName,
             Type = AssetType.Area,
         }).Result;
 
