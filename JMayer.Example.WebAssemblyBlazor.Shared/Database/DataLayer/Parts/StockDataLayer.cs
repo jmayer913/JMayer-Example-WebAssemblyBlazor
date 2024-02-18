@@ -93,11 +93,11 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
         {
             List<Stock> stocks = await GetAllAsync(obj => obj.StorageLocationId == storageLocation.Integer64ID);
 
-            if (stocks.Count > 0 && stocks[0].StorageLocationName != storageLocation.Name)
+            if (stocks.Count > 0 && stocks[0].StorageLocationName != storageLocation.FriendlyName)
             {
                 foreach (Stock stock in stocks)
                 {
-                    stock.StorageLocationName = storageLocation.Name;
+                    stock.StorageLocationName = storageLocation.FriendlyName;
                 }
 
                 stockUpdateList.AddRange(stocks);

@@ -454,6 +454,48 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     /// <summary>
+    /// The method confirms the server will return a failure if the asset already exists when updating an asset.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task UpdateDuplicateAssetAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 1" });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the first asset.");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 2" });
+        Asset? asset = operationResult.DataObject as Asset;
+
+        if (asset == null)
+        {
+            Assert.Fail("Failed to create the second asset.");
+            return;
+        }
+
+        asset.Name = "Duplicate Asset Test 1";
+        operationResult = await dataLayer.UpdateAsync(asset);
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No asset was returned.
+            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
+            && operationResult.ServerSideValidationResult != null //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(Asset.Name) //The correct error was returned.
+        );
+    }
+
+    /// <summary>
     /// The method confirms the parent path is updated when the root asset is renamed.
     /// </summary>
     /// <returns>A Task object for the async.</returns>

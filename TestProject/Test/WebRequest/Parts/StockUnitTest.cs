@@ -167,7 +167,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         StockDataLayer dataLayer = new(client);
         
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Dependencies Not Exists Stock Test", OwnerInteger64ID = 0, StorageLocationId = 0 });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Add Dependencies Not Exists Stock Test", OwnerInteger64ID = 0, StorageLocationId = 0 });
         
         Assert.True
         (
@@ -492,6 +492,69 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     /// <summary>
+    /// The method confirms on the server-side if a storage location is renamed, the associated stock is updated with the new name.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task RenameStorageLocationAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        StockDataLayer dataLayer = new(client);
+
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
+
+        if (areaAsset == null)
+        {
+            Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
+        }
+
+        StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, "Rename Storage Location Test", areaAsset.Integer64ID);
+
+        if (storageLocation == null)
+        {
+            Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
+        }
+
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
+
+        if (part == null)
+        {
+            Assert.Fail("Failed to retrieve or create the part.");
+            return;
+        }
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock()
+        {
+            Amount = 0,
+            Name = "Rename Storage Location Test",
+            OwnerInteger64ID = part.Integer64ID,
+            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationName = storageLocation.FriendlyName,
+        });
+        Stock? stock = operationResult.DataObject as Stock;
+
+        if (stock == null)
+        {
+            Assert.Fail("Failed to create the stock.");
+            return;
+        }
+
+        storageLocation.LocationA = "New Storage Location Test";
+        operationResult = await new StorageLocationDataLayer(client).UpdateAsync(storageLocation);
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to update the storage location.");
+            return;
+        }
+
+        stock = await dataLayer.GetSingleAsync(stock.Integer64ID);
+        Assert.True(stock != null && stock.StorageLocationName == storageLocation.FriendlyName);
+    }
+
+    /// <summary>
     /// The method confirms the HTTP data layer can request a stock to be updated by the server and the server can successfully process the request.
     /// </summary>
     /// <param name="locationName">The name of the storage location.</param>
@@ -562,6 +625,75 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     /// <summary>
+    /// The method confirms the server will return a failure if the part or storage location doesn't exists when updating a stock.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task UpdateStockDependenciesNotExistsAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        StockDataLayer dataLayer = new(client);
+
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
+
+        if (areaAsset == null)
+        {
+            Assert.Fail("Failed to retrieve or create the area asset.");
+            return;
+        }
+
+        StorageLocation? storageLocation = await DataHelper.GetOrCreateStorageLocationAsync(client, Constants.TestStorageLocation, areaAsset.Integer64ID);
+
+        if (storageLocation == null)
+        {
+            Assert.Fail("Failed to retrieve or create the storage location.");
+            return;
+        }
+
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, "Update Dependencies Not Exists Stock Test");
+
+        if (part == null)
+        {
+            Assert.Fail("Failed to retrieve or create the part.");
+            return;
+        }
+
+        Stock? stock = new()
+        {
+            Amount = 0,
+            Name = "Update Dependencies Not Exists Stock Test",
+            OwnerInteger64ID = part.Integer64ID,
+            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationName = storageLocation.FriendlyName,
+        };
+        OperationResult operationResult = await dataLayer.CreateAsync(stock);
+        stock = operationResult.DataObject as Stock;
+
+        if (stock == null)
+        {
+            Assert.Fail("Failed to create the stock.");
+            return;
+        }
+
+        stock.OwnerInteger64ID = 0;
+        stock.StorageLocationId = 0;
+        operationResult = await dataLayer.UpdateAsync(stock);
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No stock was returned.
+            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
+            && operationResult.ServerSideValidationResult != null //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors.Count == 2 //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("part was not found") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(Stock.OwnerInteger64ID) //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[1].ErrorMessage.Contains("storage location was not found") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[1].PropertyName == nameof(Stock.StorageLocationId) //The correct error was returned.
+        );
+    }
+
+    /// <summary>
     /// The method confirms the server will return a failure if the stock being updated is old.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
@@ -587,7 +719,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        Part? part = await DataHelper.GetOrCreatePartAsync(client, Constants.TestPart);
+        Part? part = await DataHelper.GetOrCreatePartAsync(client, "Stock Old Data Test");
 
         if (part == null)
         {
@@ -598,7 +730,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         OperationResult operationResult = await dataLayer.CreateAsync(new Stock()
         {
             Amount = 0,
-            Name = "Test",
+            Name = "Stock Old Data Test",
             OwnerInteger64ID = part.Integer64ID,
             StorageLocationId = storageLocation.Integer64ID,
             StorageLocationName = storageLocation.FriendlyName,

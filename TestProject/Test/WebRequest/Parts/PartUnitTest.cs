@@ -53,7 +53,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Duplicate Part Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -61,7 +61,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Duplicate Part Test" });
+        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" });
 
         Assert.True
         (
@@ -207,6 +207,48 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         {
             Assert.Fail("Failed to create the part.");
         }
+    }
+
+    /// <summary>
+    /// The method confirms the server will return a failure if the part already exists when update a part.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task UpdateDuplicatePartAsync()
+    {
+        HttpClient client = _factory.CreateClient();
+        PartDataLayer dataLayer = new(client);
+
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 1" });
+
+        if (!operationResult.IsSuccessStatusCode)
+        {
+            Assert.Fail("Failed to create the first part.");
+            return;
+        }
+
+        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 2" });
+        Part? part = operationResult.DataObject as Part;
+
+        if (part == null)
+        {
+            Assert.Fail("Failed to create the second part.");
+            return;
+        }
+
+        part.Name = "Add Duplicate Part Test 1";
+        operationResult = await dataLayer.UpdateAsync(part);
+
+        Assert.True
+        (
+            !operationResult.IsSuccessStatusCode //The operation must have failed.
+            && operationResult.DataObject == null //No part was returned.
+            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
+            && operationResult.ServerSideValidationResult != null //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
+            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(Part.Name) //The correct error was returned.
+        );
     }
 
     /// <summary>
