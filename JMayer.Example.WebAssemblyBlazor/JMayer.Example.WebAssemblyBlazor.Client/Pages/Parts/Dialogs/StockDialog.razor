@@ -22,7 +22,7 @@
                 </MudCardContent>
 
                 <MudCardActions>
-                    <MudButton ButtonType="ButtonType.Submit">Create</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit">@(IsNewRecord ? "Create" : "Update")</MudButton>
                     <MudButton OnClick="@OnCancelButtonClick">Cancel</MudButton>
                 </MudCardActions>
             </MudCard>

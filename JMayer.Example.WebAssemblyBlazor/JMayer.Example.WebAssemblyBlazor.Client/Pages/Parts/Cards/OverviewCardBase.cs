@@ -27,8 +27,9 @@ public class OverviewCardBase : Components.Base.OverviewCardBase<Part, IPartData
     /// The method returns the list based on what the user has typed in.
     /// </summary>
     /// <param name="value">The value to search for.</param>
+    /// <param name="cancellationToken">Used to cancel the task.</param>
     /// <returns>A list of acceptable categories.</returns>
-    protected async Task<IEnumerable<string>> OnCategoryAutoCompleteSearch(string value)
+    protected async Task<IEnumerable<string>> OnCategoryAutoCompleteSearch(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
