@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Setup Database, Data Layers & Logging
 
-#warning Need to add actual logging.
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
