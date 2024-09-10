@@ -11,7 +11,7 @@
     <ProjectReference Include="..\..\JMayer.Example.WebAssemblyBlazor.Shared\JMayer.Example.WebAssemblyBlazor.Shared.csproj" />
     <ProjectReference Include="..\JMayer.Example.WebAssemblyBlazor.Client\JMayer.Example.WebAssemblyBlazor.Client.csproj" />
     <PackageReference Include="JMayer.Web.Mvc" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
   </ItemGroup>
 
 </Project>
