@@ -39,7 +39,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        int count = await dataLayer.CountAsync();
+        long count = await dataLayer.CountAsync();
         Assert.True(count > 0);
     }
 
@@ -164,7 +164,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        int preCount = await dataLayer.CountAsync();
+        long preCount = await dataLayer.CountAsync();
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Parent Test" });
         Asset? dataObject = operationResult.DataObject as Asset;
 
@@ -191,7 +191,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
 
         operationResult = await dataLayer.DeleteAsync(dataObject);
-        int postCount = await dataLayer.CountAsync();
+        long postCount = await dataLayer.CountAsync();
 
         Assert.True(operationResult.IsSuccessStatusCode && preCount == postCount);
     }

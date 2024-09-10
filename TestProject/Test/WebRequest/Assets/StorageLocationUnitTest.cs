@@ -39,7 +39,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        int count = await dataLayer.CountAsync();
+        long count = await dataLayer.CountAsync();
         Assert.True(count > 0);
     }
 

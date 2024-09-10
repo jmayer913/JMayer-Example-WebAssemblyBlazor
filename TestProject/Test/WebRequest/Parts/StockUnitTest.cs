@@ -39,7 +39,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         StockDataLayer dataLayer = new(client);
 
-        int count = await dataLayer.CountAsync();
+        long count = await dataLayer.CountAsync();
         Assert.True(count > 0);
     }
 

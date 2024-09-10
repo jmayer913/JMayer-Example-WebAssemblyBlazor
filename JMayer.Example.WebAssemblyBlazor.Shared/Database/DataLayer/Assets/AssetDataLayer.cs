@@ -6,7 +6,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 /// <summary>
 /// The class manages CRUD interactions with the database for an asset.
 /// </summary>
-public class AssetDataLayer : UserEditableMemoryDataLayer<Asset>, IAssetDataLayer
+public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
 {
     /// <inheritdoc/>
     /// <remarks>

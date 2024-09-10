@@ -9,7 +9,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
 /// <summary>
 /// The class manages CRUD interactions with the database for part stock.
 /// </summary>
-public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLayer
+public class StockDataLayer : UserEditableDataLayer<Stock>, IStockDataLayer
 {
     /// <summary>
     /// The data layer for interacting with parts.
