@@ -66,7 +66,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             }
         }
 
-        Asset originalDataObject = new()
+        Asset asset = new()
         {
             Category = category,
             Description = description,
@@ -74,11 +74,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             ParentID = parentID,
             Type = assetType,
         };
-        OperationResult operationResult = await dataLayer.CreateAsync(originalDataObject);
+        OperationResult operationResult = await dataLayer.CreateAsync(asset);
 
         Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
         Assert.IsType<Asset>(operationResult.DataObject); //An asset must have been returned.
-        Assert.True(new AssetEqualityComparer(true, true, true).Equals((Asset)operationResult.DataObject, originalDataObject), "The data object sent should be the same as the data object returned."); //Original and return must be equal.
+        Assert.True(new AssetEqualityComparer(true, true, true).Equals((Asset)operationResult.DataObject, asset), "The data object sent should be the same as the data object returned."); //Original and return must be equal.
     }
 
     /// <summary>
@@ -145,9 +145,9 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Asset Test" });
 
-        if (operationResult.DataObject is Asset dataObject)
+        if (operationResult.DataObject is Asset asset)
         {
-            operationResult = await dataLayer.DeleteAsync(dataObject);
+            operationResult = await dataLayer.DeleteAsync(asset);
             Assert.True(operationResult.IsSuccessStatusCode);
         }
         else
@@ -169,9 +169,9 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         long preCount = await dataLayer.CountAsync();
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Parent Test" });
 
-        if (operationResult.DataObject is Asset parentDataObject)
+        if (operationResult.DataObject is Asset parentAsset)
         {
-            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = parentDataObject.Integer64ID });
+            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = parentAsset.Integer64ID });
 
             if (!operationResult.IsSuccessStatusCode)
             {
@@ -179,7 +179,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 return;
             }
 
-            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = parentDataObject.Integer64ID });
+            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = parentAsset.Integer64ID });
 
             if (!operationResult.IsSuccessStatusCode)
             {
@@ -187,7 +187,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 return;
             }
 
-            operationResult = await dataLayer.DeleteAsync(parentDataObject);
+            operationResult = await dataLayer.DeleteAsync(parentAsset);
             long postCount = await dataLayer.CountAsync();
 
             //The operation was a success and the parent and its children were deleted.
@@ -228,11 +228,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        List<Asset>? dataObjects = await dataLayer.GetAllAsync();
+        List<Asset>? assets = await dataLayer.GetAllAsync();
 
         //Assets must have been returned.
-        Assert.NotNull(dataObjects);
-        Assert.NotEmpty(dataObjects);
+        Assert.NotNull(assets);
+        Assert.NotEmpty(assets);
     }
 
     /// <summary>
@@ -245,11 +245,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        List<ListView>? listViews = await dataLayer.GetAllListViewAsync();
+        List<ListView>? assets = await dataLayer.GetAllListViewAsync();
         
         //List view assets must have been returned.
-        Assert.NotNull(listViews);
-        Assert.NotEmpty(listViews);
+        Assert.NotNull(assets);
+        Assert.NotEmpty(assets);
     }
 
     /// <summary>
@@ -262,8 +262,8 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        Asset? dataObject = await dataLayer.GetSingleAsync();
-        Assert.NotNull(dataObject);
+        Asset? asset = await dataLayer.GetSingleAsync();
+        Assert.NotNull(asset);
     }
 
     /// <summary>
@@ -278,10 +278,10 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Get Single Asset Test" });
 
-        if (operationResult.DataObject is Asset createdDataObject)
+        if (operationResult.DataObject is Asset createdAsset)
         {
-            Asset? dataObject = await dataLayer.GetSingleAsync(createdDataObject.Integer64ID);
-            Assert.NotNull(dataObject);
+            Asset? asset = await dataLayer.GetSingleAsync(createdAsset.Integer64ID);
+            Assert.NotNull(asset);
         }
         else
         {
@@ -318,9 +318,9 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = originalName });
 
-        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdDataObject)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdAsset)
         {
-            Asset updatedDataObject = new(createdDataObject)
+            Asset updatedAsset = new(createdAsset)
             {
                 Category = category,
                 Description = description,
@@ -333,11 +333,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 Priority = priority,
                 Type = AssetType.Equipment,
             };
-            operationResult = await dataLayer.UpdateAsync(updatedDataObject);
+            operationResult = await dataLayer.UpdateAsync(updatedAsset);
 
             Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
             Assert.IsType<Asset>(operationResult.DataObject); //An asset must have been returned.
-            Assert.True(new AssetEqualityComparer(false, false, true).Equals((Asset)operationResult.DataObject, updatedDataObject), "The data object sent should be the same as the data object returned."); //The original data matches the returned data.
+            Assert.True(new AssetEqualityComparer(false, false, true).Equals((Asset)operationResult.DataObject, updatedAsset), "The data object sent should be the same as the data object returned."); //The original data matches the returned data.
         }
         else
         {
@@ -360,14 +360,14 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Name = "Old Data Asset Test",
         });
 
-        if (operationResult.DataObject is Asset firstDataObject)
+        if (operationResult.DataObject is Asset firstAsset)
         {
-            Asset secondDataObject = new(firstDataObject);
+            Asset secondAsset = new(firstAsset);
 
-            firstDataObject.Description = "A description";
-            secondDataObject.Category = "A Category";
+            firstAsset.Description = "A description";
+            secondAsset.Category = "A Category";
 
-            operationResult = await dataLayer.UpdateAsync(secondDataObject);
+            operationResult = await dataLayer.UpdateAsync(secondAsset);
 
             if (!operationResult.IsSuccessStatusCode)
             {
@@ -375,7 +375,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 return;
             }
 
-            operationResult = await dataLayer.UpdateAsync(firstDataObject);
+            operationResult = await dataLayer.UpdateAsync(firstAsset);
 
             Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed."); //The operation must have failed.
             Assert.Null(operationResult.DataObject); //No asset was returned.
