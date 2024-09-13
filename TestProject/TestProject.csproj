@@ -29,8 +29,4 @@
     <ProjectReference Include="..\JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Test\EqualityComparer\" />
-  </ItemGroup>
-
 </Project>
