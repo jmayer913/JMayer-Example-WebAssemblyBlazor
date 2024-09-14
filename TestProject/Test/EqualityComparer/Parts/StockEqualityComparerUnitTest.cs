@@ -147,7 +147,7 @@ public class StockEqualityComparerUnitTest
             LastEditedOn = DateTime.Now,
             Name = Name,
             OwnerInteger64ID = OwnerID,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             StorageLocationName = StorageLocationName,
         };
 
@@ -178,7 +178,7 @@ public class StockEqualityComparerUnitTest
     {
         Stock stock1 = new()
         {
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
         };
         Stock stock2 = new();
 
@@ -215,7 +215,7 @@ public class StockEqualityComparerUnitTest
             LastEditedOn = DateTime.Now,
             Name = Name,
             OwnerInteger64ID = OwnerID,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             StorageLocationName = StorageLocationName,
         };
         Stock stock2 = new(stock1);
@@ -239,7 +239,7 @@ public class StockEqualityComparerUnitTest
             LastEditedOn = DateTime.Now,
             Name = Name,
             OwnerInteger64ID = OwnerID,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             StorageLocationName = StorageLocationName,
         };
         Stock stock2 = new(stock1)
@@ -266,7 +266,7 @@ public class StockEqualityComparerUnitTest
             LastEditedOn = DateTime.Now,
             Name = Name,
             OwnerInteger64ID = OwnerID,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             StorageLocationName = StorageLocationName,
         };
         Stock stock2 = new(stock1)
@@ -293,7 +293,7 @@ public class StockEqualityComparerUnitTest
             LastEditedOn = DateTime.Now,
             Name = Name,
             OwnerInteger64ID = OwnerID,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             StorageLocationName = StorageLocationName,
         };
         Stock stock2 = new(stock1)

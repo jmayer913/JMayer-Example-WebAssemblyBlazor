@@ -69,7 +69,7 @@ public class Asset : UserEditableDataObject
     /// <remarks>
     /// Only an equipment asset can be assigned a storage location.
     /// </remarks>
-    public long StorageLocationId { get; set; }
+    public long StorageLocationID { get; set; }
 
     /// <summary>
     /// The property gets/sets what the asset represents.
@@ -98,7 +98,7 @@ public class Asset : UserEditableDataObject
             ParentID = asset.ParentID;
             ParentPath = asset.ParentPath;
             Priority = asset.Priority;
-            StorageLocationId = asset.StorageLocationId;
+            StorageLocationID = asset.StorageLocationID;
             Type = asset.Type;
         }
     }

@@ -249,7 +249,7 @@ public class AssetEqualityComparerUnitTest
             Name = Name,
             ParentID = ParentID,
             Priority = Priority.High,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             Type = AssetType.Group,
         };
 
@@ -295,7 +295,7 @@ public class AssetEqualityComparerUnitTest
     {
         Asset asset1 = new()
         {
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
         };
         Asset asset2 = new();
 
@@ -337,7 +337,7 @@ public class AssetEqualityComparerUnitTest
             Name = Name,
             ParentID = ParentID,
             Priority = Priority.High,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             Type = AssetType.Group,
         };
         Asset asset2 = new(asset1);
@@ -366,7 +366,7 @@ public class AssetEqualityComparerUnitTest
             Name = Name,
             ParentID = ParentID,
             Priority = Priority.High,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             Type = AssetType.Group,
         };
         Asset asset2 = new(asset1)
@@ -398,7 +398,7 @@ public class AssetEqualityComparerUnitTest
             Name = Name,
             ParentID = ParentID,
             Priority = Priority.High,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             Type = AssetType.Group,
         };
         Asset asset2 = new(asset1)
@@ -430,7 +430,7 @@ public class AssetEqualityComparerUnitTest
             Name = Name,
             ParentID = ParentID,
             Priority = Priority.High,
-            StorageLocationId = StorageLocationID,
+            StorageLocationID = StorageLocationID,
             Type = AssetType.Group,
         };
         Asset asset2 = new(asset1)

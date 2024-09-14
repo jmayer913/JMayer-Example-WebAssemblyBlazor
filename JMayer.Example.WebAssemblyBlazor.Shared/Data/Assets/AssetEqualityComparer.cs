@@ -61,7 +61,7 @@ public class AssetEqualityComparer : IEqualityComparer<Asset>
             && x.Name == y.Name 
             && x.ParentID == y.ParentID 
             && x.Priority == y.Priority 
-            && x.StorageLocationId == y.StorageLocationId
+            && x.StorageLocationID == y.StorageLocationID
             && x.Type == y.Type;
     }
 

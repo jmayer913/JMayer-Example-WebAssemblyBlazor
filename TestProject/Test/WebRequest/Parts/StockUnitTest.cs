@@ -63,7 +63,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Duplicate Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Duplicate Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationID = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -71,7 +71,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Duplicate Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Duplicate Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationID = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -88,7 +88,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         //The correct error was returned.
         Assert.Contains("stock location already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(Stock.StorageLocationId), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        Assert.Equal(nameof(Stock.StorageLocationID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Amount = amount,
             Name = "Create Test",
             OwnerInteger64ID = part.Integer64ID,
-            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationID = storageLocation.Integer64ID,
             StorageLocationName = storageLocation.FriendlyName,
         };
         OperationResult operationResult = await dataLayer.CreateAsync(partStock);
@@ -156,7 +156,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         StockDataLayer dataLayer = new(client);
         
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Add Dependencies Not Exists Stock Test", OwnerInteger64ID = 0, StorageLocationId = 0 });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Add Dependencies Not Exists Stock Test", OwnerInteger64ID = 0, StorageLocationID = 0 });
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -175,7 +175,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         Assert.Contains("part was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
         Assert.Equal(nameof(Stock.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
         Assert.Contains("storage location was not found", operationResult.ServerSideValidationResult.Errors[1].ErrorMessage);
-        Assert.Equal(nameof(Stock.StorageLocationId), operationResult.ServerSideValidationResult.Errors[1].PropertyName);
+        Assert.Equal(nameof(Stock.StorageLocationID), operationResult.ServerSideValidationResult.Errors[1].PropertyName);
     }
 
     /// <summary>
@@ -226,7 +226,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Asset-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Asset-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationID = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -277,7 +277,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Part-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Part-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationID = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -328,7 +328,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Delete Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Delete Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationID = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         if (operationResult.DataObject is Stock stock)
         {
@@ -375,7 +375,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Storage Location-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Cascade Storage Location-Stock Delete Test", OwnerInteger64ID = part.Integer64ID, StorageLocationID = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         if (!operationResult.IsSuccessStatusCode)
         {
@@ -509,7 +509,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             return;
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Get Single Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationId = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Get Single Stock Test", OwnerInteger64ID = part.Integer64ID, StorageLocationID = storageLocation.Integer64ID, StorageLocationName = storageLocation.FriendlyName });
 
         if (operationResult.DataObject is Stock createdPartStock)
         {
@@ -561,7 +561,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Amount = 0,
             Name = "Rename Storage Location Test",
             OwnerInteger64ID = part.Integer64ID,
-            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationID = storageLocation.Integer64ID,
             StorageLocationName = storageLocation.FriendlyName,
         });
 
@@ -634,7 +634,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Amount = 0,
             Name = "Test",
             OwnerInteger64ID = part.Integer64ID,
-            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationID = storageLocation.Integer64ID,
             StorageLocationName = storageLocation.FriendlyName,
         });
 
@@ -695,14 +695,14 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Amount = 0,
             Name = "Update Dependencies Not Exists Stock Test",
             OwnerInteger64ID = part.Integer64ID,
-            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationID = storageLocation.Integer64ID,
             StorageLocationName = storageLocation.FriendlyName,
         });
 
         if (operationResult.DataObject is Stock stock)
         {
             stock.OwnerInteger64ID = 0;
-            stock.StorageLocationId = 0;
+            stock.StorageLocationID = 0;
             operationResult = await dataLayer.UpdateAsync(stock);
 
             //The operation must have failed.
@@ -722,7 +722,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Contains("part was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
             Assert.Equal(nameof(Stock.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
             Assert.Contains("storage location was not found", operationResult.ServerSideValidationResult.Errors[1].ErrorMessage);
-            Assert.Equal(nameof(Stock.StorageLocationId), operationResult.ServerSideValidationResult.Errors[1].PropertyName);
+            Assert.Equal(nameof(Stock.StorageLocationID), operationResult.ServerSideValidationResult.Errors[1].PropertyName);
         }
         else
         {
@@ -770,7 +770,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Amount = 0,
             Name = "Stock Old Data Test",
             OwnerInteger64ID = part.Integer64ID,
-            StorageLocationId = storageLocation.Integer64ID,
+            StorageLocationID = storageLocation.Integer64ID,
             StorageLocationName = storageLocation.FriendlyName,
         });
 

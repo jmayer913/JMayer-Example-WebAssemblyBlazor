@@ -39,7 +39,7 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
         {
             _selectedStorageLocation = value;
             //Map any selection changes to the StorageLocationId and StorageLocationName property.
-            DataObject.StorageLocationId = value?.Integer64ID ?? 0;
+            DataObject.StorageLocationID = value?.Integer64ID ?? 0;
             DataObject.StorageLocationName = value?.Name ?? string.Empty;
         }
     }
@@ -67,7 +67,7 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
 
         if (!IsNewRecord)
         {
-            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationId);
+            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationID);
 
             if (storageLocation != null)
             {
