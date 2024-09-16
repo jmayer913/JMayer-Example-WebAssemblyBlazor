@@ -33,6 +33,28 @@
     private bool _drawerOpen = true;
 
     /// <summary>
+    /// Used to interact with javascript.
+    /// </summary>
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = null!;
+
+    /// <summary>
+    /// The method hides the preloading (loading indicator and any styles needed before the mudblazor css is loaded) 
+    /// after the client has rendered for the first time.
+    /// </summary>
+    /// <param name="firstRender">Indicates if this is the first render or not.</param>
+    /// <returns>A Task object for the async.</returns>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeAsync<object>("removePreloading");
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    /// <summary>
     /// The method toggles the drawer's open/close state.
     /// </summary>
     private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
