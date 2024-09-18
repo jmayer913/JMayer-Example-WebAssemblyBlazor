@@ -7,13 +7,13 @@
 
     <MudText Typo="Typo.h5">Asset Search</MudText>
 
-    <MudDataGrid @ref="@MudDataGrid" T="Asset" ColumnsPanelReordering="false" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="false" SortMode="SortMode.Single">
+    <MudDataGrid @ref="@MudDataGrid" T="Asset" ColumnsPanelReordering="false" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="true" SortMode="SortMode.Single">
         <ToolBarContent>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
         </ToolBarContent>
 
         <Columns>
-            <TemplateColumn Editable="false" Filterable="false" Sortable="false">
+            <TemplateColumn Editable="false" Filterable="false" Hideable="false" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true">
                         <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteButtonClickAsync(context.Item))" />
