@@ -7,7 +7,7 @@
 
     <MudText Typo="Typo.h5">Asset Search</MudText>
 
-    <MudDataGrid @ref="@MudDataGrid" T="Asset" ColumnsPanelReordering="false" ColumnResizeMode="ResizeMode.Column" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="true" SortMode="SortMode.Single">
+    <MudDataGrid @ref="@MudDataGrid" T="Asset" ColumnResizeMode="ResizeMode.Column" ColumnsPanelReordering="true" DragDropColumnReordering="true" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="true" SortMode="SortMode.Single">
         <ToolBarContent>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
         </ToolBarContent>
