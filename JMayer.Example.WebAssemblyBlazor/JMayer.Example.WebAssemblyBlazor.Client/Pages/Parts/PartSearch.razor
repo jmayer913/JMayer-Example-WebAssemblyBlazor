@@ -7,7 +7,7 @@
 
     <MudText Typo="Typo.h5">Part Search</MudText>
 
-    <MudDataGrid @ref="@MudDataGrid" T="Part" ColumnsPanelReordering="false" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="true" SortMode="SortMode.Single">
+    <MudDataGrid @ref="@MudDataGrid" T="Part" ColumnsPanelReordering="false" ColumnResizeMode="ResizeMode.Column" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="true" SortMode="SortMode.Single">
         <ToolBarContent>
             <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
         </ToolBarContent>
