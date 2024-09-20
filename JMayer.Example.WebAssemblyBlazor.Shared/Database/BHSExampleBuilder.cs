@@ -234,7 +234,7 @@ public class BHSExampleBuilder
                     Amount = 5 * (index + 1),
                     Name = "A Name",
                     OwnerInteger64ID = parts[index].Integer64ID,
-                    StorageLocationId = storageLocations[index].Integer64ID,
+                    StorageLocationID = storageLocations[index].Integer64ID,
                     StorageLocationName = storageLocations[index].FriendlyName,
                 });
             }

@@ -8,7 +8,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 /// <summary>
 /// The class manages CRUD interactions with the database for a storage location.
 /// </summary>
-public class StorageLocationDataLayer : UserEditableMemoryDataLayer<StorageLocation>, IStorageLocationDataLayer
+public class StorageLocationDataLayer : UserEditableDataLayer<StorageLocation>, IStorageLocationDataLayer
 {
     /// <summary>
     /// The data layer for interacting with assets.

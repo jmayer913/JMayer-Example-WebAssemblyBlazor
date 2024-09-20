@@ -9,13 +9,13 @@
 
     <MudCardContent>
 
-        <MudDataGrid @ref="@MudDataGrid" T="StorageLocation" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" ServerData="@OnDataGridStateChangedAsync" SortMode="SortMode.Single">
+        <MudDataGrid @ref="@MudDataGrid" T="StorageLocation" ColumnResizeMode="ResizeMode.Column" ColumnsPanelReordering="true" DragDropColumnReordering="true" EditTrigger="DataGridEditTrigger.Manual" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" Groupable="false" Hideable="true" ServerData="@OnDataGridStateChangedAsync" ShowMenuIcon="true" SortMode="SortMode.Single">
             <ToolBarContent>
                 <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@OnNewButtonClickAsync" />
             </ToolBarContent>
 
             <Columns>
-                <TemplateColumn IsEditable="false" Filterable="false" Sortable="false">
+                <TemplateColumn Editable="false" Filterable="false" Hideable="false" Sortable="false">
                     <CellTemplate>
                         <MudStack Row="true">
                             <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OnDeleteButtonClickAsync(context.Item))" />
@@ -26,8 +26,8 @@
                 <PropertyColumn Property="x => x.LocationA" Title="Location A" />
                 <PropertyColumn Property="x => x.LocationB" Title="Location B" />
                 <PropertyColumn Property="x => x.LocationC" Title="Location C" />
-                <PropertyColumn Property="x => x.CreatedOn" IsEditable="false" Title="Created" />
-                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" IsEditable="false" Title="Last Edited" />
+                <PropertyColumn Property="x => x.CreatedOn" Editable="false" Title="Created" />
+                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" Editable="false" Title="Last Edited" />
             </Columns>
 
             <PagerContent>

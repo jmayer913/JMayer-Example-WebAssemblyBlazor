@@ -22,7 +22,7 @@ public class Stock : SubUserEditableDataObject
     /// The property gets/sets the id for the storage location the part is stored at.
     /// </summary>
     [Required]
-    public long StorageLocationId { get; set; }
+    public long StorageLocationID { get; set; }
 
     /// <summary>
     /// The property gets/sets the name for the storage location the part is stored at.
@@ -46,7 +46,7 @@ public class Stock : SubUserEditableDataObject
         if (dataObject is Stock stock)
         {
             Amount = stock.Amount;
-            StorageLocationId = stock.StorageLocationId;
+            StorageLocationID = stock.StorageLocationID;
             StorageLocationName = stock.StorageLocationName;
         }
     }

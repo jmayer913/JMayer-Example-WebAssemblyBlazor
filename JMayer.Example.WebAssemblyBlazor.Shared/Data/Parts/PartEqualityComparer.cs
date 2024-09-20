@@ -23,6 +23,11 @@ public class PartEqualityComparer : IEqualityComparer<Part>
     private readonly bool _excludeLastEditedOn;
 
     /// <summary>
+    /// The default constructor.
+    /// </summary>
+    public PartEqualityComparer() { }
+
+    /// <summary>
     /// The property constructor.
     /// </summary>
     /// <param name="excludeCreatedOn">Excludes the CreatedOn property from the equals check.</param>

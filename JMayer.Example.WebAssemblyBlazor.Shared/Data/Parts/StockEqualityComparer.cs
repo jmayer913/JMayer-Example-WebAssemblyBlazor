@@ -23,6 +23,11 @@ public class StockEqualityComparer : IEqualityComparer<Stock>
     private readonly bool _excludeLastEditedOn;
 
     /// <summary>
+    /// The default constructor.
+    /// </summary>
+    public StockEqualityComparer() { }
+
+    /// <summary>
     /// The property constructor.
     /// </summary>
     /// <param name="excludeCreatedOn">Excludes the CreatedOn property from the equals check.</param>
@@ -50,7 +55,7 @@ public class StockEqualityComparer : IEqualityComparer<Stock>
             && (_excludeLastEditedOn || x.LastEditedOn == y.LastEditedOn)
             && x.Name == y.Name
             && x.OwnerInteger64ID == y.OwnerInteger64ID
-            && x.StorageLocationId == y.StorageLocationId
+            && x.StorageLocationID == y.StorageLocationID
             && x.StorageLocationName == y.StorageLocationName;
     }
 

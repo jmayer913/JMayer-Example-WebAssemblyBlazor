@@ -54,8 +54,9 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     /// The method returns the asset list based on what the user has typed in.
     /// </summary>
     /// <param name="value">The value to search for.</param>
+    /// <param name="cancellationToken">Used to cancel the task.</param>
     /// <returns>A list of acceptable categories.</returns>
-    protected async Task<IEnumerable<ListView>> OnAssetParentAutoCompleteSearchAsync(string value)
+    protected async Task<IEnumerable<ListView>> OnAssetParentAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -71,8 +72,9 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     /// The method returns the category list based on what the user has typed in.
     /// </summary>
     /// <param name="value">The value to search for.</param>
+    /// <param name="cancellationToken">Used to cancel the task.</param>
     /// <returns>A list of acceptable categories.</returns>
-    protected async Task<IEnumerable<string>> OnCategoryAutoCompleteSearchAsync(string value)
+    protected async Task<IEnumerable<string>> OnCategoryAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {

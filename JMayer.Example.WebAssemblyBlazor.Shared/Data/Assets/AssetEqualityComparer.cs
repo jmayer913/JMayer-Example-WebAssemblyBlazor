@@ -23,6 +23,11 @@ public class AssetEqualityComparer : IEqualityComparer<Asset>
     private readonly bool _excludeLastEditedOn;
 
     /// <summary>
+    /// The default constructor.
+    /// </summary>
+    public AssetEqualityComparer() { }
+
+    /// <summary>
     /// The property constructor.
     /// </summary>
     /// <param name="excludeCreatedOn">Excludes the CreatedOn property from the equals check.</param>
@@ -56,6 +61,7 @@ public class AssetEqualityComparer : IEqualityComparer<Asset>
             && x.Name == y.Name 
             && x.ParentID == y.ParentID 
             && x.Priority == y.Priority 
+            && x.StorageLocationID == y.StorageLocationID
             && x.Type == y.Type;
     }
 

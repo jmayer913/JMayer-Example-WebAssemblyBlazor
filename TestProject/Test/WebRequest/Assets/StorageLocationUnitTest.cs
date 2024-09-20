@@ -1,7 +1,6 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Data.HTTP.DataLayer;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
-using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -30,21 +29,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     public StorageLocationUnitTest(WebApplicationFactory<Program> factory) => _factory = factory;
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request the count from the server and the server can successfully process the request.
-    /// </summary>
-    /// <returns></returns>
-    [Fact]
-    public async Task CountStorageLocationsAsync()
-    {
-        HttpClient client = _factory.CreateClient();
-        StorageLocationDataLayer dataLayer = new(client);
-
-        int count = await dataLayer.CountAsync();
-        Assert.True(count > 0);
-    }
-
-    /// <summary>
-    /// The method confirms the server will return a failure if the storage location already exists when adding a new asset.
+    /// The method verifies the server will return a failure if the storage location already exists when adding a new asset.
     /// </summary>
     /// <param name="locationA">The name of the A location.</param>
     /// <param name="locationB">The name of the B location.</param>
@@ -54,7 +39,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     [InlineData("Duplicate Storage Location Test A", "", "")]
     [InlineData("Duplicate Storage Location Test A", "Duplicate Storage Location Test B", "")]
     [InlineData("Duplicate Storage Location Test A", "Duplicate Storage Location Test B", "Duplicate Storage Location Test C")]
-    public async Task AddDuplicateStorageLocationAsync(string locationA, string locationB, string locationC)
+    public async Task VerifyAddDuplicateStorageLocationFailure(string locationA, string locationB, string locationC)
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -93,20 +78,26 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         storageLocation.Name = storageLocation.FriendlyName;
         operationResult = await dataLayer.CreateAsync(storageLocation);
 
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No storage location was returned.
-            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
-            && operationResult.ServerSideValidationResult != null //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("location already exists") //The correct error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(StorageLocation.LocationA) //The correct error was returned.
-        );
+        //The operation must have failed.
+        Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
+
+        //No storage location was returned.
+        Assert.Null(operationResult.DataObject);
+
+        //A bad request status was returned.
+        Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
+
+        //A validation error was returned.
+        Assert.NotNull(operationResult.ServerSideValidationResult);
+        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+
+        //The correct error was returned.
+        Assert.Contains("location already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
+        Assert.Equal(nameof(StorageLocation.LocationA), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request a storage location to be created by the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request a storage location to be created by the server and the server can successfully process the request.
     /// </summary>
     /// <param name="locationA">The name of the A location.</param>
     /// <param name="locationB">The name of the B location.</param>
@@ -116,7 +107,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     [InlineData("Test Location A", "", "")]
     [InlineData("Test Location A", "Test Location B", "")]
     [InlineData("Test Location A", "Test Location B", "Test Location C")]
-    public async Task AddStorageLocationAsync(string locationA, string locationB, string locationC)
+    public async Task VerifyAddStorageLocation(string locationA, string locationB, string locationC)
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -129,54 +120,71 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             return;
         }
 
-        StorageLocation originalDataObject = new()
+        StorageLocation storageLocation = new()
         {
             LocationA = locationA,
             LocationB = locationB,
             LocationC = locationC,
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
-        originalDataObject.Name = originalDataObject.FriendlyName;
-        OperationResult operationResult = await dataLayer.CreateAsync(originalDataObject);
+        storageLocation.Name = storageLocation.FriendlyName;
+        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation);
 
-        Assert.True
-        (
-            operationResult.IsSuccessStatusCode //The operation must have been successful.
-            && operationResult.DataObject is StorageLocation returnedDataObject //A storage location must have been returned.
-            && new StorageLocationEqualityComparer(true, true, true).Equals(returnedDataObject, originalDataObject) //Original and return must be equal.
-        );
+        Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
+        Assert.IsType<StorageLocation>(operationResult.DataObject); //A storage location must have been returned.
+        Assert.True(new StorageLocationEqualityComparer(true, true, true).Equals((StorageLocation)operationResult.DataObject, storageLocation), "The data object sent should be the same as the data object returned."); //Original and return must be equal.
     }
 
     /// <summary>
-    /// The method confirms the server will return a failure if the area asset doesn't exists when adding a new storage location.
+    /// The method verifies the server will return a failure if the area asset doesn't exists when adding a new storage location.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task AddStorageLocationDependenciesNotExistsAsync()
+    public async Task VerifyAddStorageLocationDependenciesNotExists()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Add Dependencies Not Exists Storage Location Test", Name = "Dependencies Not Exists Storage Location Test", OwnerInteger64ID = 0 });
 
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No storage location was returned.
-            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
-            && operationResult.ServerSideValidationResult != null //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("asset was not found") //The correct error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(StorageLocation.OwnerInteger64ID) //The correct error was returned.
-        );
+        //The operation must have failed.
+        Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
+
+        //No storage location was returned.
+        Assert.Null(operationResult.DataObject);
+
+        //A bad request status was returned.
+        Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
+
+        //A validation error was returned.
+        Assert.NotNull(operationResult.ServerSideValidationResult);
+        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+
+        //The correct error was returned.
+        Assert.Contains("asset was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
+        Assert.Equal(nameof(StorageLocation.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
     }
 
     /// <summary>
-    /// The method confirms on the server-side if an area asset is deleted, the associated storage locations are also deleted.
+    /// The method verifies the HTTP data layer can request the count from the server and the server can successfully process the request.
+    /// </summary>
+    /// <returns></returns>
+    [Fact]
+    public async Task VerifyCountStorageLocations()
+    {
+        HttpClient client = _factory.CreateClient();
+        StorageLocationDataLayer dataLayer = new(client);
+
+        long count = await dataLayer.CountAsync();
+        Assert.True(count > 0);
+    }
+
+    /// <summary>
+    /// The method verifies on the server-side if an area asset is deleted, the associated storage locations are also deleted.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task DeleteAreaAssetAsync()
+    public async Task VerifyDeleteAreaAssetCascade()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -216,15 +224,17 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         await new AssetDataLayer(client).DeleteAsync(areaAsset);
 
         List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(areaAsset.Integer64ID);
-        Assert.True(storageLocations != null && storageLocations.Count == 0);
+        
+        Assert.NotNull(storageLocations);
+        Assert.Empty(storageLocations);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request a storage location to be deleted by the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request a storage location to be deleted by the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task DeleteStorageLocationAsync()
+    public async Task VerifyDeleteStorageLocation()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -239,10 +249,10 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Delete Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
 
-        if (operationResult.DataObject is StorageLocation dataObject)
+        if (operationResult.DataObject is StorageLocation storageLocation)
         {
-            operationResult = await dataLayer.DeleteAsync(dataObject);
-            Assert.True(operationResult.IsSuccessStatusCode);
+            operationResult = await dataLayer.DeleteAsync(storageLocation);
+            Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful.");
         }
         else
         {
@@ -251,61 +261,28 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request all storage locations as list views from the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request all storage locations as list views from the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task GetAllListViewStorageLocationsAsync()
+    public async Task VerifyGetAllListViewStorageLocations()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        List<ListView>? listViews = await dataLayer.GetAllListViewAsync();
-        Assert.True(listViews != null && listViews.Count > 0);
+        List<ListView>? storageLocations = await dataLayer.GetAllListViewAsync();
+
+        //Storage location list views must have been returned.
+        Assert.NotNull(storageLocations);
+        Assert.NotEmpty(storageLocations);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request all storage locations for an area asset as list views from the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request all storage locations for an area asset as list views from the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task GetAllListViewStorageLocationsWithOwnerIdAsync()
-    {
-        HttpClient client = _factory.CreateClient();
-        StorageLocationDataLayer dataLayer = new(client);
-
-        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
-
-        if (areaAsset == null)
-        {
-            Assert.Fail("Failed to find the area asset");
-            return;
-        }
-
-        List<ListView>? dataObjects = await dataLayer.GetAllListViewAsync(areaAsset.Integer64ID);
-        Assert.True(dataObjects != null && dataObjects.Count > 0);
-    }
-
-    /// <summary>
-    /// The method confirms the HTTP data layer can request all storage locations from the server and the server can successfully process the request.
-    /// </summary>
-    /// <returns>A Task object for the async.</returns>
-    [Fact]
-    public async Task GetAllStorageLocationsAsync()
-    {
-        HttpClient client = _factory.CreateClient();
-        StorageLocationDataLayer dataLayer = new(client);
-
-        List<StorageLocation>? dataObjects = await dataLayer.GetAllAsync();
-        Assert.True(dataObjects != null && dataObjects.Count > 0);
-    }
-
-    /// <summary>
-    /// The method confirms the HTTP data layer can request all storage locations for an area asset from the server and the server can successfully process the request.
-    /// </summary>
-    /// <returns>A Task object for the async.</returns>
-    [Fact]
-    public async Task GetAllStorageLocationsWithOwnerIdAsync()
+    public async Task VerifyGetAllListViewStorageLocationsWithOwnerId()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -318,30 +295,75 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             return;
         }
 
-        List<StorageLocation>? dataObjects = await dataLayer.GetAllAsync(areaAsset.Integer64ID);
-        Assert.True(dataObjects != null && dataObjects.Count > 0);
+        List<ListView>? storageLocations = await dataLayer.GetAllListViewAsync(areaAsset.Integer64ID);
+
+        //Storage location list views must have been returned.
+        Assert.NotNull(storageLocations);
+        Assert.NotEmpty(storageLocations);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request the first storage location from the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request all storage locations from the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task GetSingleStorageLocationAsync()
+    public async Task VerifyGetAllStorageLocations()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        StorageLocation? dataObject = await dataLayer.GetSingleAsync();
-        Assert.NotNull(dataObject);
+        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync();
+
+        //Storage locations must have been returned.
+        Assert.NotNull(storageLocations);
+        Assert.NotEmpty(storageLocations);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request a storage location from the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request all storage locations for an area asset from the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task GetSingleStorageLocationWithIdAsync()
+    public async Task VerifyGetAllStorageLocationsWithOwnerId()
+    {
+        HttpClient client = _factory.CreateClient();
+        StorageLocationDataLayer dataLayer = new(client);
+
+        Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
+
+        if (areaAsset == null)
+        {
+            Assert.Fail("Failed to find the area asset");
+            return;
+        }
+
+        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(areaAsset.Integer64ID);
+
+        //Storage locations must have been returned.
+        Assert.NotNull(storageLocations);
+        Assert.NotEmpty(storageLocations);
+    }
+
+    /// <summary>
+    /// The method verifies the HTTP data layer can request the first storage location from the server and the server can successfully process the request.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task VerifyGetSingleStorageLocation()
+    {
+        HttpClient client = _factory.CreateClient();
+        StorageLocationDataLayer dataLayer = new(client);
+
+        StorageLocation? storageLocation = await dataLayer.GetSingleAsync();
+        Assert.NotNull(storageLocation);
+    }
+
+    /// <summary>
+    /// The method verifies the HTTP data layer can request a storage location from the server and the server can successfully process the request.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task VerifyGetSingleStorageLocationWithIdA()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -356,10 +378,10 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Get Single Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
 
-        if (operationResult.DataObject is StorageLocation storageLocation)
+        if (operationResult.DataObject is StorageLocation createdStorageLocation)
         {
-            StorageLocation? dataObject = await dataLayer.GetSingleAsync(storageLocation.Integer64ID);
-            Assert.NotNull(dataObject);
+            StorageLocation? fetchedStorageLocation = await dataLayer.GetSingleAsync(createdStorageLocation.Integer64ID);
+            Assert.NotNull(fetchedStorageLocation);
         }
         else
         {
@@ -368,7 +390,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     }
 
     /// <summary>
-    /// The method confirms the server will return a failure if the storage location already exists when adding a new asset.
+    /// The method verifies the server will return a failure if the storage location already exists when adding a new asset.
     /// </summary>
     /// <param name="locationA">The name of the A location.</param>
     /// <param name="locationB">The name of the B location.</param>
@@ -378,7 +400,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     [InlineData("Duplicate Storage Location Test A", "", "")]
     [InlineData("Duplicate Storage Location Test A", "Duplicate Storage Location Test B", "")]
     [InlineData("Duplicate Storage Location Test A", "Duplicate Storage Location Test B", "Duplicate Storage Location Test C")]
-    public async Task UpdateDuplicateStorageLocationAsync(string locationA, string locationB, string locationC)
+    public async Task VerifyUpdateDuplicateStorageLocationFailure(string locationA, string locationB, string locationC)
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -416,33 +438,40 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         };
         secondStorageLocation.Name = secondStorageLocation.FriendlyName;
         operationResult = await dataLayer.CreateAsync(secondStorageLocation);
-        StorageLocation? duplicateStorageLocation = operationResult.DataObject as StorageLocation;
 
-        if (duplicateStorageLocation == null)
+        if (operationResult.DataObject is StorageLocation duplicateStorageLocation)
+        {
+            duplicateStorageLocation.LocationA = firstStorageLocation.LocationA;
+            duplicateStorageLocation.LocationB = firstStorageLocation.LocationB;
+            duplicateStorageLocation.LocationC = firstStorageLocation.LocationC;
+            operationResult = await dataLayer.UpdateAsync(duplicateStorageLocation);
+
+            //The operation must have failed.
+            Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
+
+            //No storage location was returned.
+            Assert.Null(operationResult.DataObject);
+
+            //A bad request status was returned.
+            Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
+
+            //A validation error was returned.
+            Assert.NotNull(operationResult.ServerSideValidationResult);
+            Assert.Single(operationResult.ServerSideValidationResult.Errors);
+
+            //The correct error was returned.
+            Assert.Contains("location already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
+            Assert.Equal(nameof(StorageLocation.LocationA), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        }
+        else
         {
             Assert.Fail("Failed to create the second storage location.");
             return;
         }
-
-        duplicateStorageLocation.LocationA = firstStorageLocation.LocationA;
-        duplicateStorageLocation.LocationB = firstStorageLocation.LocationB;
-        duplicateStorageLocation.LocationC = firstStorageLocation.LocationC;
-        operationResult = await dataLayer.UpdateAsync(duplicateStorageLocation);
-
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No storage location was returned.
-            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
-            && operationResult.ServerSideValidationResult != null //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("location already exists") //The correct error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(StorageLocation.LocationA) //The correct error was returned.
-        );
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request a storage location to be updated by the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request a storage location to be updated by the server and the server can successfully process the request.
     /// </summary>
     /// <param name="locationA">The name of the A location.</param>
     /// <param name="locationB">The name of the B location.</param>
@@ -452,7 +481,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     [InlineData("Test Location 1", "Test Location X", "", "")]
     [InlineData("Test Location 2", "Test Location X", "Test Location Y", "")]
     [InlineData("Test Location 3", "Test Location X", "Test Location Y", "Test Location Z")]
-    public async Task UpdateStorageLocationAsync(string originalLocationA, string locationA, string locationB, string locationC)
+    public async Task VerifyUpdateStorageLocation(string originalLocationA, string locationA, string locationB, string locationC)
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -465,30 +494,27 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             return;
         }
 
-        StorageLocation originalDataObject = new()
+        StorageLocation originalStorageLocation = new()
         {
             LocationA = originalLocationA,
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
-        originalDataObject.Name = originalDataObject.FriendlyName;
-        OperationResult operationResult = await dataLayer.CreateAsync(originalDataObject);
+        originalStorageLocation.Name = originalStorageLocation.FriendlyName;
+        OperationResult operationResult = await dataLayer.CreateAsync(originalStorageLocation);
 
-        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation createdDataObject)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation createdStorageLocation)
         {
-            StorageLocation updatedDataObject = new(createdDataObject)
+            StorageLocation updatedStorageLocation = new(createdStorageLocation)
             {
                 LocationA = locationA,
                 LocationB = locationB,
                 LocationC = locationC,
             };
-            operationResult = await dataLayer.UpdateAsync(updatedDataObject);
+            operationResult = await dataLayer.UpdateAsync(updatedStorageLocation);
 
-            Assert.True
-            (
-                operationResult.IsSuccessStatusCode //The operation must have been successful.
-                && operationResult.DataObject is StorageLocation returnedDataObject //A storage location must have been returned.
-                && new StorageLocationEqualityComparer(false, false, true).Equals(returnedDataObject, updatedDataObject) //The original data matches the returned data.
-            );
+            Assert.True(operationResult.IsSuccessStatusCode); //The operation must have been successful.
+            Assert.IsType<StorageLocation>(operationResult.DataObject); //A storage location must have been returned.
+            Assert.True(new StorageLocationEqualityComparer(true, true, true).Equals((StorageLocation)operationResult.DataObject, updatedStorageLocation), "The data object sent should be the same as the data object returned."); //Original and return must be equal.
         }
         else
         {
@@ -497,11 +523,11 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
     }
 
     /// <summary>
-    /// The method confirms the server will return a failure if the area asset doesn't exists when updating a storage location.
+    /// The method verifies the server will return a failure if the area asset doesn't exists when updating a storage location.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task UpdateStorageLocationDependenciesNotExistsAsync()
+    public async Task VerifyUpdateStorageLocationDependenciesNotExists()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -532,24 +558,30 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         storageLocation.OwnerInteger64ID = 0;
         operationResult = await dataLayer.UpdateAsync(storageLocation);
 
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No storage location was returned.
-            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
-            && operationResult.ServerSideValidationResult != null //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("asset was not found") //The correct error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(StorageLocation.OwnerInteger64ID) //The correct error was returned.
-        );
+        //The operation must have failed.
+        Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
+
+        //No storage location was returned.
+        Assert.Null(operationResult.DataObject);
+
+        //A bad request status was returned.
+        Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
+
+        //A validation error was returned.
+        Assert.NotNull(operationResult.ServerSideValidationResult);
+        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+
+        //The correct error was returned.
+        Assert.Contains("asset was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
+        Assert.Equal(nameof(StorageLocation.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
     }
 
     /// <summary>
-    /// The method confirms the server will return a failure if the storage location being updated is old.
+    /// The method verifies the server will return a failure if the storage location being updated is old.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task UpdateStorageLocationOldDataAsync()
+    public async Task VerifyUpdateStorageLocationOldDataConflict()
     {
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
@@ -568,34 +600,32 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             Name = "Test",
             OwnerInteger64ID = areaAsset.Integer64ID,
         });
-        StorageLocation? firstDataObject = operationResult.DataObject as StorageLocation;
 
-        if (firstDataObject == null)
+        if (operationResult.DataObject is StorageLocation firstStorageLocation)
+        {
+            StorageLocation secondStorageLocation = new(firstStorageLocation);
+
+            firstStorageLocation.LocationB = "Old Data Storage Location Test 1";
+            secondStorageLocation.LocationB = "Old Data Storage Location Test 2";
+
+            operationResult = await dataLayer.UpdateAsync(secondStorageLocation);
+
+            if (!operationResult.IsSuccessStatusCode)
+            {
+                Assert.Fail("Failed to update the second storage location.");
+                return;
+            }
+
+            operationResult = await dataLayer.UpdateAsync(firstStorageLocation);
+
+            Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed."); //The operation must have failed.
+            Assert.Null(operationResult.DataObject); //No asset was returned.
+            Assert.Equal(HttpStatusCode.Conflict, operationResult.StatusCode); //A conflict status was returned.
+        }
+        else
         {
             Assert.Fail("Failed to create the storage location.");
             return;
         }
-
-        StorageLocation secondDataObject = new(firstDataObject);
-
-        firstDataObject.LocationB = "Old Data Storage Location Test 1";
-        secondDataObject.LocationB = "Old Data Storage Location Test 2";
-
-        operationResult = await dataLayer.UpdateAsync(secondDataObject);
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to update the second storage location.");
-            return;
-        }
-
-        operationResult = await dataLayer.UpdateAsync(firstDataObject);
-
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No storage location was returned.
-            && operationResult.StatusCode == HttpStatusCode.Conflict //A conflict status was returned.
-        );
     }
 }

@@ -23,6 +23,11 @@ public class StorageLocationEqualityComparer : IEqualityComparer<StorageLocation
     private readonly bool _excludeLastEditedOn;
 
     /// <summary>
+    /// The default constructor.
+    /// </summary>
+    public StorageLocationEqualityComparer() { }
+
+    /// <summary>
     /// The property constructor.
     /// </summary>
     /// <param name="excludeCreatedOn">Excludes the CreatedOn property from the equals check.</param>

@@ -9,7 +9,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
 /// <summary>
 /// The class manages CRUD interactions with the database for part stock.
 /// </summary>
-public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLayer
+public class StockDataLayer : UserEditableDataLayer<Stock>, IStockDataLayer
 {
     /// <summary>
     /// The data layer for interacting with parts.
@@ -71,7 +71,7 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
     {
         foreach (StorageLocation storageLocation in e.DataObjects.Cast<StorageLocation>())
         {
-            List<Stock> stocks = await GetAllAsync(obj => obj.StorageLocationId == storageLocation.Integer64ID);
+            List<Stock> stocks = await GetAllAsync(obj => obj.StorageLocationID == storageLocation.Integer64ID);
 
             if (stocks.Count > 0)
             {
@@ -91,7 +91,7 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
 
         foreach (StorageLocation storageLocation in e.DataObjects.Cast<StorageLocation>())
         {
-            List<Stock> stocks = await GetAllAsync(obj => obj.StorageLocationId == storageLocation.Integer64ID);
+            List<Stock> stocks = await GetAllAsync(obj => obj.StorageLocationID == storageLocation.Integer64ID);
 
             if (stocks.Count > 0 && stocks[0].StorageLocationName != storageLocation.FriendlyName)
             {
@@ -126,14 +126,14 @@ public class StockDataLayer : UserEditableMemoryDataLayer<Stock>, IStockDataLaye
             validationResults.Add(new ValidationResult($"The {dataObject.OwnerInteger64ID} part was not found in the data store.", [nameof(Stock.OwnerInteger64ID)]));
         }
 
-        if (await _storageLocationDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.StorageLocationId, cancellationToken) == false)
+        if (await _storageLocationDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.StorageLocationID, cancellationToken) == false)
         {
-            validationResults.Add(new ValidationResult($"The {dataObject.StorageLocationId} storage location was not found in the data store.", [nameof(Stock.StorageLocationId)]));
+            validationResults.Add(new ValidationResult($"The {dataObject.StorageLocationID} storage location was not found in the data store.", [nameof(Stock.StorageLocationID)]));
         }
 
-        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.OwnerInteger64ID == dataObject.OwnerInteger64ID && obj.StorageLocationId == dataObject.StorageLocationId, cancellationToken) == true) 
+        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.OwnerInteger64ID == dataObject.OwnerInteger64ID && obj.StorageLocationID == dataObject.StorageLocationID, cancellationToken) == true) 
         {
-            validationResults.Add(new ValidationResult("The stock location already exists in the data store for the part.", [nameof(Stock.StorageLocationId)]));
+            validationResults.Add(new ValidationResult("The stock location already exists in the data store for the part.", [nameof(Stock.StorageLocationID)]));
         }
 
         return await Task.FromResult(validationResults);

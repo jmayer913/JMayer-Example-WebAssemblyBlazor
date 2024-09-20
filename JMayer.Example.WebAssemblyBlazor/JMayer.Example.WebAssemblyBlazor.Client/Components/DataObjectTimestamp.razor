@@ -68,7 +68,7 @@
     {
         _updatedTimer.Elapsed += async (s, e) =>
         {
-            Updated = true;
+            Updated = false;
             await UpdatedChanged.InvokeAsync();
         };
         base.OnInitialized();

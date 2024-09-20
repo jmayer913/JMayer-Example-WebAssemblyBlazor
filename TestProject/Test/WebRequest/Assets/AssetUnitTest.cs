@@ -2,7 +2,6 @@
 using JMayer.Data.HTTP.DataLayer;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
-using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
@@ -30,21 +29,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     public AssetUnitTest(WebApplicationFactory<Program> factory) => _factory = factory;
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request the count from the server and the server can successfully process the request.
-    /// </summary>
-    /// <returns></returns>
-    [Fact]
-    public async Task CountAssetsAsync()
-    {
-        HttpClient client = _factory.CreateClient();
-        AssetDataLayer dataLayer = new(client);
-
-        int count = await dataLayer.CountAsync();
-        Assert.True(count > 0);
-    }
-
-    /// <summary>
-    /// The method confirms the HTTP data layer can request an asset to be created by the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request an asset to be created by the server and the server can successfully process the request.
     /// </summary>
     /// <param name="name">The name of the asset.</param>
     /// <param name="description">The description for the asset.</param>
@@ -63,7 +48,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("Test Equipment 2", "Test Equipment 2", AssetType.Equipment, null, null)]
     [InlineData("Test Equipment 3", "Test Equipment 3", AssetType.Equipment, "Main Bag Room", null)]
     [InlineData("Test Equipment 4", "Test Equipment 4", AssetType.Equipment, "Main Bag Room", "Equipment")]
-    public async Task AddAssetAsync(string name, string description, AssetType assetType, string parentName, string? category)
+    public async Task VerifyAddAsset(string name, string description, AssetType assetType, string parentName, string? category)
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -81,7 +66,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             }
         }
 
-        Asset originalDataObject = new()
+        Asset asset = new()
         {
             Category = category,
             Description = description,
@@ -89,22 +74,19 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             ParentID = parentID,
             Type = assetType,
         };
-        OperationResult operationResult = await dataLayer.CreateAsync(originalDataObject);
+        OperationResult operationResult = await dataLayer.CreateAsync(asset);
 
-        Assert.True
-        (
-            operationResult.IsSuccessStatusCode //The operation must have been successful.
-            && operationResult.DataObject is Asset returnedDataObject //An asset must have been returned.
-            && new AssetEqualityComparer(true, true, true).Equals(returnedDataObject, originalDataObject) //Original and return must be equal.
-        );
+        Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
+        Assert.IsType<Asset>(operationResult.DataObject); //An asset must have been returned.
+        Assert.True(new AssetEqualityComparer(true, true, true).Equals((Asset)operationResult.DataObject, asset), "The data object sent should be the same as the data object returned."); //Original and return must be equal.
     }
 
     /// <summary>
-    /// The method confirms the server will return a failure if the asset already exists when adding a new asset.
+    /// The method verifies the server will return a failure if the asset already exists when adding a new asset.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task AddDuplicateAssetAsync()
+    public async Task VerifyAddDuplicateAssetFailure()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -119,33 +101,53 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
 
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No asset was returned.
-            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
-            && operationResult.ServerSideValidationResult != null //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(Asset.Name) //The correct error was returned.
-        );
+        //The operation must have failed.
+        Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
+
+        //No asset was returned.
+        Assert.Null(operationResult.DataObject);
+
+        //A bad request status was returned.
+        Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
+
+        //A validation error was returned.
+        Assert.NotNull(operationResult.ServerSideValidationResult);
+        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+
+        //The correct error was returned.
+        Assert.Contains("name already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
+        Assert.Equal(nameof(Asset.Name), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request an asset to be deleted by the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request the count from the server and the server can successfully process the request.
+    /// </summary>
+    /// <returns></returns>
+    [Fact]
+    public async Task VerifyCountAssets()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        long count = await dataLayer.CountAsync();
+        Assert.True(count > 0);
+    }
+
+    /// <summary>
+    /// The method verifies the HTTP data layer can request an asset to be deleted by the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task DeleteAssetAsync()
+    public async Task VerifyDeleteAsset()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Asset Test" });
 
-        if (operationResult.DataObject is Asset dataObject)
+        if (operationResult.DataObject is Asset asset)
         {
-            operationResult = await dataLayer.DeleteAsync(dataObject);
+            operationResult = await dataLayer.DeleteAsync(asset);
             Assert.True(operationResult.IsSuccessStatusCode);
         }
         else
@@ -155,119 +157,131 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     /// <summary>
-    /// The method confirms on the server-side if a parent asset is deleted, the children are also deleted.
+    /// The method verifies on the server-side if a parent asset is deleted, the children are also deleted.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task DeleteAssetParentAsync()
+    public async Task VerifyDeleteAssetParentCascade()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        int preCount = await dataLayer.CountAsync();
+        long preCount = await dataLayer.CountAsync();
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Parent Test" });
-        Asset? dataObject = operationResult.DataObject as Asset;
 
-        if (dataObject == null)
+        if (operationResult.DataObject is Asset parentAsset)
+        {
+            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = parentAsset.Integer64ID });
+
+            if (!operationResult.IsSuccessStatusCode)
+            {
+                Assert.Fail("Failed to create the child asset.");
+                return;
+            }
+
+            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = parentAsset.Integer64ID });
+
+            if (!operationResult.IsSuccessStatusCode)
+            {
+                Assert.Fail("Failed to create the child asset.");
+                return;
+            }
+
+            operationResult = await dataLayer.DeleteAsync(parentAsset);
+            long postCount = await dataLayer.CountAsync();
+
+            //The operation was a success and the parent and its children were deleted.
+            Assert.True(operationResult.IsSuccessStatusCode);
+            Assert.Equal(preCount, postCount);
+        }
+        else
         {
             Assert.Fail("Failed to create the parent asset.");
             return;
         }
-
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = dataObject.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the child asset.");
-            return;
-        }
-
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = dataObject.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the child asset.");
-            return;
-        }
-
-        operationResult = await dataLayer.DeleteAsync(dataObject);
-        int postCount = await dataLayer.CountAsync();
-
-        Assert.True(operationResult.IsSuccessStatusCode && preCount == postCount);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request all assets from the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request all asset categories from the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task GetAllAssetsAsync()
-    {
-        HttpClient client = _factory.CreateClient();
-        AssetDataLayer dataLayer = new(client);
-
-        List<Asset>? dataObjects = await dataLayer.GetAllAsync();
-        Assert.True(dataObjects != null && dataObjects.Count > 0);
-    }
-
-    /// <summary>
-    /// The method confirms the HTTP data layer can request all assets as list views from the server and the server can successfully process the request.
-    /// </summary>
-    /// <returns>A Task object for the async.</returns>
-    [Fact]
-    public async Task GetAllListViewAssetsAsync()
-    {
-        HttpClient client = _factory.CreateClient();
-        AssetDataLayer dataLayer = new(client);
-
-        List<ListView>? listViews = await dataLayer.GetAllListViewAsync();
-        Assert.True(listViews != null && listViews.Count > 0);
-    }
-
-    /// <summary>
-    /// The method confirms the HTTP data layer can request all asset categories from the server and the server can successfully process the request.
-    /// </summary>
-    /// <returns>A Task object for the async.</returns>
-    [Fact]
-    public async Task GetAllAssetCategoriesAsync()
+    public async Task VerifyGetAllAssetCategories()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
         List<string>? categories = await dataLayer.GetCategoriesAsync();
-        Assert.True(categories != null && categories.Count > 0);
+
+        //Asset categories must have been returned.
+        Assert.NotNull(categories);
+        Assert.NotEmpty(categories);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request the first asset from the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request all assets from the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task GetSingleAssetAsync()
+    public async Task VerifyGetAllAssets()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        Asset? dataObject = await dataLayer.GetSingleAsync();
-        Assert.NotNull(dataObject);
+        List<Asset>? assets = await dataLayer.GetAllAsync();
+
+        //Assets must have been returned.
+        Assert.NotNull(assets);
+        Assert.NotEmpty(assets);
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request an asset from the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request all assets as list views from the server and the server can successfully process the request.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task GetSingleAssetWithIdAsync()
+    public async Task VerifyGetAllListViewAssets()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        List<ListView>? assets = await dataLayer.GetAllListViewAsync();
+        
+        //List view assets must have been returned.
+        Assert.NotNull(assets);
+        Assert.NotEmpty(assets);
+    }
+
+    /// <summary>
+    /// The method verifies the HTTP data layer can request the first asset from the server and the server can successfully process the request.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task VerifyGetSingleAsset()
+    {
+        HttpClient client = _factory.CreateClient();
+        AssetDataLayer dataLayer = new(client);
+
+        Asset? asset = await dataLayer.GetSingleAsync();
+        Assert.NotNull(asset);
+    }
+
+    /// <summary>
+    /// The method verifies the HTTP data layer can request an asset from the server and the server can successfully process the request.
+    /// </summary>
+    /// <returns>A Task object for the async.</returns>
+    [Fact]
+    public async Task VerifyGetSingleAssetWithId()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Get Single Asset Test" });
 
-        if (operationResult.DataObject is Asset assetDataObject)
+        if (operationResult.DataObject is Asset createdAsset)
         {
-            Asset? dataObject = await dataLayer.GetSingleAsync(assetDataObject.Integer64ID);
-            Assert.NotNull(dataObject);
+            Asset? asset = await dataLayer.GetSingleAsync(createdAsset.Integer64ID);
+            Assert.NotNull(asset);
         }
         else
         {
@@ -276,7 +290,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     /// <summary>
-    /// The method confirms the HTTP data layer can request an asset to be updated by the server and the server can successfully process the request.
+    /// The method verifies the HTTP data layer can request an asset to be updated by the server and the server can successfully process the request.
     /// </summary>
     /// <param name="originalName">The orginal name of the asset.</param>
     /// <param name="newName">The new name of the asset.</param>
@@ -297,16 +311,16 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("Test Asset 6", "Test AL1-05", "Test AL1-05", "Conveyor", "Make", "Model", "Manufacturer", null, Priority.Medium, false)]
     [InlineData("Test Asset 7", "Test AL1-05-BSD", "Test AL1-05-BSD", "BSD", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, false)]
     [InlineData("Test Asset 8", "Test AL1-VSU", "Test AL1-VSU", "VSU", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, true)]
-    public async Task UpdateAssetAsync(string originalName, string newName, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, Priority priority, bool online)
+    public async Task VerifyUpdateAsset(string originalName, string newName, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, Priority priority, bool online)
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = originalName });
 
-        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdDataObject)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdAsset)
         {
-            Asset updatedDataObject = new(createdDataObject)
+            Asset updatedAsset = new(createdAsset)
             {
                 Category = category,
                 Description = description,
@@ -319,14 +333,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 Priority = priority,
                 Type = AssetType.Equipment,
             };
-            operationResult = await dataLayer.UpdateAsync(updatedDataObject);
+            operationResult = await dataLayer.UpdateAsync(updatedAsset);
 
-            Assert.True
-            (
-                operationResult.IsSuccessStatusCode //The operation must have been successful.
-                && operationResult.DataObject is Asset returnedDataObject //An asset must have been returned.
-                && new AssetEqualityComparer(false, false, true).Equals(returnedDataObject, updatedDataObject) //The original data matches the returned data.
-            );
+            Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
+            Assert.IsType<Asset>(operationResult.DataObject); //An asset must have been returned.
+            Assert.True(new AssetEqualityComparer(false, false, true).Equals((Asset)operationResult.DataObject, updatedAsset), "The data object sent should be the same as the data object returned."); //The original data matches the returned data.
         }
         else
         {
@@ -335,11 +346,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     /// <summary>
-    /// The method confirms the server will return a failure if the asset being updated is old.
+    /// The method verifies the server will return a failure if the asset being updated is old.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task UpdateAssetOldDataAsync()
+    public async Task VerifyUpdateAssetOldDataConflict()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -348,43 +359,41 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         {
             Name = "Old Data Asset Test",
         });
-        Asset? firstDataObject = operationResult.DataObject as Asset;
 
-        if (firstDataObject == null)
+        if (operationResult.DataObject is Asset firstAsset)
+        {
+            Asset secondAsset = new(firstAsset);
+
+            firstAsset.Description = "A description";
+            secondAsset.Category = "A Category";
+
+            operationResult = await dataLayer.UpdateAsync(secondAsset);
+
+            if (!operationResult.IsSuccessStatusCode)
+            {
+                Assert.Fail("Failed to update the second asset.");
+                return;
+            }
+
+            operationResult = await dataLayer.UpdateAsync(firstAsset);
+
+            Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed."); //The operation must have failed.
+            Assert.Null(operationResult.DataObject); //No asset was returned.
+            Assert.Equal(HttpStatusCode.Conflict, operationResult.StatusCode); //A conflict status was returned.
+        }
+        else
         {
             Assert.Fail("Failed to create the asset.");
             return;
         }
-
-        Asset secondDataObject = new(firstDataObject);
-
-        firstDataObject.Description = "A description";
-        secondDataObject.Category = "A Category";
-
-        operationResult = await dataLayer.UpdateAsync(secondDataObject);
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to update the second asset.");
-            return;
-        }
-
-        operationResult = await dataLayer.UpdateAsync(firstDataObject);
-
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No asset was returned.
-            && operationResult.StatusCode == HttpStatusCode.Conflict //A conflict status was returned.
-        );
     }
 
     /// <summary>
-    /// The method confirms the parent path is updated when the root asset is changed to a different asset.
+    /// The method verifies the parent path is updated when the root asset is changed to a different asset.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task UpdateAssetTreeStructureAsync()
+    public async Task VerifyUpdateAssetTreeStructure()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -450,15 +459,15 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
 
         List<Asset> testTreeAssets = allAssets.Where(obj => obj.Integer64ID == middleAsset.Integer64ID || obj.ParentID == middleAsset.Integer64ID).ToList();
-        Assert.True(testTreeAssets.All(obj => obj.ParentPath != null && obj.ParentPath.Contains(otherRootAsset.Name)));
+        Assert.All(testTreeAssets, asset => Assert.True(asset.ParentPath != null && asset.ParentPath.Contains(otherRootAsset.Name)));
     }
 
     /// <summary>
-    /// The method confirms the server will return a failure if the asset already exists when updating an asset.
+    /// The method verifies the server will return a failure if the asset already exists when updating an asset.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task UpdateDuplicateAssetAsync()
+    public async Task VerifyUpdateDuplicateAssetFailure()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -472,35 +481,41 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 2" });
-        Asset? asset = operationResult.DataObject as Asset;
 
-        if (asset == null)
+        if (operationResult.DataObject is Asset asset)
+        {
+            asset.Name = "Duplicate Asset Test 1";
+            operationResult = await dataLayer.UpdateAsync(asset);
+
+            //The operation must have failed.
+            Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
+
+            //No asset was returned.
+            Assert.Null(operationResult.DataObject);
+
+            //A bad request status was returned.
+            Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
+
+            //A validation error was returned.
+            Assert.NotNull(operationResult.ServerSideValidationResult);
+            Assert.Single(operationResult.ServerSideValidationResult.Errors);
+
+            //The correct error was returned.
+            Assert.Contains("name already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
+            Assert.Equal(nameof(Asset.Name), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        }
+        else
         {
             Assert.Fail("Failed to create the second asset.");
-            return;
         }
-
-        asset.Name = "Duplicate Asset Test 1";
-        operationResult = await dataLayer.UpdateAsync(asset);
-
-        Assert.True
-        (
-            !operationResult.IsSuccessStatusCode //The operation must have failed.
-            && operationResult.DataObject == null //No asset was returned.
-            && operationResult.StatusCode == HttpStatusCode.BadRequest //A bad request status was returned.
-            && operationResult.ServerSideValidationResult != null //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors.Count == 1 //A validation error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].ErrorMessage.Contains("name already exists") //The correct error was returned.
-            && operationResult.ServerSideValidationResult.Errors[0].PropertyName == nameof(Asset.Name) //The correct error was returned.
-        );
     }
 
     /// <summary>
-    /// The method confirms the parent path is updated when the root asset is renamed.
+    /// The method verifies the parent path is updated when the root asset is renamed.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     [Fact]
-    public async Task UpdateRootAssetNameAsync()
+    public async Task VerifyUpdateRootAssetName()
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -557,6 +572,6 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         }
 
         List<Asset> testTreeAssets = allAssets.Where(obj => obj.Integer64ID == middleAsset.Integer64ID || obj.ParentID ==  middleAsset.Integer64ID).ToList();
-        Assert.True(testTreeAssets.All(obj => obj.ParentPath != null && obj.ParentPath.Contains(rootAsset.Name)));
+        Assert.All(testTreeAssets, asset => Assert.True(asset.ParentPath != null && asset.ParentPath.Contains(rootAsset.Name)));
     }
 }

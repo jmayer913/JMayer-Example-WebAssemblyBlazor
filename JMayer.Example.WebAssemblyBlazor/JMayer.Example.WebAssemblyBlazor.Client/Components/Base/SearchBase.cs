@@ -120,9 +120,9 @@ public class SearchBase<T, U, V> : ComponentBase
     protected virtual async Task OnNewButtonClickAsync()
     {
         IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName.SpaceCapitalLetters()}");
-        DialogResult dialogResult = await dialogReference.Result;
+        DialogResult? dialogResult = await dialogReference.Result;
 
-        if (!dialogResult.Canceled)
+        if (dialogResult?.Canceled == false)
         {
             await MudDataGrid.ReloadServerData();
         }

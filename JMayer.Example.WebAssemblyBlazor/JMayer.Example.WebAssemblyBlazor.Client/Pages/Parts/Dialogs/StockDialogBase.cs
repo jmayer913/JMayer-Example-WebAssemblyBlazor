@@ -39,7 +39,7 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
         {
             _selectedStorageLocation = value;
             //Map any selection changes to the StorageLocationId and StorageLocationName property.
-            DataObject.StorageLocationId = value?.Integer64ID ?? 0;
+            DataObject.StorageLocationID = value?.Integer64ID ?? 0;
             DataObject.StorageLocationName = value?.Name ?? string.Empty;
         }
     }
@@ -67,7 +67,7 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
 
         if (!IsNewRecord)
         {
-            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationId);
+            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationID);
 
             if (storageLocation != null)
             {
@@ -86,8 +86,9 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
     /// The method returns the storage location list based on what the user has typed in.
     /// </summary>
     /// <param name="value">The value to search for.</param>
+    /// <param name="cancellationToken">Used to cancel the task.</param>
     /// <returns>A list of acceptable categories.</returns>
-    protected async Task<IEnumerable<ListView>> OnStorageLocationAutoCompleteSearchAsync(string value)
+    protected async Task<IEnumerable<ListView>> OnStorageLocationAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
