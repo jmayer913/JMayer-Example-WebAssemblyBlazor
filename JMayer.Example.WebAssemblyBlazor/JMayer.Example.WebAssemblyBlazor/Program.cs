@@ -68,6 +68,9 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+//The <NotFound> in Routes.razor doesn't work and the workaround I
+//found said to tell the server to redirect to a custom not found page.
 app.UseStatusCodePagesWithRedirects("/NotFound");
 
 app.MapRazorComponents<App>()
