@@ -68,6 +68,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseStatusCodePagesWithRedirects("/NotFound");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
