@@ -10,8 +10,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\JMayer.Example.WebAssemblyBlazor.Shared\JMayer.Example.WebAssemblyBlazor.Shared.csproj" />
     <ProjectReference Include="..\JMayer.Example.WebAssemblyBlazor.Client\JMayer.Example.WebAssemblyBlazor.Client.csproj" />
-    <PackageReference Include="JMayer.Web.Mvc" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
+    <PackageReference Include="JMayer.Data" Version="1.2.0" />
+    <PackageReference Include="JMayer.Web.Mvc" Version="1.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
   </ItemGroup>
 
 </Project>
