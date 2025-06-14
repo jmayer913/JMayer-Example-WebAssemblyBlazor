@@ -50,7 +50,7 @@ public class CardDialogBase<T, U> : ComponentBase
     /// The property gets/sets a reference to the mud dialog.
     /// </summary>
     [CascadingParameter]
-    protected MudDialogInstance MudDialog { get; set; } = default!;
+    protected IMudDialogInstance MudDialog { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the id of who owns the created sub data object.
