@@ -11,8 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JMayer.Data" Version="1.2.0" />
-    <PackageReference Include="JMayer.Web.Mvc" Version="1.2.0" />
+    <PackageReference Include="JMayer.Web.Mvc" Version="1.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.17" />
