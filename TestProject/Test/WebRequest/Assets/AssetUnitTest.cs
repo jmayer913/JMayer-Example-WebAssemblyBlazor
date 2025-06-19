@@ -48,7 +48,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("Test Equipment 2", "Test Equipment 2", AssetType.Equipment, null, null)]
     [InlineData("Test Equipment 3", "Test Equipment 3", AssetType.Equipment, "Main Bag Room", null)]
     [InlineData("Test Equipment 4", "Test Equipment 4", AssetType.Equipment, "Main Bag Room", "Equipment")]
-    public async Task VerifyAddAsset(string name, string description, AssetType assetType, string parentName, string? category)
+    public async Task VerifyAddAsset(string name, string? description, AssetType assetType, string? parentName, string? category)
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);

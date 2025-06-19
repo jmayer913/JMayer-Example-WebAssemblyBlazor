@@ -76,7 +76,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("Test Motor", null, null)]
     [InlineData("Test Push Button", "Test Push Button", null)]
     [InlineData("Test Contact", "Test Contact", "Contact")]
-    public async Task VerifyAddPart(string name, string description, string? category)
+    public async Task VerifyAddPart(string name, string? description, string? category)
     {
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
@@ -290,7 +290,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("Test Part 6", "Test Limit Switch", "Test Limit Switch", "Switch", "Make", "Model", "Manufacturer", null, false)]
     [InlineData("Test Part 7", "Test Belt", "Test Belt", "Belt", "Make", "Model", "Manufacturer", "Manufacturer Number", false)]
     [InlineData("Test Part 8", "Test VFD", "Test VFD", "VFD", "Make", "Model", "Manufacturer", "Manufacturer Number", true)]
-    public async Task VerifyUpdatePart(string originalName, string newName, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, bool obsolete)
+    public async Task VerifyUpdatePart(string originalName, string newName, string? description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, bool obsolete)
     {
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);

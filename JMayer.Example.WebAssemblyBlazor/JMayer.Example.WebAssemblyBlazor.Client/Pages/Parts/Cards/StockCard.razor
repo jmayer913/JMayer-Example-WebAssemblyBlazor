@@ -25,8 +25,8 @@
                 </TemplateColumn>
                 <PropertyColumn Property="x => x.StorageLocationName" Title="Storage Location" />
                 <PropertyColumn Property="x => x.Amount" />
-                <PropertyColumn Property="x => x.CreatedOn" Editable="false" Title="Created" />
-                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" Editable="false" Title="Last Edited" />
+                <PropertyColumn Property="x => x.CreatedOn" Editable="false" Filterable="false" Title="Created" />
+                <PropertyColumn Property="x => x.LastEditedOn" Hidden="true" Filterable="false" Editable="false" Title="Last Edited" />
             </Columns>
 
             <PagerContent>

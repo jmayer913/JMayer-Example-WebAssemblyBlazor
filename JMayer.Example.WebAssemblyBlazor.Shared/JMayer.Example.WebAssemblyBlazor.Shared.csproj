@@ -4,11 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JMayer.Data" Version="1.2.0" />
+    <PackageReference Include="JMayer.Data" Version="1.2.2" />
   </ItemGroup>
 
 </Project>
