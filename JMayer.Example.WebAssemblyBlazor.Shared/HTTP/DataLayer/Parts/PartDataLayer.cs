@@ -8,7 +8,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 /// <summary>
 /// The class manages CRUD interactions with a remote server for a part.
 /// </summary>
-public class PartDataLayer : UserEditableDataLayer<Part>, IPartDataLayer
+public class PartDataLayer : StandardCRUDDataLayer<Part>, IPartDataLayer
 {
     /// <inheritdoc/>
     public PartDataLayer(HttpClient httpClient) : base(httpClient) { }
@@ -19,7 +19,7 @@ public class PartDataLayer : UserEditableDataLayer<Part>, IPartDataLayer
         List<string>? categories = null;
         HttpResponseMessage httpResponseMessage = await HttpClient.GetAsync($"api/{TypeName}/Category/All", cancellationToken);
 
-        if (httpResponseMessage.IsSuccessStatusCode && httpResponseMessage.StatusCode != HttpStatusCode.NoContent)
+        if (httpResponseMessage.IsSuccessStatusCode && httpResponseMessage.StatusCode is not HttpStatusCode.NoContent)
         {
             categories = await httpResponseMessage.Content.ReadFromJsonAsync<List<string>>(cancellationToken);
         }

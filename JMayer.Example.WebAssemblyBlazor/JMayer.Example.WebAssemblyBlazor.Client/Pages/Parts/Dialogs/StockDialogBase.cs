@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Dialogs;
 
+#warning There's no error handling if DataLayer.GetAllListViewAsync() throws an exception because of network issues.
+
 /// <summary>
 /// The class manages user interactions with the StockDialog.razor dialog.
 /// </summary>
@@ -65,16 +67,16 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
     {
         StorageLocations = await StorageLocationDataLayer.GetAllListViewAsync() ?? [];
 
-        if (!IsNewRecord)
+        if (IsNewRecord is false)
         {
             StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationID);
 
-            if (storageLocation != null)
+            if (storageLocation is not null)
             {
                 SelectedStorageLocation = new ListView()
                 {
                     Integer64ID = storageLocation.Integer64ID,
-                    Name = storageLocation.Name,
+                    Name = storageLocation.Name ?? string.Empty,
                 };
             }
         }

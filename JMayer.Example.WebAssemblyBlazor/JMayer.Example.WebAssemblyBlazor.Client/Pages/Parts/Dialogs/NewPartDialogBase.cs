@@ -4,6 +4,8 @@ using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Dialogs;
 
+#warning There's no error handling if DataLayer.GetCategoriesAsync() throws an exception because of network issues.
+
 /// <summary>
 /// The class manages user interactions with the NewPartDialog.razor dialog.
 /// </summary>

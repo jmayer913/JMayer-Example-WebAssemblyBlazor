@@ -3,21 +3,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 
+#warning I wonder if I should make the locations nullable since no value can be set.
+#warning I should use Name instead of FriendlyName; maybe I can override Name only have it be get or hide the set with the access level.
+
 /// <summary>
 /// The class represents a storage location for an area asset.
 /// </summary>
 /// <remarks>
-/// The OwnerId in the SubUserEditableDataObject will represent an asset.
+/// The OwnerId in the SubDataObject will represent an asset.
 /// </remarks>
-public class StorageLocation : SubUserEditableDataObject
+public class StorageLocation : SubDataObject
 {
     /// <summary>
     /// The property gets/sets the friendly name (locations concatenated).
     /// </summary>
-    public string FriendlyName
-    {
-        get => $"{LocationA}{(!string.IsNullOrWhiteSpace(LocationB) ? $" {LocationB}" : string.Empty)}{(!string.IsNullOrWhiteSpace(LocationC) ? $" {LocationC}" : string.Empty)}";
-    }
+    public string FriendlyName => $"{LocationA}{(string.IsNullOrWhiteSpace(LocationB) is false ? $" {LocationB}" : string.Empty)}{(string.IsNullOrWhiteSpace(LocationC) is false ? $" {LocationC}" : string.Empty)}";
 
     /// <summary>
     /// The property gets/sets the name of the A location for the storage location.
@@ -46,7 +46,7 @@ public class StorageLocation : SubUserEditableDataObject
     {
         base.MapProperties(dataObject);
 
-        if (dataObject is  StorageLocation storageLocation)
+        if (dataObject is StorageLocation storageLocation)
         {
             LocationA = storageLocation.LocationA;
             LocationB = storageLocation.LocationB;

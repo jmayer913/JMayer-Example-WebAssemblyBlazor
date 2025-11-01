@@ -4,14 +4,16 @@ using Microsoft.AspNetCore.Components;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 
+#warning There's no error handling if DataLayer.GetSingleAsync() throws an exception because of network issues.
+
 /// <summary>
 /// The class manages interaction for an inspector.
 /// </summary>
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 public class InspectorBase<T, U> : ComponentBase
-    where T : UserEditableDataObject
-    where U : IUserEditableDataLayer<T>
+    where T : DataObject
+    where U : IStandardCRUDDataLayer<T>
 {
     /// <summary>
     /// The property gets/sets the data layer to used by the page.

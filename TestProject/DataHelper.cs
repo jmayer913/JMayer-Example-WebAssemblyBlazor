@@ -20,14 +20,13 @@ internal static class DataHelper
     public static async Task<Asset?> GetOrCreateAreaAssetAsync(HttpClient client, string areaName)
     {
         AssetDataLayer dataLayer = new(client);
-
         List<Asset>? assets = await dataLayer.GetAllAsync();
 
-        if (assets != null)
+        if (assets is not null)
         {
             Asset? areaAsset = assets.FirstOrDefault(obj => obj.Name == areaName && obj.Type == AssetType.Area);
 
-            if (areaAsset != null)
+            if (areaAsset is not null)
             {
                 return areaAsset;
             }
@@ -46,14 +45,13 @@ internal static class DataHelper
     public static async Task<Part?> GetOrCreatePartAsync(HttpClient client, string name)
     {
         PartDataLayer dataLayer = new(client);
-
         List<Part>? parts = await dataLayer.GetAllAsync();
 
-        if (parts != null)
+        if (parts is not null)
         {
             Part? part = parts.FirstOrDefault(obj => obj.Name == name);
 
-            if (part != null)
+            if (part is not null)
             {
                 return part;
             }
@@ -73,14 +71,13 @@ internal static class DataHelper
     public static async Task<StorageLocation?> GetOrCreateStorageLocationAsync(HttpClient client, string locationName, long ownerID)
     {
         StorageLocationDataLayer dataLayer = new(client);
-
         List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync();
 
-        if (storageLocations != null)
+        if (storageLocations is not null)
         {
             StorageLocation? foundStorageLocation = storageLocations.FirstOrDefault(obj => obj.LocationA == locationName);
 
-            if (foundStorageLocation != null)
+            if (foundStorageLocation is not null)
             {
                 return foundStorageLocation;
             }

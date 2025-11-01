@@ -1,11 +1,12 @@
 ﻿using JMayer.Data.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 
 /// <summary>
 /// The class represents a part to be used for repairing an asset.
 /// </summary>
-public class Part : UserEditableDataObject
+public class Part : DataObject
 {
     /// <summary>
     /// The property gets/sets the common category for the part.
@@ -31,6 +32,11 @@ public class Part : UserEditableDataObject
     /// The property gets/sets the model for the part.
     /// </summary>
     public string? Model { get; set; }
+
+    /// <inheritdoc/>
+    /// <remarks>Overridden to add Required data annotation.</remarks>
+    [Required]
+    public override string? Name { get => base.Name; set => base.Name = value; }
 
     /// <summary>
     /// The property gets/sets is no longer procedured by the manfacturer.

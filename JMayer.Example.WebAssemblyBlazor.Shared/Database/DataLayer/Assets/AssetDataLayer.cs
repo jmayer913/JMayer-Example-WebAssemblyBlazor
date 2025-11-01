@@ -6,23 +6,24 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 /// <summary>
 /// The class manages CRUD interactions with the database for an asset.
 /// </summary>
-public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
+public class AssetDataLayer : StandardCRUDDataLayer<Asset>, IAssetDataLayer
 {
+    /// <summary>
+    /// The default constructor.
+    /// </summary>
+    public AssetDataLayer() => IsUniqueNameRequired = true;
+
     /// <inheritdoc/>
     /// <remarks>
     /// This is overriden so the parent path can be set before creation.
     /// </remarks>
     public override async Task<Asset> CreateAsync(Asset dataObject, CancellationToken cancellationToken = default)
     {
-        //Set the parent path is a parent exists.
-        if (dataObject.ParentID != null)
+        //Set the parent path if a parent exists.
+        if (dataObject.ParentID is not null)
         {
             Asset? parent = await GetSingleAsync(obj => obj.Integer64ID == dataObject.ParentID, cancellationToken);
-
-            if (parent != null)
-            {
-                dataObject.ParentPath = parent.MeAsParentPath;
-            }
+            dataObject.ParentPath = parent?.MeAsParentPath;
         }
 
         return await base.CreateAsync(dataObject, cancellationToken);
@@ -53,23 +54,24 @@ public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
     /// <returns>A list of children assets or an empty list is none exists.</returns>
     private async Task<List<Asset>> GetChildrenAsync(Asset parent, CancellationToken cancellationToken)
     {
-        List<Asset> returnList = [];
         List<Asset> children = await GetAllAsync(obj => obj.ParentID == parent.Integer64ID, cancellationToken: cancellationToken);
 
-        if (children.Count > 0)
+        if (children.Count is 0)
         {
-            returnList = [.. children];
+            return [];
+        }
 
-            foreach (Asset child in children)
+        List<Asset> returnList = [.. children];
+
+        foreach (Asset child in children)
+        {
+            if (child.ParentID is not null)
             {
-                if (child.ParentID != null)
-                {
-                    List<Asset> temp = await GetChildrenAsync(child, cancellationToken);
+                List<Asset> temp = await GetChildrenAsync(child, cancellationToken);
 
-                    if (temp.Count > 0)
-                    {
-                        returnList.AddRange(temp);
-                    }
+                if (temp.Count > 0)
+                {
+                    returnList.AddRange(temp);
                 }
             }
         }
@@ -87,9 +89,9 @@ public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
         Asset? originalDataObject = await GetSingleAsync(obj => obj.Integer64ID == dataObject.Integer64ID, cancellationToken);
 
         //Update the parent path if the parent has changed.
-        if (originalDataObject != null && originalDataObject.ParentID != dataObject.ParentID)
+        if (originalDataObject is not null && originalDataObject.ParentID != dataObject.ParentID)
         {
-            if (dataObject.ParentID == null)
+            if (dataObject.ParentID is null)
             {
                 dataObject.ParentPath = null;
             }
@@ -103,7 +105,7 @@ public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
         dataObject = await base.UpdateAsync(dataObject, cancellationToken);
 
         //All child under the asset must update their parent's path if the name has changed or the parent has changed.
-        if (originalDataObject != null && (originalDataObject.Name != dataObject.Name || originalDataObject.ParentID != dataObject.ParentID))
+        if (originalDataObject is not null && (originalDataObject.Name != dataObject.Name || originalDataObject.ParentID != dataObject.ParentID))
         {
             await UpdateParentPathAsync(dataObject.MeAsParentPath, dataObject, cancellationToken);
         }
@@ -122,15 +124,17 @@ public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
     {
         List<Asset> children = await GetAllAsync(obj => obj.ParentID == parentAsset.Integer64ID, cancellationToken: cancellationToken);
 
-        if (children.Count > 0)
+        if (children.Count is 0)
         {
-            foreach (Asset childAsset in children)
-            {
-                childAsset.ParentPath = parentPath;
-                await UpdateParentPathAsync(childAsset.MeAsParentPath, childAsset, cancellationToken);
-            }
-
-            _ = await UpdateAsync(children, cancellationToken);
+            return;
         }
+
+        foreach (Asset childAsset in children)
+        {
+            childAsset.ParentPath = parentPath;
+            await UpdateParentPathAsync(childAsset.MeAsParentPath, childAsset, cancellationToken);
+        }
+
+        _ = await UpdateAsync(children, cancellationToken);
     }
 }

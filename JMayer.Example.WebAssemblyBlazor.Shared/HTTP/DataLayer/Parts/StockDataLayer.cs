@@ -6,7 +6,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 /// <summary>
 /// The class manages CRUD interactions with a remote server for a part stock.
 /// </summary>
-public class StockDataLayer : SubUserEditableDataLayer<Stock>, IStockDataLayer
+public class StockDataLayer : StandardSubCRUDDataLayer<Stock>, IStockDataLayer
 {
     /// <inheritdoc/>
     public StockDataLayer(HttpClient httpClient) : base(httpClient) { }

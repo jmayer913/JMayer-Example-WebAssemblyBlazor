@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JMayer.Example.WebAssemblyB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestProject\TestProject.csproj", "{C0DD761B-7F78-45DF-A25D-6D022212C839}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JMayer.Data", "..\JMayer-Data-Library\JMayer.Data\JMayer.Data.csproj", "{5E2E9979-417E-9AC0-DE5B-ED439D651066}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JMayer.Web.Mvc", "..\JMayer-Web-Mvc-Library\JMayer.Web.Mvc\JMayer.Web.Mvc.csproj", "{185EFF51-282E-8F0A-7CE5-41B2029C51D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{C0DD761B-7F78-45DF-A25D-6D022212C839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0DD761B-7F78-45DF-A25D-6D022212C839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0DD761B-7F78-45DF-A25D-6D022212C839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E2E9979-417E-9AC0-DE5B-ED439D651066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E2E9979-417E-9AC0-DE5B-ED439D651066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E2E9979-417E-9AC0-DE5B-ED439D651066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E2E9979-417E-9AC0-DE5B-ED439D651066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{185EFF51-282E-8F0A-7CE5-41B2029C51D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{185EFF51-282E-8F0A-7CE5-41B2029C51D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{185EFF51-282E-8F0A-7CE5-41B2029C51D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{185EFF51-282E-8F0A-7CE5-41B2029C51D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

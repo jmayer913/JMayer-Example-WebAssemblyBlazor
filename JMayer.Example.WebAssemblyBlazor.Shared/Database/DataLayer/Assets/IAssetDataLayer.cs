@@ -6,6 +6,6 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 /// <summary>
 /// The interface for interacting with an asset collection in a database using CRUD operations.
 /// </summary>
-public interface IAssetDataLayer : IUserEditableDataLayer<Asset>
+public interface IAssetDataLayer : IStandardCRUDDataLayer<Asset>
 {
 }

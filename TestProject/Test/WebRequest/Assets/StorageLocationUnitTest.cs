@@ -88,12 +88,11 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
         //A validation error was returned.
-        Assert.NotNull(operationResult.ServerSideValidationResult);
-        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+        Assert.Single(operationResult.ValidationErrors);
 
         //The correct error was returned.
-        Assert.Contains("location already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(StorageLocation.LocationA), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.LocationA));
+        Assert.Contains("location already exists", operationResult.ValidationErrors[nameof(StorageLocation.LocationA)][0]);
     }
 
     /// <summary>
@@ -157,12 +156,11 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
         //A validation error was returned.
-        Assert.NotNull(operationResult.ServerSideValidationResult);
-        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+        Assert.Single(operationResult.ValidationErrors);
 
         //The correct error was returned.
-        Assert.Contains("asset was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(StorageLocation.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.OwnerInteger64ID));
+        Assert.Contains("asset was not found", operationResult.ValidationErrors[nameof(StorageLocation.OwnerInteger64ID)][0]);
     }
 
     /// <summary>
@@ -456,12 +454,11 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
             //A validation error was returned.
-            Assert.NotNull(operationResult.ServerSideValidationResult);
-            Assert.Single(operationResult.ServerSideValidationResult.Errors);
+            Assert.Single(operationResult.ValidationErrors);
 
             //The correct error was returned.
-            Assert.Contains("location already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-            Assert.Equal(nameof(StorageLocation.LocationA), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+            Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.LocationA));
+            Assert.Contains("location already exists", operationResult.ValidationErrors[nameof(StorageLocation.LocationA)][0]);
         }
         else
         {
@@ -568,12 +565,11 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
         //A validation error was returned.
-        Assert.NotNull(operationResult.ServerSideValidationResult);
-        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+        Assert.Single(operationResult.ValidationErrors);
 
         //The correct error was returned.
-        Assert.Contains("asset was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(StorageLocation.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.OwnerInteger64ID));
+        Assert.Contains("asset was not found", operationResult.ValidationErrors[nameof(StorageLocation.OwnerInteger64ID)][0]);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Data.HTTP.DataLayer;
+using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -57,12 +58,11 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
         //A validation error was returned.
-        Assert.NotNull(operationResult.ServerSideValidationResult);
-        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+        Assert.Single(operationResult.ValidationErrors);
 
         //The correct error was returned.
-        Assert.Contains("name already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(Part.Name), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Part.Name));
+        Assert.Contains("name already exists", operationResult.ValidationErrors[nameof(Part.Name)][0]);
     }
 
     /// <summary>
@@ -254,12 +254,11 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
             //A validation error was returned.
-            Assert.NotNull(operationResult.ServerSideValidationResult);
-            Assert.Single(operationResult.ServerSideValidationResult.Errors);
+            Assert.Single(operationResult.ValidationErrors);
 
             //The correct error was returned.
-            Assert.Contains("name already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-            Assert.Equal(nameof(Part.Name), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+            Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Part.Name));
+            Assert.Contains("name already exists", operationResult.ValidationErrors[nameof(Part.Name)][0]);
         }
         else
         {

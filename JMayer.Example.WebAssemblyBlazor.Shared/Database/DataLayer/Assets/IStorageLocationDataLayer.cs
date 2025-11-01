@@ -6,6 +6,6 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 /// <summary>
 /// The interface for interacting with a storage location collection in a database using CRUD operations.
 /// </summary>
-public interface IStorageLocationDataLayer : IUserEditableDataLayer<StorageLocation>
+public interface IStorageLocationDataLayer : IStandardSubCRUDDataLayer<StorageLocation>
 {
 }

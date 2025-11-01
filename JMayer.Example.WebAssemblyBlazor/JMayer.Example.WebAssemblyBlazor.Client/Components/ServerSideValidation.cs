@@ -25,15 +25,17 @@ public class ServerSideValidation : ComponentBase
     /// <param name="errors">The errors to display.</param>
     public void DisplayErrors(Dictionary<string, List<string>> errors)
     {
-        if (_store != null)
+        if (_store is null)
         {
-            foreach (var error in errors)
-            {
-                _store.Add(EditContext.Field(error.Key), error.Value);
-            }
-
-            EditContext.NotifyValidationStateChanged();
+            return;
         }
+
+        foreach (var error in errors)
+        {
+            _store.Add(EditContext.Field(error.Key), error.Value);
+        }
+
+        EditContext.NotifyValidationStateChanged();
     }
 
     /// <summary>

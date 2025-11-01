@@ -6,7 +6,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 /// <summary>
 /// The class manages CRUD interactions with a remote server for a storage location.
 /// </summary>
-public class StorageLocationDataLayer : SubUserEditableDataLayer<StorageLocation>, IStorageLocationDataLayer
+public class StorageLocationDataLayer : StandardSubCRUDDataLayer<StorageLocation>, IStorageLocationDataLayer
 {
     /// <inheritdoc/>
     public StorageLocationDataLayer(HttpClient httpClient) : base(httpClient) { }

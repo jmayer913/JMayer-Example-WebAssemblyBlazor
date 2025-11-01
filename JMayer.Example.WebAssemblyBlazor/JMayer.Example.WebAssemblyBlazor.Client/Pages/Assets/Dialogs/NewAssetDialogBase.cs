@@ -5,6 +5,8 @@ using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Dialogs;
 
+#warning There's no error handling if DataLayer.GetAllListViewAsync() or DataLayer.GetCategoriesAsync() throws an exception because of network issues.
+
 /// <summary>
 /// The class manages user interactions with the NewAssetDialog.razor dialog.
 /// </summary>
@@ -16,15 +18,15 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     private ListView? _selectedAssetParent;
 
     /// <summary>
-    /// The property gets/sets the assets to choose for a parent.
-    /// </summary>
-    protected List<ListView> Assets { get; set; } = [];
-
-    /// <summary>
     /// The property gets/sets the categories for the parts.
     /// </summary>
     protected List<string> Categories { get; set; } = [];
-    
+
+    /// <summary>
+    /// The property gets/sets the assets to choose for a parent.
+    /// </summary>
+    protected List<ListView> ParentAssets { get; set; } = [];
+
     /// <summary>
     /// The property gets/sets the parent asset which the user selected.
     /// </summary>
@@ -45,7 +47,7 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        Assets = await DataLayer.GetAllListViewAsync() ?? [];
+        ParentAssets = await DataLayer.GetAllListViewAsync() ?? [];
         Categories = await DataLayer.GetCategoriesAsync() ?? [];
         await base.OnParametersSetAsync();
     }
@@ -60,11 +62,11 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return await Task.FromResult(Assets);
+            return await Task.FromResult(ParentAssets);
         }
         else
         {
-            return await Task.FromResult(Assets.Where(obj => obj.Name.Contains(value)));
+            return await Task.FromResult(ParentAssets.Where(obj => obj.Name.Contains(value)));
         }
     }
 

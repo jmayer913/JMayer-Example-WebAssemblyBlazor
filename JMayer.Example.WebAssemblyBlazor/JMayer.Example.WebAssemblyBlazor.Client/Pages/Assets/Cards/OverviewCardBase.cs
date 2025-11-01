@@ -15,14 +15,14 @@ public class OverviewCardBase : Components.Base.OverviewCardBase<Asset, IAssetDa
     private ListView? _selectedAssetParent;
 
     /// <summary>
-    /// The property gets/sets the assets to choose for a parent.
-    /// </summary>
-    protected List<ListView> Assets { get; set; } = [];
-
-    /// <summary>
     /// The property gets/sets the categories for the parts.
     /// </summary>
     protected List<string> Categories { get; set; } = [];
+
+    /// <summary>
+    /// The property gets/sets the assets to choose for a parent.
+    /// </summary>
+    protected List<ListView> ParentAssets { get; set; } = [];
 
     /// <summary>
     /// The property gets/sets the parent asset which the user selected.
@@ -44,19 +44,19 @@ public class OverviewCardBase : Components.Base.OverviewCardBase<Asset, IAssetDa
     /// <returns></returns>
     protected override async Task OnParametersSetAsync()
     {
-        Assets = await DataLayer.GetAllListViewAsync() ?? [];
+        ParentAssets = await DataLayer.GetAllListViewAsync() ?? [];
         Categories = await DataLayer.GetCategoriesAsync() ?? [];
 
-        if (DataObject.ParentID != null)
+        if (DataObject.ParentID is not null)
         {
             Asset? parent = await DataLayer.GetSingleAsync(DataObject.ParentID ?? 0);
 
-            if (parent != null)
+            if (parent is not null)
             {
                 SelectedAssetParent = new ListView()
                 {
                     Integer64ID = parent.Integer64ID,
-                    Name = parent.Name,
+                    Name = parent.Name ?? string.Empty,
                 };
             }
         }
@@ -74,11 +74,11 @@ public class OverviewCardBase : Components.Base.OverviewCardBase<Asset, IAssetDa
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return await Task.FromResult(Assets);
+            return await Task.FromResult(ParentAssets);
         }
         else
         {
-            return await Task.FromResult(Assets.Where(obj => obj.Name.Contains(value)));
+            return await Task.FromResult(ParentAssets.Where(obj => obj.Name.Contains(value)));
         }
     }
 

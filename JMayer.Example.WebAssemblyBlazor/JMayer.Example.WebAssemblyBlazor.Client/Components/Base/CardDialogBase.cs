@@ -14,8 +14,8 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 public class CardDialogBase<T, U> : ComponentBase
-    where T : SubUserEditableDataObject, new()
-    where U : ISubUserEditableDataLayer<T>
+    where T : SubDataObject, new()
+    where U : IStandardSubCRUDDataLayer<T>
 {
     /// <summary>
     /// The property gets/sets the data layer to be used by the dialog.
@@ -72,7 +72,7 @@ public class CardDialogBase<T, U> : ComponentBase
     protected override void OnParametersSet()
     {
         //For new records, set the owner to the value set when the dialog is opened.
-        if (DataObject.OwnerInteger64ID == 0)
+        if (DataObject.OwnerInteger64ID is 0)
         {
             DataObject.OwnerInteger64ID = OwnerId;
         }
@@ -109,17 +109,18 @@ public class CardDialogBase<T, U> : ComponentBase
             {
                 MudDialog.Close();
             }
-            else if (operationResult.ServerSideValidationResult?.Errors.Count > 0)
+            else if (operationResult.ValidationErrors.Count > 0)
             {
                 Dictionary<string, List<string>> errors = [];
 
-                foreach (ServerSideValidationError error in operationResult.ServerSideValidationResult.Errors)
+                foreach (var errorKeyPairs in operationResult.ValidationErrors)
                 {
-                    errors.Add(error.PropertyName, [error.ErrorMessage]);
+                    errors.Add(errorKeyPairs.Key, [.. errorKeyPairs.Value]);
                 }
 
                 ServerSideValidation.DisplayErrors(errors);
             }
+#warning I need to decide if the problem details are utilized.
             else if (operationResult.StatusCode == HttpStatusCode.Conflict)
             {
                 await DialogService.ShowEditConflictMessageAsync();

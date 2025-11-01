@@ -8,7 +8,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
 /// <summary>
 /// The class manages CRUD interactions with the database for a storage location.
 /// </summary>
-public class StorageLocationDataLayer : UserEditableDataLayer<StorageLocation>, IStorageLocationDataLayer
+public class StorageLocationDataLayer : StandardSubCRUDDataLayer<StorageLocation>, IStorageLocationDataLayer
 {
     /// <summary>
     /// The data layer for interacting with assets.
@@ -49,21 +49,18 @@ public class StorageLocationDataLayer : UserEditableDataLayer<StorageLocation>, 
 
     /// <inheritdoc/>
     /// <remarks>
-    /// Overriding and not calling the base because the parent class forces the Name property 
-    /// to be unique but the property is not used. Also, added additional server-side validation
-    /// unique to the storage location.
+    /// Overriding to check if the owner asset exists and the storage location doesn't already exist.
     /// </remarks>
     public override async Task<List<ValidationResult>> ValidateAsync(StorageLocation dataObject, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(dataObject);
-        List<ValidationResult> validationResults = dataObject.Validate();
+        List<ValidationResult> validationResults = await base.ValidateAsync(dataObject, cancellationToken);
 
-        if (await _assetDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.OwnerInteger64ID, cancellationToken) == false)
+        if (await _assetDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.OwnerInteger64ID, cancellationToken) is false)
         {
             validationResults.Add(new ValidationResult($"The {dataObject.OwnerInteger64ID} asset was not found in the data store.", [nameof(StorageLocation.OwnerInteger64ID)]));
         }
 
-        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.LocationA == dataObject.LocationA && obj.LocationB == dataObject.LocationB && obj.LocationC == dataObject.LocationC, cancellationToken) == true)
+        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.LocationA == dataObject.LocationA && obj.LocationB == dataObject.LocationB && obj.LocationC == dataObject.LocationC, cancellationToken) is true)
         {
             validationResults.Add(new ValidationResult("The location already exists in the data store.", [nameof(StorageLocation.LocationA)]));
         }

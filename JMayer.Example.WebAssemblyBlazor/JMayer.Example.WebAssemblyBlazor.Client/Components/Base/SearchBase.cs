@@ -13,8 +13,8 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 /// <typeparam name="V">Must be a component that's also a dialog.</typeparam>
 public class SearchBase<T, U, V> : ComponentBase
-    where T : UserEditableDataObject
-    where U : IUserEditableDataLayer<T>
+    where T : DataObject
+    where U : IStandardCRUDDataLayer<T>
     where V : ComponentBase
 {
     /// <summary>
@@ -56,7 +56,7 @@ public class SearchBase<T, U, V> : ComponentBase
         {
             PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(gridState.ToQueryDefinition());
 
-            if (pagedDataObjects != null)
+            if (pagedDataObjects is not null)
             {
                 return new GridData<T>()
                 {
@@ -82,7 +82,7 @@ public class SearchBase<T, U, V> : ComponentBase
     {
         bool? result = await DialogService.ShowConfirmActionMessageAsync();
 
-        if (result == true)
+        if (result is true)
         {
             try
             {
@@ -122,7 +122,7 @@ public class SearchBase<T, U, V> : ComponentBase
         IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName.SpaceCapitalLetters()}");
         DialogResult? dialogResult = await dialogReference.Result;
 
-        if (dialogResult?.Canceled == false)
+        if (dialogResult?.Canceled is false)
         {
             await MudDataGrid.ReloadServerData();
         }

@@ -14,8 +14,8 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 public class OverviewCardBase<T, U> : ComponentBase
-    where T : UserEditableDataObject, new()
-    where U : IUserEditableDataLayer<T>
+    where T : DataObject, new()
+    where U : IStandardCRUDDataLayer<T>
 {
     /// <summary>
     /// The property gets/sets the data layer to used by the page.
@@ -90,25 +90,26 @@ public class OverviewCardBase<T, U> : ComponentBase
         {
             OperationResult operationResult = await DataLayer.UpdateAsync(DataObject);
 
-            if (operationResult.IsSuccessStatusCode && operationResult.DataObject != null)
+            if (operationResult.IsSuccessStatusCode && operationResult.DataObject is not null)
             {
                 Updated = true;
                 DataObject.MapProperties((T)operationResult.DataObject);
                 OriginalDataObject.MapProperties(DataObject);
                 EditContext.MarkAsUnmodified();
             }
-            else if (operationResult.ServerSideValidationResult?.Errors.Count > 0)
+            else if (operationResult.ValidationErrors.Count > 0)
             {
                 Dictionary<string, List<string>> errors = [];
 
-                foreach (ServerSideValidationError error in operationResult.ServerSideValidationResult.Errors)
+                foreach (var errorKeyPair in operationResult.ValidationErrors)
                 {
-                    errors.Add(error.PropertyName, [error.ErrorMessage]);
+                    errors.Add(errorKeyPair.Key, [.. errorKeyPair.Value]);
                 }
 
                 ServerSideValidation.DisplayErrors(errors);
             }
-            else if (operationResult.StatusCode == HttpStatusCode.Conflict)
+#warning I need to decide if the problem details are utilized.
+            else if (operationResult.StatusCode is HttpStatusCode.Conflict)
             {
                 await DialogService.ShowEditConflictMessageAsync();
             }

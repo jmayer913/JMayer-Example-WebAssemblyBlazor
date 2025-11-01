@@ -83,12 +83,11 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
         //A validation error was returned.
-        Assert.NotNull(operationResult.ServerSideValidationResult);
-        Assert.Single(operationResult.ServerSideValidationResult.Errors);
+        Assert.Single(operationResult.ValidationErrors);
 
         //The correct error was returned.
-        Assert.Contains("stock location already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(Stock.StorageLocationID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Stock.StorageLocationID));
+        Assert.Contains("stock location already exists", operationResult.ValidationErrors[nameof(Stock.StorageLocationID)][0]);
     }
 
     /// <summary>
@@ -168,14 +167,13 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
         //A validation error was returned.
-        Assert.NotNull(operationResult.ServerSideValidationResult);
-        Assert.Equal(2, operationResult.ServerSideValidationResult.Errors.Count);
+        Assert.Equal(2, operationResult.ValidationErrors.Count);
 
         //The correct error was returned.
-        Assert.Contains("part was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(Stock.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
-        Assert.Contains("storage location was not found", operationResult.ServerSideValidationResult.Errors[1].ErrorMessage);
-        Assert.Equal(nameof(Stock.StorageLocationID), operationResult.ServerSideValidationResult.Errors[1].PropertyName);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Stock.OwnerInteger64ID));
+        Assert.Contains("part was not found", operationResult.ValidationErrors[nameof(Stock.OwnerInteger64ID)][0]);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Stock.StorageLocationID));
+        Assert.Contains("storage location was not found", operationResult.ValidationErrors[nameof(Stock.StorageLocationID)][0]);
     }
 
     /// <summary>
@@ -715,14 +713,13 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
             //A validation error was returned.
-            Assert.NotNull(operationResult.ServerSideValidationResult);
-            Assert.Equal(2, operationResult.ServerSideValidationResult.Errors.Count);
+            Assert.Equal(2, operationResult.ValidationErrors.Count);
 
             //The correct error was returned.
-            Assert.Contains("part was not found", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-            Assert.Equal(nameof(Stock.OwnerInteger64ID), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
-            Assert.Contains("storage location was not found", operationResult.ServerSideValidationResult.Errors[1].ErrorMessage);
-            Assert.Equal(nameof(Stock.StorageLocationID), operationResult.ServerSideValidationResult.Errors[1].PropertyName);
+            Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Stock.OwnerInteger64ID));
+            Assert.Contains("part was not found", operationResult.ValidationErrors[nameof(Stock.OwnerInteger64ID)][0]);
+            Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Stock.StorageLocationID));
+            Assert.Contains("storage location was not found", operationResult.ValidationErrors[nameof(Stock.StorageLocationID)][0]);
         }
         else
         {

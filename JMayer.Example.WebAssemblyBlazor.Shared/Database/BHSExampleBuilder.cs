@@ -232,7 +232,6 @@ public class BHSExampleBuilder
                 _ = StockDataLayer.CreateAsync(new Stock()
                 {
                     Amount = 5 * (index + 1),
-                    Name = "A Name",
                     OwnerInteger64ID = parts[index].Integer64ID,
                     StorageLocationID = storageLocations[index].Integer64ID,
                     StorageLocationName = storageLocations[index].FriendlyName,
@@ -261,7 +260,6 @@ public class BHSExampleBuilder
             LocationC = "S1",
             OwnerInteger64ID = asset.Integer64ID,
         };
-        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
 
         storageLocation = new StorageLocation()
@@ -271,7 +269,6 @@ public class BHSExampleBuilder
             LocationC = "S2",
             OwnerInteger64ID = asset.Integer64ID,
         };
-        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
 
         storageLocation = new StorageLocation()
@@ -281,7 +278,6 @@ public class BHSExampleBuilder
             LocationC = "S1",
             OwnerInteger64ID = asset.Integer64ID,
         };
-        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
 
         storageLocation = new StorageLocation()
@@ -291,7 +287,6 @@ public class BHSExampleBuilder
             LocationC = "S2",
             OwnerInteger64ID = asset.Integer64ID,
         };
-        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
     }
 }
