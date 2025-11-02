@@ -1,11 +1,10 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Dialogs;
-
-#warning There's no error handling if DataLayer.GetAllListViewAsync() or DataLayer.GetCategoriesAsync() throws an exception because of network issues.
 
 /// <summary>
 /// The class manages user interactions with the NewAssetDialog.razor dialog.
@@ -47,8 +46,21 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        ParentAssets = await DataLayer.GetAllListViewAsync() ?? [];
-        Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        Task<List<string>?> categoryTask = DataLayer.GetCategoriesAsync();
+        Task<List<ListView>?> parentAssetTask = DataLayer.GetAllListViewAsync();
+
+        try
+        {
+            await Task.WhenAll(categoryTask, parentAssetTask);
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
+        Categories = categoryTask.Result ?? [];
+        ParentAssets = parentAssetTask.Result ?? [];
+
         await base.OnParametersSetAsync();
     }
 

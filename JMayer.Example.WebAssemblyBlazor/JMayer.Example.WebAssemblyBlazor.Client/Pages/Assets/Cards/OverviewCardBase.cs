@@ -1,4 +1,5 @@
 ﻿using JMayer.Data.Data;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 
@@ -44,20 +45,28 @@ public class OverviewCardBase : Components.Base.OverviewCardBase<Asset, IAssetDa
     /// <returns></returns>
     protected override async Task OnParametersSetAsync()
     {
-        ParentAssets = await DataLayer.GetAllListViewAsync() ?? [];
-        Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        Task<List<string>?> categoryTask = DataLayer.GetCategoriesAsync();
+        Task<List<ListView>?> parentAssetTask = DataLayer.GetAllListViewAsync();
+
+        try
+        {
+            await Task.WhenAll(categoryTask, parentAssetTask);
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
+        Categories = categoryTask.Result ?? [];
+        ParentAssets = parentAssetTask.Result ?? [];
 
         if (DataObject.ParentID is not null)
         {
-            Asset? parent = await DataLayer.GetSingleAsync(DataObject.ParentID ?? 0);
+            ListView? parent = ParentAssets.FirstOrDefault(obj => obj.Integer64ID == DataObject.ParentID);
 
             if (parent is not null)
             {
-                SelectedAssetParent = new ListView()
-                {
-                    Integer64ID = parent.Integer64ID,
-                    Name = parent.Name ?? string.Empty,
-                };
+                SelectedAssetParent = parent;
             }
         }
         

@@ -1,10 +1,10 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Data.HTTP.DataLayer;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
-
-#warning There's no error handling if DataLayer.GetSingleAsync() throws an exception because of network issues.
 
 /// <summary>
 /// The class manages interaction for an inspector.
@@ -27,6 +27,12 @@ public class InspectorBase<T, U> : ComponentBase
     protected T? DataObject { get; set; }
 
     /// <summary>
+    /// The property gets/sets the dialog service used for managing MudDialogs.
+    /// </summary>
+    [Inject]
+    protected IDialogService DialogService { get; set; } = default!;
+
+    /// <summary>
     /// The property gets/sets the index key for the data object.
     /// </summary>
     [Parameter]
@@ -43,7 +49,15 @@ public class InspectorBase<T, U> : ComponentBase
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        DataObject = await DataLayer.GetSingleAsync(IndexKey);
+        try
+        {
+            DataObject = await DataLayer.GetSingleAsync(IndexKey);
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
         await base.OnParametersSetAsync();
         Initialized = true;
     }

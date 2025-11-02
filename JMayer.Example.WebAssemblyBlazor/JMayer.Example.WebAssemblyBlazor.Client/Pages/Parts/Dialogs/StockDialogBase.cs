@@ -1,14 +1,12 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
-using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 using Microsoft.AspNetCore.Components;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Dialogs;
-
-#warning There's no error handling if DataLayer.GetAllListViewAsync() throws an exception because of network issues.
 
 /// <summary>
 /// The class manages user interactions with the StockDialog.razor dialog.
@@ -65,20 +63,23 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        StorageLocations = await StorageLocationDataLayer.GetAllListViewAsync() ?? [];
-
-        if (IsNewRecord is false)
+        try
         {
-            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationID);
+            StorageLocations = await StorageLocationDataLayer.GetAllListViewAsync() ?? [];
 
-            if (storageLocation is not null)
+            if (IsNewRecord is false)
             {
-                SelectedStorageLocation = new ListView()
+                ListView? storageLocation = StorageLocations.FirstOrDefault(obj => obj.Integer64ID == DataObject.StorageLocationID);
+
+                if (storageLocation is not null)
                 {
-                    Integer64ID = storageLocation.Integer64ID,
-                    Name = storageLocation.Name ?? string.Empty,
-                };
+                    SelectedStorageLocation = storageLocation;
+                }
             }
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
         }
 
         await base.OnParametersSetAsync();

@@ -1,9 +1,8 @@
-﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
+﻿using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
+using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Cards;
-
-#warning There's no error handling if DataLayer.GetCategoriesAsync() throws an exception because of network issues.
 
 /// <summary>
 /// The class manages user interactions with the OverviewCard.razor component.
@@ -21,7 +20,15 @@ public class OverviewCardBase : Components.Base.OverviewCardBase<Part, IPartData
     /// <returns></returns>
     protected override async Task OnParametersSetAsync()
     {
-        Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        try
+        {
+            Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
         await base.OnParametersSetAsync();
     }
 
