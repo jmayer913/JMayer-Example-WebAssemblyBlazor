@@ -4,7 +4,6 @@ using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using System.Net;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 
@@ -120,10 +119,9 @@ public class CardDialogBase<T, U> : ComponentBase
 
                 ServerSideValidation.DisplayErrors(errors);
             }
-#warning I need to decide if the problem details are utilized.
-            else if (operationResult.StatusCode == HttpStatusCode.Conflict)
+            else if (operationResult.ProblemDetails is not null)
             {
-                await DialogService.ShowEditConflictMessageAsync();
+                await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
             }
             else
             {

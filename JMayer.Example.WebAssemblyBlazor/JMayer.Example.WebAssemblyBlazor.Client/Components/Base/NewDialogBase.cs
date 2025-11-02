@@ -88,7 +88,10 @@ public class NewDialogBase<T, U> : ComponentBase
 
                 ServerSideValidation.DisplayErrors(errors);
             }
-            #warning I need to decide if the problem details are utilized.
+            else if (operationResult.ProblemDetails is not null)
+            {
+                await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
+            }
             else
             {
                 await DialogService.ShowErrorMessageAsync("Failed to create the object because of an error on the server.");
