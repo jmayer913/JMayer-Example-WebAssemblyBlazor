@@ -65,7 +65,7 @@ public static class GridStateExtension
         {
             string value = string.Empty;
 
-            if (filterDefinition.Value != null && !string.IsNullOrWhiteSpace(filterDefinition.Value.ToString()))
+            if (filterDefinition.Value is not null && string.IsNullOrWhiteSpace(filterDefinition.Value.ToString()) is false)
             {
                 if (filterDefinition.Value is DateTime dateTime)
                 {

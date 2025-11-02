@@ -10,11 +10,9 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Dialogs;
 public class StorageLocationDialogBase : CardDialogBase<StorageLocation, IStorageLocationDataLayer>
 {
     /// <inheritdoc/>
+    /// <remarks>Overridden because the Name property is used for the ListView and we need to make sure the Name property is set to the FriendlyName.</remarks>
     protected override async Task OnSubmitEditFormAsync()
     {
-        //The Name property is used for the ListView and
-        //this ensures the ListView displays the friendly
-        //name.
         DataObject.Name = DataObject.FriendlyName;
         await base.OnSubmitEditFormAsync();
     }
