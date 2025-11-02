@@ -1,7 +1,6 @@
 ﻿using JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
-using Microsoft.AspNetCore.Components;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Dialogs;
 
@@ -10,16 +9,6 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Dialogs;
 /// </summary>
 public class StorageLocationDialogBase : CardDialogBase<StorageLocation, IStorageLocationDataLayer>
 {
-    /// <inheritdoc/>
-    public override Task SetParametersAsync(ParameterView parameters)
-    {
-        //The Name property is a required field but the
-        //StorageLocation data object doesn't use it so
-        //it needs to be set to pass validation.
-        DataObject.Name = "A Name";
-        return base.SetParametersAsync(parameters);
-    }
-
     /// <inheritdoc/>
     protected override async Task OnSubmitEditFormAsync()
     {

@@ -3,9 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 
-#warning I wonder if I should make the locations nullable since no value can be set.
-#warning I should use Name instead of FriendlyName; maybe I can override Name only have it be get or hide the set with the access level.
-
 /// <summary>
 /// The class represents a storage location for an area asset.
 /// </summary>

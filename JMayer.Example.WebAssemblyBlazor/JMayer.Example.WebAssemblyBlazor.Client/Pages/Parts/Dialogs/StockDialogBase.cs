@@ -48,19 +48,6 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
     /// The method sets up the component after the parameters are set.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
-    protected override void OnParametersSet()
-    {
-        //The Name property is a required field but the
-        //Stock data object doesn't use it so
-        //it needs to be set to pass validation.
-        DataObject.Name = "A Name";
-        base.OnParametersSet();
-    }
-
-    /// <summary>
-    /// The method sets up the component after the parameters are set.
-    /// </summary>
-    /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
         try
