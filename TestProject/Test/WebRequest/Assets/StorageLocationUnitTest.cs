@@ -46,10 +46,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         StorageLocation storageLocation = new()
@@ -61,12 +60,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         };
         storageLocation.Name = storageLocation.FriendlyName;
         OperationResult operationResult = await dataLayer.CreateAsync(storageLocation);
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first storage location.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first storage location.");
 
         storageLocation = new()
         {
@@ -87,11 +81,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         //A bad request status was returned.
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-        //A validation error was returned.
-        Assert.Single(operationResult.ValidationErrors);
-
         //The correct error was returned.
         Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.LocationA));
+        Assert.Single(operationResult.ValidationErrors[nameof(StorageLocation.LocationA)]);
         Assert.Contains("location already exists", operationResult.ValidationErrors[nameof(StorageLocation.LocationA)][0]);
     }
 
@@ -113,10 +105,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         StorageLocation storageLocation = new()
@@ -155,11 +146,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         //A bad request status was returned.
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-        //A validation error was returned.
-        Assert.Single(operationResult.ValidationErrors);
-
         //The correct error was returned.
         Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.OwnerInteger64ID));
+        Assert.Single(operationResult.ValidationErrors[nameof(StorageLocation.OwnerInteger64ID)]);
         Assert.Contains("asset was not found", operationResult.ValidationErrors[nameof(StorageLocation.OwnerInteger64ID)][0]);
     }
 
@@ -189,35 +178,19 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, "Cascade Area Asset-Storage Location Delete Test");
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 1", Name = "Cascade Storage Location Delete Test 1", OwnerInteger64ID = areaAsset.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the storage location.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first storage location.");
 
         operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 2", Name = "Cascade Storage Location Delete Test 2", OwnerInteger64ID = areaAsset.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the storage location.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the second storage location.");
 
         operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 3", Name = "Cascade Storage Location Delete Test 3", OwnerInteger64ID = areaAsset.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the storage location.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the third storage location.");
 
         await new AssetDataLayer(client).DeleteAsync(areaAsset);
 
@@ -239,15 +212,14 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Delete Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
 
-        if (operationResult.DataObject is StorageLocation storageLocation)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation storageLocation)
         {
             operationResult = await dataLayer.DeleteAsync(storageLocation);
             Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful.");
@@ -287,10 +259,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to find the area asset");
-            return;
         }
 
         List<ListView>? storageLocations = await dataLayer.GetAllListViewAsync(areaAsset.Integer64ID);
@@ -329,10 +300,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, BHSExampleBuilder.MainPartStorageAreaAssetName);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to find the area asset");
-            return;
         }
 
         List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(areaAsset.Integer64ID);
@@ -368,15 +338,14 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Get Single Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
 
-        if (operationResult.DataObject is StorageLocation createdStorageLocation)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation createdStorageLocation)
         {
             StorageLocation? fetchedStorageLocation = await dataLayer.GetSingleAsync(createdStorageLocation.Integer64ID);
             Assert.NotNull(fetchedStorageLocation);
@@ -405,10 +374,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         StorageLocation firstStorageLocation = new()
@@ -420,12 +388,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         };
         firstStorageLocation.Name = firstStorageLocation.FriendlyName;
         OperationResult operationResult = await dataLayer.CreateAsync(firstStorageLocation);
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first storage location.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first storage location.");
 
         StorageLocation secondStorageLocation = new()
         {
@@ -453,17 +416,14 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             //A bad request status was returned.
             Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-            //A validation error was returned.
-            Assert.Single(operationResult.ValidationErrors);
-
             //The correct error was returned.
             Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.LocationA));
+            Assert.Single(operationResult.ValidationErrors[nameof(StorageLocation.LocationA)]);
             Assert.Contains("location already exists", operationResult.ValidationErrors[nameof(StorageLocation.LocationA)][0]);
         }
         else
         {
             Assert.Fail("Failed to create the second storage location.");
-            return;
         }
     }
 
@@ -485,10 +445,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         StorageLocation originalStorageLocation = new()
@@ -531,10 +490,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         StorageLocation? storageLocation = new()
@@ -546,10 +504,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         OperationResult operationResult = await dataLayer.CreateAsync(storageLocation);
         storageLocation = operationResult.DataObject as StorageLocation;
 
-        if (storageLocation == null)
+        if (storageLocation is null)
         {
             Assert.Fail("Failed to create the storage location.");
-            return;
         }
 
         storageLocation.OwnerInteger64ID = 0;
@@ -564,11 +521,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         //A bad request status was returned.
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-        //A validation error was returned.
-        Assert.Single(operationResult.ValidationErrors);
-
         //The correct error was returned.
         Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(StorageLocation.OwnerInteger64ID));
+        Assert.Single(operationResult.ValidationErrors[nameof(StorageLocation.OwnerInteger64ID)]);
         Assert.Contains("asset was not found", operationResult.ValidationErrors[nameof(StorageLocation.OwnerInteger64ID)][0]);
     }
 
@@ -584,10 +539,9 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
 
         Asset? areaAsset = await DataHelper.GetOrCreateAreaAssetAsync(client, Constants.TestAreaAsset);
 
-        if (areaAsset == null)
+        if (areaAsset is null)
         {
             Assert.Fail("Failed to retrieve or create the area asset.");
-            return;
         }
 
         OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation()
@@ -597,7 +551,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         });
 
-        if (operationResult.DataObject is StorageLocation firstStorageLocation)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation firstStorageLocation)
         {
             StorageLocation secondStorageLocation = new(firstStorageLocation);
 
@@ -605,12 +559,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             secondStorageLocation.LocationB = "Old Data Storage Location Test 2";
 
             operationResult = await dataLayer.UpdateAsync(secondStorageLocation);
-
-            if (!operationResult.IsSuccessStatusCode)
-            {
-                Assert.Fail("Failed to update the second storage location.");
-                return;
-            }
+            Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the second storage location.");
 
             operationResult = await dataLayer.UpdateAsync(firstStorageLocation);
 
@@ -621,7 +570,6 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         else
         {
             Assert.Fail("Failed to create the storage location.");
-            return;
         }
     }
 }

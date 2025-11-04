@@ -55,14 +55,13 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         long? parentID = null;
 
-        if (!string.IsNullOrEmpty(parentName))
+        if (parentName is not null)
         {
             parentID = (await dataLayer.GetAllListViewAsync())?.FirstOrDefault(obj => obj.Name == parentName)?.Integer64ID;
 
-            if (parentID == null)
+            if (parentID is null)
             {
                 Assert.Fail("The parent asset was not found.");
-                return;
             }
         }
 
@@ -92,12 +91,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         AssetDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first asset.");
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
 
@@ -110,11 +104,9 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         //A bad request status was returned.
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-        //A validation error was returned.
-        Assert.Single(operationResult.ValidationErrors);
-
         //The correct error was returned.
         Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Asset.Name));
+        Assert.Single(operationResult.ValidationErrors[nameof(Asset.Name)]);
         Assert.Contains("name already exists", operationResult.ValidationErrors[nameof(Asset.Name)][0]);
     }
 
@@ -144,10 +136,10 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Asset Test" });
 
-        if (operationResult.DataObject is Asset asset)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset asset)
         {
             operationResult = await dataLayer.DeleteAsync(asset);
-            Assert.True(operationResult.IsSuccessStatusCode);
+            Assert.True(operationResult.IsSuccessStatusCode, "The operation should have successed.");
         }
         else
         {
@@ -168,23 +160,13 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         long preCount = await dataLayer.CountAsync();
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Parent Test" });
 
-        if (operationResult.DataObject is Asset parentAsset)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset parentAsset)
         {
             operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = parentAsset.Integer64ID });
-
-            if (!operationResult.IsSuccessStatusCode)
-            {
-                Assert.Fail("Failed to create the child asset.");
-                return;
-            }
+            Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the child asset.");
 
             operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = parentAsset.Integer64ID });
-
-            if (!operationResult.IsSuccessStatusCode)
-            {
-                Assert.Fail("Failed to create the child asset.");
-                return;
-            }
+            Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the child asset.");
 
             operationResult = await dataLayer.DeleteAsync(parentAsset);
             long postCount = await dataLayer.CountAsync();
@@ -196,7 +178,6 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         else
         {
             Assert.Fail("Failed to create the parent asset.");
-            return;
         }
     }
 
@@ -277,7 +258,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Get Single Asset Test" });
 
-        if (operationResult.DataObject is Asset createdAsset)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdAsset)
         {
             Asset? asset = await dataLayer.GetSingleAsync(createdAsset.Integer64ID);
             Assert.NotNull(asset);
@@ -310,7 +291,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("Test Asset 6", "Test AL1-05", "Test AL1-05", "Conveyor", "Make", "Model", "Manufacturer", null, Priority.Medium, false)]
     [InlineData("Test Asset 7", "Test AL1-05-BSD", "Test AL1-05-BSD", "BSD", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, false)]
     [InlineData("Test Asset 8", "Test AL1-VSU", "Test AL1-VSU", "VSU", "Make", "Model", "Manufacturer", "Manufacturer Number", Priority.Medium, true)]
-    public async Task VerifyUpdateAsset(string originalName, string newName, string description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, Priority priority, bool online)
+    public async Task VerifyUpdateAsset(string originalName, string newName, string? description, string? category, string? make, string? model, string? manufacturer, string? manufacturerNumber, Priority priority, bool online)
     {
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
@@ -359,7 +340,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Name = "Old Data Asset Test",
         });
 
-        if (operationResult.DataObject is Asset firstAsset)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset firstAsset)
         {
             Asset secondAsset = new(firstAsset);
 
@@ -367,12 +348,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             secondAsset.Category = "A Category";
 
             operationResult = await dataLayer.UpdateAsync(secondAsset);
-
-            if (!operationResult.IsSuccessStatusCode)
-            {
-                Assert.Fail("Failed to update the second asset.");
-                return;
-            }
+            Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the second asset.");
 
             operationResult = await dataLayer.UpdateAsync(firstAsset);
 
@@ -383,7 +359,6 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         else
         {
             Assert.Fail("Failed to create the asset.");
-            return;
         }
     }
 
@@ -400,61 +375,42 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Tree Structure Test" });
         Asset? rootAsset = operationResult.DataObject as Asset;
 
-        if (rootAsset == null)
+        if (rootAsset is null)
         {
             Assert.Fail("Failed to create the root asset");
-            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Other Root Asset Tree Structure Test" });
         Asset? otherRootAsset = operationResult.DataObject as Asset;
 
-        if (otherRootAsset == null)
+        if (otherRootAsset is null)
         {
             Assert.Fail("Failed to create the other root asset");
-            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Tree Structure Test", ParentID = rootAsset.Integer64ID });
         Asset? middleAsset = operationResult.DataObject as Asset;
 
-        if (middleAsset == null)
+        if (middleAsset is null)
         {
             Assert.Fail("Failed to create the middle asset.");
-            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 1", ParentID = middleAsset.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first leaf asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first leaf asset.");
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 2", ParentID = middleAsset.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the second leaf asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the second leaf asset.");
 
         middleAsset.ParentID = otherRootAsset.Integer64ID;
         operationResult = await dataLayer.UpdateAsync(middleAsset);
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to update the parent of the middle asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the parent of the middle asset.");
 
         List<Asset>? allAssets = await dataLayer.GetAllAsync();
 
-        if (allAssets == null)
+        if (allAssets is null)
         {
             Assert.Fail("Failed to retrieve the assets.");
-            return;
         }
 
         List<Asset> testTreeAssets = allAssets.Where(obj => obj.Integer64ID == middleAsset.Integer64ID || obj.ParentID == middleAsset.Integer64ID).ToList();
@@ -472,16 +428,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         AssetDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 1" });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first asset.");
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 2" });
 
-        if (operationResult.DataObject is Asset asset)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset asset)
         {
             asset.Name = "Duplicate Asset Test 1";
             operationResult = await dataLayer.UpdateAsync(asset);
@@ -495,11 +446,9 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             //A bad request status was returned.
             Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-            //A validation error was returned.
-            Assert.Single(operationResult.ValidationErrors);
-
             //The correct error was returned.
             Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Asset.Name));
+            Assert.Single(operationResult.ValidationErrors[nameof(Asset.Name)]);
             Assert.Contains("name already exists", operationResult.ValidationErrors[nameof(Asset.Name)][0]);
         }
         else
@@ -521,55 +470,37 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Rename Test" });
         Asset? rootAsset = operationResult.DataObject as Asset;
 
-        if (rootAsset == null)
+        if (rootAsset is null)
         {
             Assert.Fail("Failed to create the root asset");
-            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Rename Test", ParentID = rootAsset.Integer64ID });
         Asset? middleAsset = operationResult.DataObject as Asset;
 
-        if (middleAsset == null)
+        if (middleAsset is null)
         {
             Assert.Fail("Failed to create the middle asset.");
-            return;
         }
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 1", ParentID = middleAsset.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first leaf asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first leaf asset.");
 
         operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 2", ParentID = middleAsset.Integer64ID });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the second leaf asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the second leaf asset.");
 
         rootAsset.Name = "New Root Asset Rename Test";
         operationResult = await dataLayer.UpdateAsync(rootAsset);
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to rename of the root asset.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to rename of the root asset.");
 
         List<Asset>? allAssets = await dataLayer.GetAllAsync();
 
-        if (allAssets == null)
+        if (allAssets is null)
         {
             Assert.Fail("Failed to retrieve the assets.");
-            return;
         }
 
-        List<Asset> testTreeAssets = allAssets.Where(obj => obj.Integer64ID == middleAsset.Integer64ID || obj.ParentID ==  middleAsset.Integer64ID).ToList();
-        Assert.All(testTreeAssets, asset => Assert.True(asset.ParentPath != null && asset.ParentPath.Contains(rootAsset.Name)));
+        List<Asset> testTreeAssets = [.. allAssets.Where(obj => obj.Integer64ID == middleAsset.Integer64ID || obj.ParentID ==  middleAsset.Integer64ID)];
+        Assert.All(testTreeAssets, asset => Assert.True(asset.ParentPath is not null && asset.ParentPath.Contains(rootAsset.Name)));
     }
 }
