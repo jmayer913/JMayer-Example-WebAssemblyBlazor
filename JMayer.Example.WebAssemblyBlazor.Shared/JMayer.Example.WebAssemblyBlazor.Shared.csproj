@@ -5,6 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Version>9.0.0</Version>
+    <Authors>jmayer913</Authors>
+    <Company>jmayer913</Company>
+    <RepositoryUrl>https://github.com/jmayer913/JMayer-Example-WebAssemblyBlazor</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
