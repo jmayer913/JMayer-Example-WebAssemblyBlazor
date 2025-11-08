@@ -11,10 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
@@ -28,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\JMayer-Data-Library\JMayer.Data\JMayer.Data.csproj" />
     <ProjectReference Include="..\JMayer.Example.WebAssemblyBlazor.Shared\JMayer.Example.WebAssemblyBlazor.Shared.csproj" />
     <ProjectReference Include="..\JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor\JMayer.Example.WebAssemblyBlazor.csproj" />
   </ItemGroup>
