@@ -11,5 +11,9 @@ public class PartDataLayer : StandardCRUDDataLayer<Part>, IPartDataLayer
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public PartDataLayer() => IsUniqueNameRequired = true;
+    public PartDataLayer()
+    {
+        IsOldDataObjectDetectionEnabled = true;
+        IsUniqueNameRequired = true;
+    }
 }

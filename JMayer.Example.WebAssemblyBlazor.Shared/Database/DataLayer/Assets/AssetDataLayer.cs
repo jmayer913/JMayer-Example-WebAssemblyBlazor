@@ -11,7 +11,11 @@ public class AssetDataLayer : StandardCRUDDataLayer<Asset>, IAssetDataLayer
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public AssetDataLayer() => IsUniqueNameRequired = true;
+    public AssetDataLayer()
+    {
+        IsOldDataObjectDetectionEnabled = true;
+        IsUniqueNameRequired = true;
+    }
 
     /// <inheritdoc/>
     /// <remarks>

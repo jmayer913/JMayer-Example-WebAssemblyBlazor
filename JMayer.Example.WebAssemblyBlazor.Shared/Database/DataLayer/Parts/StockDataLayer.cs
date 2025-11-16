@@ -36,6 +36,8 @@ public class StockDataLayer : StandardSubCRUDDataLayer<Stock>, IStockDataLayer
     /// <param name="partDataLayer"></param>
     public StockDataLayer(IPartDataLayer partDataLayer, IStorageLocationDataLayer storageLocationDataLayer)
     {
+        IsOldDataObjectDetectionEnabled = true;
+
         _partDataLayer = partDataLayer;
         _partDataLayer.Deleted += PartDataLayer_Deleted;
 

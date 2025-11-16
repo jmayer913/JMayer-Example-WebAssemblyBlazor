@@ -25,6 +25,8 @@ public class StorageLocationDataLayer : StandardSubCRUDDataLayer<StorageLocation
     /// <param name="assetDataLayer">The data layer for interacting with assets.</param>
     public StorageLocationDataLayer(IAssetDataLayer assetDataLayer)
     {
+        IsOldDataObjectDetectionEnabled = true;
+
         _assetDataLayer = assetDataLayer;
         _assetDataLayer.Deleted += AssetDataLayer_Deleted;
     }
