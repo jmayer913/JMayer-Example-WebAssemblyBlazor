@@ -95,6 +95,10 @@ public class SearchBase<T, U, V> : ComponentBase
             {
                 await MudDataGrid.ReloadServerData();
             }
+            else if (operationResult.ProblemDetails is not null)
+            {
+                await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
+            }
             else
             {
                 await DialogService.ShowErrorMessageAsync("Failed to delete the object because of an error on the server.");
