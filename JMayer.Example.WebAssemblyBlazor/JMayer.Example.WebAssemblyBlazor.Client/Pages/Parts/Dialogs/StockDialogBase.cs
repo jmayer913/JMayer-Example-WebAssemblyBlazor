@@ -47,11 +47,9 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
     /// </summary>
     /// <param name="value">The value to search for.</param>
     /// <param name="cancellationToken">Used to cancel the task.</param>
-    /// <returns>A list of acceptable categories.</returns>
+    /// <returns>A list of acceptable storage locations.</returns>
     protected async Task<IEnumerable<long>> OnStorageLocationAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
     {
-        await Task.Delay(1);
-
         if (string.IsNullOrWhiteSpace(value))
         {
             return await Task.FromResult(StorageLocations.Select(obj => obj.Integer64ID));
