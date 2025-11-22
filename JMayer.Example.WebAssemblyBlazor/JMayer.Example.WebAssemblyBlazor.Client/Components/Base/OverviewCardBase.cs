@@ -75,8 +75,9 @@ public class OverviewCardBase<T, U> : ComponentBase
     /// </summary>
     protected virtual void OnResetClick()
     {
+        //For some reason, EditContext.MarkAsUnmodified() does not work and I need to recreate the EditContext.
         DataObject.MapProperties(OriginalDataObject);
-        EditContext.MarkAsUnmodified();
+        EditContext = new EditContext(DataObject);
     }
 
     /// <summary>
