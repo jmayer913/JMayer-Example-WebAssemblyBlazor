@@ -88,29 +88,31 @@ public class EditableCardBase<T, U, V> : ComponentBase
     {
         bool? result = await DialogService.ShowConfirmActionMessageAsync();
 
-        if (result is true)
+        if (result is not true)
         {
-            try
-            {
-                OperationResult operationResult = await DataLayer.DeleteAsync(dataObject);
+            return;
+        }
 
-                if (operationResult.IsSuccessStatusCode)
-                {
-                    await MudDataGrid.ReloadServerData();
-                }
-                else if (operationResult.ProblemDetails is not null)
-                {
-                    await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
-                }
-                else
-                {
-                    await DialogService.ShowErrorMessageAsync("Failed to delete the object because of an error on the server.");
-                }
-            }
-            catch
+        try
+        {
+            OperationResult operationResult = await DataLayer.DeleteAsync(dataObject);
+
+            if (operationResult.IsSuccessStatusCode)
             {
-                await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+                await MudDataGrid.ReloadServerData();
             }
+            else if (operationResult.ProblemDetails is not null)
+            {
+                await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
+            }
+            else
+            {
+                await DialogService.ShowErrorMessageAsync("Failed to delete the object because of an error on the server.");
+            }
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
         }
     }
 

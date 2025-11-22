@@ -115,9 +115,7 @@ public class SearchBase<T, U, V> : ComponentBase
     /// </summary>
     /// <param name="dataObject">The data object to inspect.</param>
     protected virtual void OnEditButtonClick(T dataObject)
-    {
-        NavigationManager.NavigateTo($"/{DataObjectTypeName}/{dataObject.Integer64ID}");
-    }
+        => NavigationManager.NavigateTo($"/{DataObjectTypeName}/{dataObject.Integer64ID}");
 
     /// <summary>
     /// The method opens a dialog for creating a new data object and if not canceled, refreshes the data grid.
