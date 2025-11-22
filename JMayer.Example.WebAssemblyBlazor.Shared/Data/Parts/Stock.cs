@@ -22,6 +22,7 @@ public class Stock : SubDataObject
     /// The property gets/sets the id for the storage location the part is stored at.
     /// </summary>
     [Required]
+    [Range(1, long.MaxValue, ErrorMessage = "The Storage Location field is required.")]
     public long StorageLocationID { get; set; }
 
     /// <summary>

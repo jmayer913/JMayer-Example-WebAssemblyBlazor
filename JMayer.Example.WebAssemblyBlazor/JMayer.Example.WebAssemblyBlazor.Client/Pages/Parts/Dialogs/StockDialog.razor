@@ -11,11 +11,11 @@
                 <MudCardContent>
                     @if (IsNewRecord) 
                     {
-                        <MudAutocomplete @bind-Value="@SelectedStorageLocation" T="ListView" CoerceText="true" CoerceValue="true" Label="Storage Location" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnStorageLocationAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />
+                        <MudAutocomplete @bind-Value="@DataObject.StorageLocationID" CoerceText="true" CoerceValue="true" For="@(() => DataObject.StorageLocationID)" Label="Storage Location" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnStorageLocationAutoCompleteSearchAsync" ToStringFunc="@(id => StorageLocations.FirstOrDefault(obj => obj.Integer64ID == id)?.Name ?? string.Empty)" />
                     }
-                    else if (SelectedStorageLocation != null)
+                    else
                     {
-                        <MudTextField @bind-Value="@SelectedStorageLocation.Name" Label="Storage Location" ReadOnly="true" />
+                        <MudTextField @bind-Value="@DataObject.StorageLocationName" Label="Storage Location" ReadOnly="true" />
                     }
 
                     <MudNumericField @bind-Value="@DataObject.Amount" For="@(() => DataObject.Amount)" Label="Amount" Min="0" Max="@int.MaxValue" />
