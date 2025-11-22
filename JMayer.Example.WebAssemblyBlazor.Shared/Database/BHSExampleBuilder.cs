@@ -17,9 +17,54 @@ public class BHSExampleBuilder
     public IAssetDataLayer AssetDataLayer { get; set; }
 
     /// <summary>
+    /// The constant for the ATR category name.
+    /// </summary>
+    private const string AtrCategoryName = "ATR";
+
+    /// <summary>
+    /// The constant for the bag room category name.
+    /// </summary>
+    private const string BagRoomCategoryName = "Bag Room";
+
+    /// <summary>
+    /// The constant for the belt category name.
+    /// </summary>
+    private const string BeltCategoryName = "Belt";
+
+    /// <summary>
+    /// The constant for the conveyor category name.
+    /// </summary>
+    private const string ConveyorCategoryName = "Conveyor";
+
+    /// <summary>
+    /// The constant for the diverter category name.
+    /// </summary>
+    private const string DiverterCategoryName = "Diverter";
+
+    /// <summary>
+    /// The constant for the electrical contact category name.
+    /// </summary>
+    private const string ElectricalContactCategoryName = "Electrical Contact";
+
+    /// <summary>
     /// The constant for the main part storage area asset name.
     /// </summary>
     public const string MainPartStorageAreaAssetName = "Main Part Storage";
+
+    /// <summary>
+    /// The constant for the conveyor length for the main sortation subsystem.
+    /// </summary>
+    private const int MainSortationConveyorLength = 15;
+
+    /// <summary>
+    /// The constant for the conveyor length for the makeup unit subsystem.
+    /// </summary>
+    private const int MakeupUnitConveyorLength = 6;
+
+    /// <summary>
+    /// The constant for the motor category name.
+    /// </summary>
+    private const string MotorCategoryName = "Motor";
 
     /// <summary>
     /// The property gets/sets the data layer used to interact with parts.
@@ -27,14 +72,29 @@ public class BHSExampleBuilder
     public IPartDataLayer PartDataLayer { get; set; }
 
     /// <summary>
+    /// The constant for the photoeye category name.
+    /// </summary>
+    private const string PhotoeyeCategoryName = "Photoeye";
+
+    /// <summary>
     /// The property gets/sets the data layer used to interact with part stock.
     /// </summary>
     public IStockDataLayer StockDataLayer { get; set; }
 
     /// <summary>
+    /// The constant for the storage category name.
+    /// </summary>
+    private const string StorageCategoryName = "Storage";
+
+    /// <summary>
     /// The property gets/sets the data layer used to interact with asset storage locations.
     /// </summary>
     public IStorageLocationDataLayer StorageLocationDataLayer { get; set; }
+
+    /// <summary>
+    /// The constant for the subsystem category name.
+    /// </summary>
+    private const string SubSystemCategoryName = "SubSystem";
 
     /// <summary>
     /// The default constructor.
@@ -65,15 +125,15 @@ public class BHSExampleBuilder
     {
         Asset bagRoomAsset = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "Bag Room",
+            Category = BagRoomCategoryName,
             Description = "The main bag room for the BHS.",
-            Name = "Main Bag Room",
+            Name = $"Main Bag Room",
             Type = AssetType.Group,
         }).Result;
 
         Asset asset = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "SubSystem",
+            Category = SubSystemCategoryName,
             Description = "The main sortation line for the bag room.",
             Name = "MS1",
             ParentID = bagRoomAsset.Integer64ID,
@@ -82,7 +142,7 @@ public class BHSExampleBuilder
 
         _ = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "ATR",
+            Category = AtrCategoryName,
             Description = "The scanner array for reading bags on the main sortation line.",
             Name = "MS1-ATR",
             ParentID = asset.Integer64ID,
@@ -90,11 +150,11 @@ public class BHSExampleBuilder
             Type = AssetType.Equipment,
         });
 
-        for (int index = 1; index <= 15; index++)
+        for (int index = 1; index <= MainSortationConveyorLength; index++)
         {
             _ = AssetDataLayer.CreateAsync(new Asset()
             {
-                Category = "Conveyor",
+                Category = ConveyorCategoryName,
                 Description = "The conveyor which makes up the main sortation line.",
                 Name = $"MS1-{index:00}",
                 ParentID = asset.Integer64ID,
@@ -105,7 +165,7 @@ public class BHSExampleBuilder
 
         asset = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "SubSystem",
+            Category = SubSystemCategoryName,
             Description = "The one of the destination lines for the bag room.",
             Name = "MU1",
             ParentID = bagRoomAsset.Integer64ID,
@@ -114,7 +174,7 @@ public class BHSExampleBuilder
 
         _ = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "Diverter",
+            Category = DiverterCategoryName,
             Description = "The diverter which pushes bags onto the MU1 destination line.",
             Name = "MU1-DIV",
             ParentID = asset.Integer64ID,
@@ -122,11 +182,11 @@ public class BHSExampleBuilder
             Type = AssetType.Equipment,
         });
 
-        for (int index = 1; index <= 6; index++)
+        for (int index = 1; index <= MakeupUnitConveyorLength; index++)
         {
             _ = AssetDataLayer.CreateAsync(new Asset()
             {
-                Category = "Conveyor",
+                Category = ConveyorCategoryName,
                 Description = "The conveyor which makes up the MU1 destination line.",
                 Name = $"MU1-{index:00}",
                 ParentID = asset.Integer64ID,
@@ -137,7 +197,7 @@ public class BHSExampleBuilder
 
         asset = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "SubSystem",
+            Category = SubSystemCategoryName,
             Description = "The one of the destination lines for the bag room.",
             Name = "MU2",
             ParentID = bagRoomAsset.Integer64ID,
@@ -146,7 +206,7 @@ public class BHSExampleBuilder
 
         _ = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "Diverter",
+            Category = DiverterCategoryName,
             Description = "The diverter which pushes bags onto the MU2 destination line.",
             Name = "MU2-DIV",
             ParentID = asset.Integer64ID,
@@ -154,11 +214,11 @@ public class BHSExampleBuilder
             Type = AssetType.Equipment,
         });
 
-        for (int index = 1; index <= 6; index++)
+        for (int index = 1; index <= MakeupUnitConveyorLength; index++)
         {
             _ = AssetDataLayer.CreateAsync(new Asset()
             {
-                Category = "Conveyor",
+                Category = ConveyorCategoryName,
                 Description = "The conveyor which makes up the MU2 destination line.",
                 Name = $"MU2-{index:00}",
                 ParentID = asset.Integer64ID,
@@ -169,18 +229,18 @@ public class BHSExampleBuilder
 
         asset = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "SubSystem",
+            Category = SubSystemCategoryName,
             Description = "The runout line for the bag room.",
             Name = "MU3",
             ParentID = bagRoomAsset.Integer64ID,
             Type = AssetType.Group,
         }).Result;
 
-        for (int index = 1; index <= 6; index++)
+        for (int index = 1; index <= MakeupUnitConveyorLength; index++)
         {
             _ = AssetDataLayer.CreateAsync(new Asset()
             {
-                Category = "Conveyor",
+                Category = ConveyorCategoryName,
                 Description = "The conveyor which makes up the MU3 destination line.",
                 Name = $"MU3-{index:00}",
                 ParentID = asset.Integer64ID,
@@ -197,22 +257,22 @@ public class BHSExampleBuilder
     {
         _ = PartDataLayer.CreateAsync(new Part()
         {
-            Category = "Belt",
+            Category = BeltCategoryName,
             Name = "Power Turn Belt",
         });
         _ = PartDataLayer.CreateAsync(new Part()
         {
-            Category = "Contact",
+            Category = ElectricalContactCategoryName,
             Name = "Motor Contactor",
         });
         _ = PartDataLayer.CreateAsync(new Part()
         {
-            Category = "Motor",
+            Category = MotorCategoryName,
             Name = "Motor 1HP Drive",
         });
         _ = PartDataLayer.CreateAsync(new Part()
         {
-            Category = "Photoeye",
+            Category = PhotoeyeCategoryName,
             Name = "Photoeye, Polarized Retro Reflective",
         });
     }
@@ -247,19 +307,20 @@ public class BHSExampleBuilder
     {
         Asset asset = AssetDataLayer.CreateAsync(new Asset()
         {
-            Category = "Storage",
+            Category = StorageCategoryName,
             Description = "The main part storage for the BHS.",
             Name = MainPartStorageAreaAssetName,
             Type = AssetType.Area,
         }).Result;
 
-        StorageLocation storageLocation = new StorageLocation()
+        StorageLocation storageLocation = new()
         {
             LocationA = "A1",
             LocationB = "R1",
             LocationC = "S1",
             OwnerInteger64ID = asset.Integer64ID,
         };
+        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
 
         storageLocation = new StorageLocation()
@@ -269,6 +330,7 @@ public class BHSExampleBuilder
             LocationC = "S2",
             OwnerInteger64ID = asset.Integer64ID,
         };
+        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
 
         storageLocation = new StorageLocation()
@@ -278,6 +340,7 @@ public class BHSExampleBuilder
             LocationC = "S1",
             OwnerInteger64ID = asset.Integer64ID,
         };
+        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
 
         storageLocation = new StorageLocation()
@@ -287,6 +350,7 @@ public class BHSExampleBuilder
             LocationC = "S2",
             OwnerInteger64ID = asset.Integer64ID,
         };
+        storageLocation.Name = storageLocation.FriendlyName;
         _ = StorageLocationDataLayer.CreateAsync(storageLocation);
     }
 }
