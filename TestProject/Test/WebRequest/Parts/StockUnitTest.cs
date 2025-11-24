@@ -19,6 +19,11 @@ namespace TestProject.Test.WebRequest.Parts;
 public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
 {
     /// <summary>
+    /// The constant for the bad storage location ID.
+    /// </summary>
+    private const int BadStorageLocationID = 99;
+
+    /// <summary>
     /// The factory for the web application.
     /// </summary>
     private readonly WebApplicationFactory<Program> _factory;
@@ -142,7 +147,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         StockDataLayer dataLayer = new(client);
         
-        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Add Dependencies Not Exists Stock Test", OwnerInteger64ID = 0, StorageLocationID = 0 });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Stock() { Amount = 0, Name = "Add Dependencies Not Exists Stock Test", OwnerInteger64ID = 0, StorageLocationID = BadStorageLocationID });
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -645,7 +650,7 @@ public class StockUnitTest : IClassFixture<WebApplicationFactory<Program>>
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Stock stock)
         {
             stock.OwnerInteger64ID = 0;
-            stock.StorageLocationID = 0;
+            stock.StorageLocationID = BadStorageLocationID;
             operationResult = await dataLayer.UpdateAsync(stock);
 
             //The operation must have failed.
