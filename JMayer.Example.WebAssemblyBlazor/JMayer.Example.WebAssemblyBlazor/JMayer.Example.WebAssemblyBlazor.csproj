@@ -4,15 +4,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>3.2.0</Version>
+    <Version>8.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\JMayer.Example.WebAssemblyBlazor.Shared\JMayer.Example.WebAssemblyBlazor.Shared.csproj" />
     <ProjectReference Include="..\JMayer.Example.WebAssemblyBlazor.Client\JMayer.Example.WebAssemblyBlazor.Client.csproj" />
-    <PackageReference Include="JMayer.Web.Mvc" Version="1.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.21" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.21" />
+    <PackageReference Include="JMayer.Web.Mvc" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.22" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
   </ItemGroup>
 
