@@ -38,12 +38,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         PartDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first part.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first part.");
 
         operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" });
 
@@ -56,13 +51,10 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         //A bad request status was returned.
         Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-        //A validation error was returned.
-        Assert.NotNull(operationResult.ServerSideValidationResult);
-        Assert.Single(operationResult.ServerSideValidationResult.Errors);
-
         //The correct error was returned.
-        Assert.Contains("name already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-        Assert.Equal(nameof(Part.Name), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+        Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Part.Name));
+        Assert.Single(operationResult.ValidationErrors[nameof(Part.Name)]);
+        Assert.Contains("name already exists", operationResult.ValidationErrors[nameof(Part.Name)][0]);
     }
 
     /// <summary>
@@ -120,7 +112,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Delete Part Test" });
         
-        if (operationResult.DataObject is Part part)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part part)
         {
             operationResult = await dataLayer.DeleteAsync(part);
             Assert.True(operationResult.IsSuccessStatusCode);
@@ -208,7 +200,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Get Single Part Test" });
 
-        if (operationResult.DataObject is Part createdPart)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part createdPart)
         {
             Part? fetchedPart = await dataLayer.GetSingleAsync(createdPart.Integer64ID);
             Assert.NotNull(fetchedPart);
@@ -230,16 +222,11 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         PartDataLayer dataLayer = new(client);
 
         OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 1" });
-
-        if (!operationResult.IsSuccessStatusCode)
-        {
-            Assert.Fail("Failed to create the first part.");
-            return;
-        }
+        Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first part.");
 
         operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 2" });
 
-        if (operationResult.DataObject is Part part)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part part)
         {
             part.Name = "Add Duplicate Part Test 1";
             operationResult = await dataLayer.UpdateAsync(part);
@@ -253,18 +240,14 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             //A bad request status was returned.
             Assert.Equal(HttpStatusCode.BadRequest, operationResult.StatusCode);
 
-            //A validation error was returned.
-            Assert.NotNull(operationResult.ServerSideValidationResult);
-            Assert.Single(operationResult.ServerSideValidationResult.Errors);
-
             //The correct error was returned.
-            Assert.Contains("name already exists", operationResult.ServerSideValidationResult.Errors[0].ErrorMessage);
-            Assert.Equal(nameof(Part.Name), operationResult.ServerSideValidationResult.Errors[0].PropertyName);
+            Assert.Contains(operationResult.ValidationErrors, obj => obj.Key == nameof(Part.Name));
+            Assert.Single(operationResult.ValidationErrors[nameof(Part.Name)]);
+            Assert.Contains("name already exists", operationResult.ValidationErrors[nameof(Part.Name)][0]);
         }
         else
         {
             Assert.Fail("Failed to create the second part.");
-            return;
         }
     }
 
@@ -337,7 +320,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Name = "Old Data Part Test",
         });
 
-        if (operationResult.DataObject is Part firstPart)
+        if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part firstPart)
         {
             Part secondPart = new(firstPart);
 
@@ -345,12 +328,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             secondPart.Obsolete = true;
 
             operationResult = await dataLayer.UpdateAsync(secondPart);
-
-            if (!operationResult.IsSuccessStatusCode)
-            {
-                Assert.Fail("Failed to update the second part.");
-                return;
-            }
+            Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the second part.");
 
             operationResult = await dataLayer.UpdateAsync(firstPart);
 
@@ -361,7 +339,6 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         else 
         {
             Assert.Fail("Failed to create the part.");
-            return;
         }
     }
 }

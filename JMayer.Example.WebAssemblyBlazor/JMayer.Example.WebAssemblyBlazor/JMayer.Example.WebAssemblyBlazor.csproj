@@ -1,19 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>8.0.0</Version>
+    <Version>9.0.0</Version>
+    <Authors>jmayer913</Authors>
+    <Company>jmayer913</Company>
+    <RepositoryUrl>https://github.com/jmayer913/JMayer-Example-WebAssemblyBlazor</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\JMayer.Example.WebAssemblyBlazor.Shared\JMayer.Example.WebAssemblyBlazor.Shared.csproj" />
     <ProjectReference Include="..\JMayer.Example.WebAssemblyBlazor.Client\JMayer.Example.WebAssemblyBlazor.Client.csproj" />
-    <PackageReference Include="JMayer.Web.Mvc" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.22" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.22" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageReference Include="JMayer.Web.Mvc" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.11" />
   </ItemGroup>
 
 </Project>

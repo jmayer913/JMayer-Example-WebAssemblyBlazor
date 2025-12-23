@@ -23,7 +23,7 @@
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudAutocomplete @bind-Value="@SelectedAssetParent" T="ListView" CoerceText="true" CoerceValue="true" Label="Parent Asset" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnAssetParentAutoCompleteSearchAsync" ToStringFunc="@(e => e?.Name ?? string.Empty)" />
+                    <MudAutocomplete @bind-Value="@DataObject.ParentID" CoerceText="true" CoerceValue="true" For="@(() => DataObject.ParentID)" Label="Parent Asset" MaxItems="null" ResetValueOnEmptyText="false" SearchFunc="@OnAssetParentAutoCompleteSearchAsync" ToStringFunc="@(id => ParentAssets.FirstOrDefault(obj => obj.Integer64ID == id)?.Name ?? string.Empty)" />
                 </MudItem>
 
                 <MudItem xs="6">

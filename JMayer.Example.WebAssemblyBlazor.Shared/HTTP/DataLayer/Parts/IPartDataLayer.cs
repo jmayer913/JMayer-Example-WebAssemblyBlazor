@@ -6,7 +6,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 /// <summary>
 /// The interface for interacting with a remote server using CRUD operations specifically for parts.
 /// </summary>
-public interface IPartDataLayer : IUserEditableDataLayer<Part>
+public interface IPartDataLayer : IStandardCRUDDataLayer<Part>
 {
     /// <summary>
     /// The method returns all the defined categories for the parts.

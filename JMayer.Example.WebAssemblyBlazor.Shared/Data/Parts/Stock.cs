@@ -7,9 +7,9 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 /// The class represents stock for a part at a particular storage location.
 /// </summary>
 /// <remarks>
-/// The OwnerId in the SubUserEditableDataObject will represent a part.
+/// The OwnerId in the SubDataObject will represent a part.
 /// </remarks>
-public class Stock : SubUserEditableDataObject
+public class Stock : SubDataObject
 {
     /// <summary>
     /// The property gets/sets the amount of stock at the location for the part.
@@ -22,6 +22,7 @@ public class Stock : SubUserEditableDataObject
     /// The property gets/sets the id for the storage location the part is stored at.
     /// </summary>
     [Required]
+    [Range(1, long.MaxValue, ErrorMessage = "The Storage Location field is required.")]
     public long StorageLocationID { get; set; }
 
     /// <summary>

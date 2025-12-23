@@ -1,5 +1,6 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 
@@ -11,33 +12,14 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Assets.Dialogs;
 public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
 {
     /// <summary>
-    /// The selected asset parent.
+    /// The property gets/sets the categories for the parts.
     /// </summary>
-    private ListView? _selectedAssetParent;
+    protected List<string> Categories { get; set; } = [];
 
     /// <summary>
     /// The property gets/sets the assets to choose for a parent.
     /// </summary>
-    protected List<ListView> Assets { get; set; } = [];
-
-    /// <summary>
-    /// The property gets/sets the categories for the parts.
-    /// </summary>
-    protected List<string> Categories { get; set; } = [];
-    
-    /// <summary>
-    /// The property gets/sets the parent asset which the user selected.
-    /// </summary>
-    protected ListView? SelectedAssetParent
-    {
-        get => _selectedAssetParent;
-        set
-        {
-            _selectedAssetParent = value;
-            //Map any selection changes to the ParentID property.
-            DataObject.ParentID = value?.Integer64ID ?? 0;
-        }
-    }
+    protected List<ListView> ParentAssets { get; set; } = [];
 
     /// <summary>
     /// The method sets up the component after the parameters are set.
@@ -45,8 +27,21 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        Assets = await DataLayer.GetAllListViewAsync() ?? [];
-        Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        Task<List<string>?> categoryTask = DataLayer.GetCategoriesAsync();
+        Task<List<ListView>?> parentAssetTask = DataLayer.GetAllListViewAsync();
+
+        try
+        {
+            await Task.WhenAll(categoryTask, parentAssetTask);
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
+        Categories = categoryTask.Result ?? [];
+        ParentAssets = parentAssetTask.Result ?? [];
+
         await base.OnParametersSetAsync();
     }
 
@@ -55,16 +50,16 @@ public class NewAssetDialogBase : NewDialogBase<Asset, IAssetDataLayer>
     /// </summary>
     /// <param name="value">The value to search for.</param>
     /// <param name="cancellationToken">Used to cancel the task.</param>
-    /// <returns>A list of acceptable categories.</returns>
-    protected async Task<IEnumerable<ListView>> OnAssetParentAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
+    /// <returns>A list of acceptable parent assets.</returns>
+    protected async Task<IEnumerable<long?>> OnAssetParentAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return await Task.FromResult(Assets);
+            return await Task.FromResult(ParentAssets.Select(obj => (long?)obj.Integer64ID));
         }
         else
         {
-            return await Task.FromResult(Assets.Where(obj => obj.Name.Contains(value)));
+            return await Task.FromResult(ParentAssets.Where(obj => obj.Name.Contains(value)).Select(obj => (long?)obj.Integer64ID));
         }
     }
 

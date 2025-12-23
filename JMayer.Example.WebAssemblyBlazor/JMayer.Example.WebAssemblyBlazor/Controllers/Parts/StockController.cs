@@ -1,6 +1,6 @@
 ﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
-using JMayer.Web.Mvc.Controller;
+using JMayer.Web.Mvc.Controller.Api;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JMayer.Example.WebAssemblyBlazor.Controllers.Parts;
@@ -10,7 +10,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Controllers.Parts;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class StockController : SubUserEditableController<Stock, IStockDataLayer>
+public class StockController : StandardSubCRUDController<Stock, IStockDataLayer>
 {
     /// <inheritdoc/>
     public StockController(IStockDataLayer dataLayer, ILogger<StockController> logger) : base(dataLayer, logger) { }

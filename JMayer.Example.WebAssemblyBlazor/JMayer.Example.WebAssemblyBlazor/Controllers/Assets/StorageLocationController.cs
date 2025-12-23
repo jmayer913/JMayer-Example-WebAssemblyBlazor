@@ -1,6 +1,6 @@
 ﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
-using JMayer.Web.Mvc.Controller;
+using JMayer.Web.Mvc.Controller.Api;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JMayer.Example.WebAssemblyBlazor.Controllers.Assets;
@@ -10,7 +10,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Controllers.Assets;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class StorageLocationController : SubUserEditableController<StorageLocation, IStorageLocationDataLayer>
+public class StorageLocationController : StandardSubCRUDController<StorageLocation, IStorageLocationDataLayer>
 {
     /// <inheritdoc/>
     public StorageLocationController(IStorageLocationDataLayer dataLayer, ILogger<StorageLocationController> logger) : base(dataLayer, logger) { }

@@ -1,4 +1,6 @@
-﻿namespace JMayer.Example.WebAssemblyBlazor.Client.Extensions;
+﻿using System.Text.RegularExpressions;
+
+namespace JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 
 /// <summary>
 /// The static class contains extension methods for the string class.
@@ -10,8 +12,5 @@ public static class StringExtension
     /// </summary>
     /// <param name="value">The string to space.</param>
     /// <returns>A string.</returns>
-    public static string SpaceCapitalLetters(this string value)
-    {
-        return string.Concat(value.Select(c => char.IsUpper(c) ? $" {c}" : c.ToString())).TrimStart();
-    }
+    public static string SpaceCapitalLetters(this string value) => Regex.Replace(value, "([A-Z])", " $1").Trim();
 }

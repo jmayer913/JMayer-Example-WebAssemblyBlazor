@@ -1,4 +1,5 @@
 ﻿using JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
 
@@ -20,7 +21,15 @@ public class NewPartDialogBase : NewDialogBase<Part, IPartDataLayer>
     /// <returns></returns>
     protected override async Task OnParametersSetAsync()
     {
-        Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        try
+        {
+            Categories = await DataLayer.GetCategoriesAsync() ?? [];
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
         await base.OnParametersSetAsync();
     }
 

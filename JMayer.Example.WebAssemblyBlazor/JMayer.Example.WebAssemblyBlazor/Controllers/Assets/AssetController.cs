@@ -1,6 +1,7 @@
 ﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Assets;
-using JMayer.Web.Mvc.Controller;
+using JMayer.Web.Mvc.Controller.Api;
+using JMayer.Web.Mvc.Extension;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JMayer.Example.WebAssemblyBlazor.Controllers.Assets;
@@ -10,7 +11,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Controllers.Assets;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class AssetController : UserEditableController<Asset, IAssetDataLayer>
+public class AssetController : StandardCRUDController<Asset, IAssetDataLayer>
 {
     /// <inheritdoc/>
     public AssetController(IAssetDataLayer dataLayer, ILogger<AssetController> logger) : base(dataLayer, logger) { }
@@ -30,8 +31,8 @@ public class AssetController : UserEditableController<Asset, IAssetDataLayer>
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to return the asset categories.");
-            return Problem();
+            Logger.LogError(ex, "Failed to return the {Type} categories.", DataObjectTypeName);
+            return Problem(title: $"{DataObjectTypeName} Get Categories Error", detail: $"Failed to return the {DataObjectTypeName.SpaceCapitalLetters()} categories records because of an error on the server.");
         }
     }
 }

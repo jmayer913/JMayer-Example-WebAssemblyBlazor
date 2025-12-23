@@ -9,7 +9,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
 /// <summary>
 /// The class manages CRUD interactions with the database for part stock.
 /// </summary>
-public class StockDataLayer : UserEditableDataLayer<Stock>, IStockDataLayer
+public class StockDataLayer : StandardSubCRUDDataLayer<Stock>, IStockDataLayer
 {
     /// <summary>
     /// The data layer for interacting with parts.
@@ -36,6 +36,8 @@ public class StockDataLayer : UserEditableDataLayer<Stock>, IStockDataLayer
     /// <param name="partDataLayer"></param>
     public StockDataLayer(IPartDataLayer partDataLayer, IStorageLocationDataLayer storageLocationDataLayer)
     {
+        IsOldDataObjectDetectionEnabled = true;
+
         _partDataLayer = partDataLayer;
         _partDataLayer.Deleted += PartDataLayer_Deleted;
 
@@ -112,26 +114,23 @@ public class StockDataLayer : UserEditableDataLayer<Stock>, IStockDataLayer
 
     /// <inheritdoc/>
     /// <remarks>
-    /// Overriding and not calling the base because the parent class forces the Name property 
-    /// to be unique but the property is not used. Also, added additional server-side validation
-    /// unique to the stock.
+    /// Overriding to check if the owner part exists, the storage location exists and the stock location doesn't already exist.
     /// </remarks>
     public override async Task<List<ValidationResult>> ValidateAsync(Stock dataObject, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(dataObject);
-        List<ValidationResult> validationResults = dataObject.Validate();
+        List<ValidationResult> validationResults = await base.ValidateAsync(dataObject, cancellationToken);
 
-        if (await _partDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.OwnerInteger64ID, cancellationToken) == false)
+        if (await _partDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.OwnerInteger64ID, cancellationToken) is false)
         {
             validationResults.Add(new ValidationResult($"The {dataObject.OwnerInteger64ID} part was not found in the data store.", [nameof(Stock.OwnerInteger64ID)]));
         }
 
-        if (await _storageLocationDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.StorageLocationID, cancellationToken) == false)
+        if (await _storageLocationDataLayer.ExistAsync(obj => obj.Integer64ID == dataObject.StorageLocationID, cancellationToken) is false)
         {
             validationResults.Add(new ValidationResult($"The {dataObject.StorageLocationID} storage location was not found in the data store.", [nameof(Stock.StorageLocationID)]));
         }
 
-        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.OwnerInteger64ID == dataObject.OwnerInteger64ID && obj.StorageLocationID == dataObject.StorageLocationID, cancellationToken) == true) 
+        if (await ExistAsync(obj => obj.Integer64ID != dataObject.Integer64ID && obj.OwnerInteger64ID == dataObject.OwnerInteger64ID && obj.StorageLocationID == dataObject.StorageLocationID, cancellationToken) is true) 
         {
             validationResults.Add(new ValidationResult("The stock location already exists in the data store for the part.", [nameof(Stock.StorageLocationID)]));
         }

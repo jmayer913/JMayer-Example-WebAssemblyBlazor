@@ -13,8 +13,8 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 /// <typeparam name="V">Must be a component that's also a dialog.</typeparam>
 public class SearchBase<T, U, V> : ComponentBase
-    where T : UserEditableDataObject
-    where U : IUserEditableDataLayer<T>
+    where T : DataObject
+    where U : IStandardCRUDDataLayer<T>
     where V : ComponentBase
 {
     /// <summary>
@@ -56,7 +56,7 @@ public class SearchBase<T, U, V> : ComponentBase
         {
             PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(gridState.ToQueryDefinition());
 
-            if (pagedDataObjects != null)
+            if (pagedDataObjects is not null)
             {
                 return new GridData<T>()
                 {
@@ -82,25 +82,31 @@ public class SearchBase<T, U, V> : ComponentBase
     {
         bool? result = await DialogService.ShowConfirmActionMessageAsync();
 
-        if (result == true)
+        if (result is not true)
         {
-            try
-            {
-                OperationResult operationResult = await DataLayer.DeleteAsync(dataObject);
+            return;
+        }
 
-                if (operationResult.IsSuccessStatusCode)
-                {
-                    await MudDataGrid.ReloadServerData();
-                }
-                else
-                {
-                    await DialogService.ShowErrorMessageAsync("Failed to delete the object because of an error on the server.");
-                }
-            }
-            catch
+        try
+        {
+            OperationResult operationResult = await DataLayer.DeleteAsync(dataObject);
+
+            if (operationResult.IsSuccessStatusCode)
             {
-                await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+                await MudDataGrid.ReloadServerData();
             }
+            else if (operationResult.ProblemDetails is not null)
+            {
+                await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
+            }
+            else
+            {
+                await DialogService.ShowErrorMessageAsync("Failed to delete the object because of an error on the server.");
+            }
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
         }
     }
 
@@ -109,9 +115,7 @@ public class SearchBase<T, U, V> : ComponentBase
     /// </summary>
     /// <param name="dataObject">The data object to inspect.</param>
     protected virtual void OnEditButtonClick(T dataObject)
-    {
-        NavigationManager.NavigateTo($"/{DataObjectTypeName}/{dataObject.Integer64ID}");
-    }
+        => NavigationManager.NavigateTo($"/{DataObjectTypeName}/{dataObject.Integer64ID}");
 
     /// <summary>
     /// The method opens a dialog for creating a new data object and if not canceled, refreshes the data grid.
@@ -122,7 +126,7 @@ public class SearchBase<T, U, V> : ComponentBase
         IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName.SpaceCapitalLetters()}");
         DialogResult? dialogResult = await dialogReference.Result;
 
-        if (dialogResult?.Canceled == false)
+        if (dialogResult?.Canceled is false)
         {
             await MudDataGrid.ReloadServerData();
         }

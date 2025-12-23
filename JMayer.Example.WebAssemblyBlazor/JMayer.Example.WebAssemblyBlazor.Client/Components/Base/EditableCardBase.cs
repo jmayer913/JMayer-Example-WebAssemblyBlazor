@@ -13,8 +13,8 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <typeparam name="U">Must be a ISubUserEditableDataLayer.</typeparam>
 /// <typeparam name="V">Must be a component that's also a dialog.</typeparam>
 public class EditableCardBase<T, U, V> : ComponentBase
-    where T : SubUserEditableDataObject
-    where U : ISubUserEditableDataLayer<T>
+    where T : SubDataObject
+    where U : IStandardSubCRUDDataLayer<T>
     where V : ComponentBase
 {
     /// <summary>
@@ -62,7 +62,7 @@ public class EditableCardBase<T, U, V> : ComponentBase
         {
             PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(OwnerID, gridState.ToQueryDefinition());
 
-            if (pagedDataObjects != null)
+            if (pagedDataObjects is not null)
             {
                 return new GridData<T>()
                 {
@@ -88,25 +88,31 @@ public class EditableCardBase<T, U, V> : ComponentBase
     {
         bool? result = await DialogService.ShowConfirmActionMessageAsync();
 
-        if (result == true)
+        if (result is not true)
         {
-            try
-            {
-                OperationResult operationResult = await DataLayer.DeleteAsync(dataObject);
+            return;
+        }
 
-                if (operationResult.IsSuccessStatusCode)
-                {
-                    await MudDataGrid.ReloadServerData();
-                }
-                else
-                {
-                    await DialogService.ShowErrorMessageAsync("Failed to delete the object because of an error on the server.");
-                }
-            }
-            catch
+        try
+        {
+            OperationResult operationResult = await DataLayer.DeleteAsync(dataObject);
+
+            if (operationResult.IsSuccessStatusCode)
             {
-                await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+                await MudDataGrid.ReloadServerData();
             }
+            else if (operationResult.ProblemDetails is not null)
+            {
+                await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
+            }
+            else
+            {
+                await DialogService.ShowErrorMessageAsync("Failed to delete the object because of an error on the server.");
+            }
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
         }
     }
 
@@ -124,7 +130,7 @@ public class EditableCardBase<T, U, V> : ComponentBase
         IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Edit the {DataObjectTypeName.SpaceCapitalLetters()}", dialogParameters);
         DialogResult? dialogResult = await dialogReference.Result;
 
-        if (dialogResult?.Canceled == false)
+        if (dialogResult?.Canceled is false)
         {
             await MudDataGrid.ReloadServerData();
         }
@@ -144,7 +150,7 @@ public class EditableCardBase<T, U, V> : ComponentBase
         IDialogReference dialogReference = await DialogService.ShowAsync<V>($"Create a New {DataObjectTypeName.SpaceCapitalLetters()}", dialogParameters);
         DialogResult? dialogResult = await dialogReference.Result;
 
-        if (dialogResult?.Canceled == false)
+        if (dialogResult?.Canceled is false)
         {
             await MudDataGrid.ReloadServerData();
         }

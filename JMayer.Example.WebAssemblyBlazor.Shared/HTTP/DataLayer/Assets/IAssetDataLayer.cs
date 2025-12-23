@@ -6,7 +6,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 /// <summary>
 /// The interface for interacting with a remote server using CRUD operations specifically for assets.
 /// </summary>
-public interface IAssetDataLayer : IUserEditableDataLayer<Asset>
+public interface IAssetDataLayer : IStandardCRUDDataLayer<Asset>
 {
     /// <summary>
     /// The method returns all the defined categories for the assets.

@@ -1,11 +1,12 @@
 ﻿using JMayer.Data.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
 
 /// <summary>
 /// The class represents an asset (equipment) that needs to be monitored and work orders can be preformed on it.
 /// </summary>
-public class Asset : UserEditableDataObject
+public class Asset : DataObject
 {
     /// <summary>
     /// The property gets/sets the common category for the asset.
@@ -38,15 +39,17 @@ public class Asset : UserEditableDataObject
     /// <remarks>
     /// This is only used by the backend when updating the parent path.
     /// </remarks>
-    internal string MeAsParentPath
-    {
-        get => ParentID == null ? Name : $"{ParentPath}/{Name}";
-    }
+    internal string MeAsParentPath => ParentID is null ? (Name ?? string.Empty) : $"{ParentPath}/{Name ?? string.Empty}";
 
     /// <summary>
     /// The property gets/sets the model for the asset.
     /// </summary>
     public string? Model { get; set; }
+
+    /// <inheritdoc/>
+    /// <remarks>Overridden to add Required data annotation.</remarks>
+    [Required]
+    public override string? Name { get => base.Name; set => base.Name = value; }
 
     /// <summary>
     /// The property gets/sets id for the parent of this asset.

@@ -1,6 +1,6 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
-using JMayer.Example.WebAssemblyBlazor.Shared.Data.Assets;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 using JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Parts;
@@ -14,11 +14,6 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Pages.Parts.Dialogs;
 public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
 {
     /// <summary>
-    /// The selected storage location.
-    /// </summary>
-    private ListView? _selectedStorageLocation;
-
-    /// <summary>
     /// The property gets/sets the data layer needed to access storage locations.
     /// </summary>
     [Inject]
@@ -30,53 +25,18 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
     protected List<ListView> StorageLocations { get; set; } = [];
 
     /// <summary>
-    /// The property gets/sets the storage location which the user selected.
-    /// </summary>
-    protected ListView? SelectedStorageLocation
-    {
-        get => _selectedStorageLocation;
-        set
-        {
-            _selectedStorageLocation = value;
-            //Map any selection changes to the StorageLocationId and StorageLocationName property.
-            DataObject.StorageLocationID = value?.Integer64ID ?? 0;
-            DataObject.StorageLocationName = value?.Name ?? string.Empty;
-        }
-    }
-
-    /// <summary>
-    /// The method sets up the component after the parameters are set.
-    /// </summary>
-    /// <returns>A Task object for the async.</returns>
-    protected override void OnParametersSet()
-    {
-        //The Name property is a required field but the
-        //Stock data object doesn't use it so
-        //it needs to be set to pass validation.
-        DataObject.Name = "A Name";
-        base.OnParametersSet();
-    }
-
-    /// <summary>
     /// The method sets up the component after the parameters are set.
     /// </summary>
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        StorageLocations = await StorageLocationDataLayer.GetAllListViewAsync() ?? [];
-
-        if (!IsNewRecord)
+        try
         {
-            StorageLocation? storageLocation = await StorageLocationDataLayer.GetSingleAsync(DataObject.StorageLocationID);
-
-            if (storageLocation != null)
-            {
-                SelectedStorageLocation = new ListView()
-                {
-                    Integer64ID = storageLocation.Integer64ID,
-                    Name = storageLocation.Name,
-                };
-            }
+            StorageLocations = await StorageLocationDataLayer.GetAllListViewAsync() ?? [];
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
         }
 
         await base.OnParametersSetAsync();
@@ -87,16 +47,25 @@ public class StockDialogBase : CardDialogBase<Stock, IStockDataLayer>
     /// </summary>
     /// <param name="value">The value to search for.</param>
     /// <param name="cancellationToken">Used to cancel the task.</param>
-    /// <returns>A list of acceptable categories.</returns>
-    protected async Task<IEnumerable<ListView>> OnStorageLocationAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
+    /// <returns>A list of acceptable storage locations.</returns>
+    protected async Task<IEnumerable<long>> OnStorageLocationAutoCompleteSearchAsync(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return await Task.FromResult(StorageLocations);
+            return await Task.FromResult(StorageLocations.Select(obj => obj.Integer64ID));
         }
         else
         {
-            return await Task.FromResult(StorageLocations.Where(obj => obj.Name.Contains(value)));
+            return await Task.FromResult(StorageLocations.Where(obj => obj.Name.Contains(value)).Select(obj => obj.Integer64ID));
         }
+    }
+
+    /// <inheritdoc/>
+    /// <remarks>Overridden so the stock's StorageLocationName is updated before it's submitted to the server.</remarks>
+    protected override async Task OnSubmitEditFormAsync()
+    {
+        ListView? selected = StorageLocations.FirstOrDefault(obj => obj.Integer64ID == DataObject.StorageLocationID);
+        DataObject.StorageLocationName = selected?.Name ?? string.Empty;
+        await base.OnSubmitEditFormAsync();
     }
 }

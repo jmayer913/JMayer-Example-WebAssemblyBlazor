@@ -13,8 +13,8 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 public class NewDialogBase<T, U> : ComponentBase
-    where T : UserEditableDataObject, new()
-    where U : IUserEditableDataLayer<T>
+    where T : DataObject, new()
+    where U : IStandardCRUDDataLayer<T>
 {
     /// <summary>
     /// The property gets/sets the data layer to be used by the dialog.
@@ -77,16 +77,20 @@ public class NewDialogBase<T, U> : ComponentBase
             {
                 MudDialog.Close();
             }
-            else if (operationResult.ServerSideValidationResult?.Errors.Count > 0)
+            else if (operationResult.ValidationErrors.Count > 0)
             {
                 Dictionary<string, List<string>> errors = [];
 
-                foreach (ServerSideValidationError error in operationResult.ServerSideValidationResult.Errors)
+                foreach (var errorKeyPair in operationResult.ValidationErrors)
                 {
-                    errors.Add(error.PropertyName, [error.ErrorMessage]);
+                    errors.Add(errorKeyPair.Key, [.. errorKeyPair.Value]);
                 }
 
                 ServerSideValidation.DisplayErrors(errors);
+            }
+            else if (operationResult.ProblemDetails is not null)
+            {
+                await DialogService.ShowErrorMessageAsync(operationResult.ProblemDetails);
             }
             else
             {

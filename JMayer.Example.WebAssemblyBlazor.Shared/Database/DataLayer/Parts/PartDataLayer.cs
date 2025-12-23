@@ -6,6 +6,14 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
 /// <summary>
 /// The class manages CRUD interactions with the database for a part.
 /// </summary>
-public class PartDataLayer : UserEditableDataLayer<Part>, IPartDataLayer
+public class PartDataLayer : StandardCRUDDataLayer<Part>, IPartDataLayer
 {
+    /// <summary>
+    /// The default constructor.
+    /// </summary>
+    public PartDataLayer()
+    {
+        IsOldDataObjectDetectionEnabled = true;
+        IsUniqueNameRequired = true;
+    }
 }

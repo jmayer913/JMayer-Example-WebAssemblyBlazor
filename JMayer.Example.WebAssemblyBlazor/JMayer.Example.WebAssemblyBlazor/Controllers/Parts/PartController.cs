@@ -1,6 +1,7 @@
 ﻿using JMayer.Example.WebAssemblyBlazor.Shared.Data.Parts;
 using JMayer.Example.WebAssemblyBlazor.Shared.Database.DataLayer.Parts;
-using JMayer.Web.Mvc.Controller;
+using JMayer.Web.Mvc.Controller.Api;
+using JMayer.Web.Mvc.Extension;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JMayer.Example.WebAssemblyBlazor.Controllers.Parts;
@@ -10,7 +11,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Controllers.Parts;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class PartController : UserEditableController<Part, IPartDataLayer>
+public class PartController : StandardCRUDController<Part, IPartDataLayer>
 {
     /// <inheritdoc/>
     public PartController(IPartDataLayer dataLayer, ILogger<PartController> logger) : base(dataLayer, logger) { }
@@ -30,8 +31,8 @@ public class PartController : UserEditableController<Part, IPartDataLayer>
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to return the part categories.");
-            return Problem();
+            Logger.LogError(ex, "Failed to return the {Type} categories.", DataObjectTypeName);
+            return Problem(title: $"{DataObjectTypeName} Get Categories Error", detail: $"Failed to return the {DataObjectTypeName.SpaceCapitalLetters()} categories records because of an error on the server.");
         }
     }
 }

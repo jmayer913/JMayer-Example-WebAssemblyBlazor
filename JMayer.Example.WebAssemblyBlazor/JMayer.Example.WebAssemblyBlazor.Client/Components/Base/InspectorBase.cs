@@ -1,6 +1,8 @@
 ﻿using JMayer.Data.Data;
 using JMayer.Data.HTTP.DataLayer;
+using JMayer.Example.WebAssemblyBlazor.Client.Extensions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 
@@ -10,8 +12,8 @@ namespace JMayer.Example.WebAssemblyBlazor.Client.Components.Base;
 /// <typeparam name="T">Must be a UserEditableDataObject.</typeparam>
 /// <typeparam name="U">Must be a IUserEditableDataLayer.</typeparam>
 public class InspectorBase<T, U> : ComponentBase
-    where T : UserEditableDataObject
-    where U : IUserEditableDataLayer<T>
+    where T : DataObject
+    where U : IStandardCRUDDataLayer<T>
 {
     /// <summary>
     /// The property gets/sets the data layer to used by the page.
@@ -23,6 +25,12 @@ public class InspectorBase<T, U> : ComponentBase
     /// The property gets/sets the data object being inspected.
     /// </summary>
     protected T? DataObject { get; set; }
+
+    /// <summary>
+    /// The property gets/sets the dialog service used for managing MudDialogs.
+    /// </summary>
+    [Inject]
+    protected IDialogService DialogService { get; set; } = default!;
 
     /// <summary>
     /// The property gets/sets the index key for the data object.
@@ -41,7 +49,15 @@ public class InspectorBase<T, U> : ComponentBase
     /// <returns>A Task object for the async.</returns>
     protected override async Task OnParametersSetAsync()
     {
-        DataObject = await DataLayer.GetSingleAsync(IndexKey);
+        try
+        {
+            DataObject = await DataLayer.GetSingleAsync(IndexKey);
+        }
+        catch
+        {
+            await DialogService.ShowErrorMessageAsync("Failed to communicate with the server.");
+        }
+
         await base.OnParametersSetAsync();
         Initialized = true;
     }

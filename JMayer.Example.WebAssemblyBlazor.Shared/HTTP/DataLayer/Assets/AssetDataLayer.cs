@@ -8,7 +8,7 @@ namespace JMayer.Example.WebAssemblyBlazor.Shared.HTTP.DataLayer.Assets;
 /// <summary>
 /// The class manages CRUD interactions with a remote server for an asset.
 /// </summary>
-public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
+public class AssetDataLayer : StandardCRUDDataLayer<Asset>, IAssetDataLayer
 {
     /// <inheritdoc/>
     public AssetDataLayer(HttpClient httpClient) : base(httpClient) { }
@@ -19,7 +19,7 @@ public class AssetDataLayer : UserEditableDataLayer<Asset>, IAssetDataLayer
         List<string>? categories = null;
         HttpResponseMessage httpResponseMessage = await HttpClient.GetAsync($"api/{TypeName}/Category/All", cancellationToken);
 
-        if (httpResponseMessage.IsSuccessStatusCode && httpResponseMessage.StatusCode != HttpStatusCode.NoContent)
+        if (httpResponseMessage.IsSuccessStatusCode && httpResponseMessage.StatusCode is not HttpStatusCode.NoContent)
         {
             categories = await httpResponseMessage.Content.ReadFromJsonAsync<List<string>>(cancellationToken);
         }
