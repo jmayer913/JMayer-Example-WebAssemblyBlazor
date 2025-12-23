@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\JMayer-Data-Library\JMayer.Data\JMayer.Data.csproj" />
+    <PackageReference Include="JMayer.Data" Version="9.0.0" />
   </ItemGroup>
 
 </Project>
