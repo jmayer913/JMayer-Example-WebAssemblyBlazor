@@ -59,15 +59,15 @@ Equipment Only:
 * Make - The make of the equipment; optional.
 * Online - Marks if the equipment is online or not.
 
-#### Add/Edit Part Stock
+#### Add/Edit Area Storage Location
 
-On the asset detail page, for area assets, the user can create new storage location or edit existing storage locations from the bottom panel.
+On the asset detail page, for area assets, the user can create a new storage location or edit an existing storage location from the bottom panel.
 
-* Location A - The friendly name for location A; required.
-* Location B - The friendly name for location B; optional.
-* Location C - The friendly name for location C; optional.
+* Location A - The friendly name for your logical A (bin, shelf or etc.); required.
+* Location B - The friendly name for your logical B (bin, shelf or etc.); optional.
+* Location C - The friendly name for your logical C (bin, shelf or etc.); optional.
 
-If the storage location'a A, B and C locations match another storage location, the add or edit will be rejected by the server.
+If the storage location's A, B and C locations match another storage location, the add or edit will be rejected by the server.
 
 <img width="467" alt="image" src="https://github.com/user-attachments/assets/0a65b87f-ce7c-45b8-96e7-74d88caf865b" />
 
@@ -113,7 +113,7 @@ On the part detail page, the user can edit the top panel which contains general 
 * Name - A friendly name for the part; required and must be unique.
 * Category - The category for the part; optional.
 * Manufacturer - Who creates the part; optional.
-* Manufacturer Number - The part identifier assigned by the manufacturer; optional.
+* Manufacturer Number - The identifier assigned by the manufacturer; optional.
 * Model - The model of the part; optional.
 * Make - The make of the part; optional.
 * Description - A description about the part; optional.
@@ -132,7 +132,7 @@ On the part detail page, the user can create new inventory at a storage location
 
 #### Delete Part Stock
 
-On the part detail page, the user can delete stock at a location from the bottom panel. The user will be required to confirm the deletion or cancel. On confirmation, the stock will be deleted at the location.
+On the part detail page, the user can delete stock at a storage location from the bottom panel. The user will be required to confirm the deletion or cancel. On confirmation, the stock will be deleted at the storage location.
 
 <img width="479" height="140" alt="image" src="https://github.com/user-attachments/assets/06e3c7ed-2f16-4ab6-8fe2-11fddd7511a9" />
 
