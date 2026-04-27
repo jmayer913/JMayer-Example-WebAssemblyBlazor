@@ -37,10 +37,10 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first part.");
 
-        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" });
+        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test" }, TestContext.Current.CancellationToken);
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -79,7 +79,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Description = description,
             Name = name,
         };
-        OperationResult operationResult = await dataLayer.CreateAsync(part);
+        OperationResult operationResult = await dataLayer.CreateAsync(part, TestContext.Current.CancellationToken);
 
         Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
         Assert.IsType<Part>(operationResult.DataObject); //A part must have been returned.
@@ -96,7 +96,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        long count = await dataLayer.CountAsync();
+        long count = await dataLayer.CountAsync(TestContext.Current.CancellationToken);
         Assert.True(count > 0);
     }
 
@@ -110,11 +110,11 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Delete Part Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Delete Part Test" }, TestContext.Current.CancellationToken);
         
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part part)
         {
-            operationResult = await dataLayer.DeleteAsync(part);
+            operationResult = await dataLayer.DeleteAsync(part, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode);
         }
         else
@@ -133,7 +133,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        List<Part>? parts = await dataLayer.GetAllAsync();
+        List<Part>? parts = await dataLayer.GetAllAsync(TestContext.Current.CancellationToken);
 
         //Parts must have been returned.
         Assert.NotNull(parts);
@@ -150,7 +150,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        List<ListView>? parts = await dataLayer.GetAllListViewAsync();
+        List<ListView>? parts = await dataLayer.GetAllListViewAsync(TestContext.Current.CancellationToken);
 
         //Part list views must have been returned.
         Assert.NotNull(parts);
@@ -167,7 +167,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        List<string>? categories = await dataLayer.GetCategoriesAsync();
+        List<string>? categories = await dataLayer.GetCategoriesAsync(TestContext.Current.CancellationToken);
 
         //Part categories must have been returned.
         Assert.NotNull(categories);
@@ -184,7 +184,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        Part? part = await dataLayer.GetSingleAsync();
+        Part? part = await dataLayer.GetSingleAsync(TestContext.Current.CancellationToken);
         Assert.NotNull(part);
     }
 
@@ -198,11 +198,11 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Get Single Part Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Get Single Part Test" }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part createdPart)
         {
-            Part? fetchedPart = await dataLayer.GetSingleAsync(createdPart.Integer64ID);
+            Part? fetchedPart = await dataLayer.GetSingleAsync(createdPart.Integer64ID, TestContext.Current.CancellationToken);
             Assert.NotNull(fetchedPart);
         }
         else
@@ -221,15 +221,15 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 1" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 1" }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first part.");
 
-        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 2" });
+        operationResult = await dataLayer.CreateAsync(new Part() { Name = "Add Duplicate Part Test 2" }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part part)
         {
             part.Name = "Add Duplicate Part Test 1";
-            operationResult = await dataLayer.UpdateAsync(part);
+            operationResult = await dataLayer.UpdateAsync(part, TestContext.Current.CancellationToken);
 
             //The operation must have failed.
             Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -278,7 +278,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         PartDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = originalName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Part() { Name = originalName }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part createdPart)
         {
@@ -293,7 +293,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 Name = newName,
                 Obsolete = obsolete,
             };
-            operationResult = await dataLayer.UpdateAsync(updatedPart);
+            operationResult = await dataLayer.UpdateAsync(updatedPart, TestContext.Current.CancellationToken);
 
             Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
             Assert.IsType<Part>(operationResult.DataObject); //A part must have been returned.
@@ -318,7 +318,7 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
         OperationResult operationResult = await dataLayer.CreateAsync(new Part()
         {
             Name = "Old Data Part Test",
-        });
+        }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Part firstPart)
         {
@@ -327,10 +327,10 @@ public class PartUnitTest : IClassFixture<WebApplicationFactory<Program>>
             firstPart.Description = "A description";
             secondPart.Obsolete = true;
 
-            operationResult = await dataLayer.UpdateAsync(secondPart);
+            operationResult = await dataLayer.UpdateAsync(secondPart, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the second part.");
 
-            operationResult = await dataLayer.UpdateAsync(firstPart);
+            operationResult = await dataLayer.UpdateAsync(firstPart, TestContext.Current.CancellationToken);
 
             Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed."); //The operation must have failed.
             Assert.Null(operationResult.DataObject); //No asset was returned.
