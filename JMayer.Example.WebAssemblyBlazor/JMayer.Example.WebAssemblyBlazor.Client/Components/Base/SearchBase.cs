@@ -50,11 +50,11 @@ public class SearchBase<T, U, V> : ComponentBase
     /// </summary>
     /// <param name="gridState">Tells the server how to query data.</param>
     /// <returns>A page of data objects.</returns>
-    protected virtual async Task<GridData<T>> OnDataGridStateChangedAsync(GridState<T> gridState)
+    protected virtual async Task<GridData<T>> OnDataGridStateChangedAsync(GridState<T> gridState, CancellationToken cancellationToken)
     {
         try
         {
-            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(gridState.ToQueryDefinition());
+            PagedList<T>? pagedDataObjects = await DataLayer.GetPageAsync(gridState.ToQueryDefinition(), cancellationToken);
 
             if (pagedDataObjects is not null)
             {
