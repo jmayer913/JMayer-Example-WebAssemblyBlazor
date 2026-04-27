@@ -4,14 +4,14 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>9.0.1</Version>
+    <Version>9.1.0</Version>
     <Authors>jmayer913</Authors>
     <Company>jmayer913</Company>
     <RepositoryUrl>https://github.com/jmayer913/JMayer-Example-WebAssemblyBlazor</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JMayer.Data" Version="9.0.0" />
+    <PackageReference Include="JMayer.Data" Version="9.1.0" />
   </ItemGroup>
 
 </Project>

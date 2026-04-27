@@ -59,7 +59,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
         storageLocation.Name = storageLocation.FriendlyName;
-        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation);
+        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first storage location.");
 
         storageLocation = new()
@@ -70,7 +70,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
         storageLocation.Name = storageLocation.FriendlyName;
-        operationResult = await dataLayer.CreateAsync(storageLocation);
+        operationResult = await dataLayer.CreateAsync(storageLocation, TestContext.Current.CancellationToken);
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -118,7 +118,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
         storageLocation.Name = storageLocation.FriendlyName;
-        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation);
+        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation, TestContext.Current.CancellationToken);
 
         Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
         Assert.IsType<StorageLocation>(operationResult.DataObject); //A storage location must have been returned.
@@ -135,7 +135,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Add Dependencies Not Exists Storage Location Test", Name = "Dependencies Not Exists Storage Location Test", OwnerInteger64ID = 0 });
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Add Dependencies Not Exists Storage Location Test", Name = "Dependencies Not Exists Storage Location Test", OwnerInteger64ID = 0 }, TestContext.Current.CancellationToken);
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -162,7 +162,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        long count = await dataLayer.CountAsync();
+        long count = await dataLayer.CountAsync(TestContext.Current.CancellationToken);
         Assert.True(count > 0);
     }
 
@@ -183,18 +183,18 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             Assert.Fail("Failed to retrieve or create the area asset.");
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 1", Name = "Cascade Storage Location Delete Test 1", OwnerInteger64ID = areaAsset.Integer64ID });
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 1", Name = "Cascade Storage Location Delete Test 1", OwnerInteger64ID = areaAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first storage location.");
 
-        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 2", Name = "Cascade Storage Location Delete Test 2", OwnerInteger64ID = areaAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 2", Name = "Cascade Storage Location Delete Test 2", OwnerInteger64ID = areaAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the second storage location.");
 
-        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 3", Name = "Cascade Storage Location Delete Test 3", OwnerInteger64ID = areaAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Cascade Area Asset-Storage Location Delete Test 3", Name = "Cascade Storage Location Delete Test 3", OwnerInteger64ID = areaAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the third storage location.");
 
-        await new AssetDataLayer(client).DeleteAsync(areaAsset);
+        await new AssetDataLayer(client).DeleteAsync(areaAsset, TestContext.Current.CancellationToken);
 
-        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(areaAsset.Integer64ID);
+        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(areaAsset.Integer64ID, TestContext.Current.CancellationToken);
         
         Assert.NotNull(storageLocations);
         Assert.Empty(storageLocations);
@@ -217,11 +217,11 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             Assert.Fail("Failed to retrieve or create the area asset.");
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Delete Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Delete Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation storageLocation)
         {
-            operationResult = await dataLayer.DeleteAsync(storageLocation);
+            operationResult = await dataLayer.DeleteAsync(storageLocation, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful.");
         }
         else
@@ -240,7 +240,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        List<ListView>? storageLocations = await dataLayer.GetAllListViewAsync();
+        List<ListView>? storageLocations = await dataLayer.GetAllListViewAsync(TestContext.Current.CancellationToken);
 
         //Storage location list views must have been returned.
         Assert.NotNull(storageLocations);
@@ -264,7 +264,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             Assert.Fail("Failed to find the area asset");
         }
 
-        List<ListView>? storageLocations = await dataLayer.GetAllListViewAsync(areaAsset.Integer64ID);
+        List<ListView>? storageLocations = await dataLayer.GetAllListViewAsync(areaAsset.Integer64ID, TestContext.Current.CancellationToken);
 
         //Storage location list views must have been returned.
         Assert.NotNull(storageLocations);
@@ -281,7 +281,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync();
+        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(TestContext.Current.CancellationToken);
 
         //Storage locations must have been returned.
         Assert.NotNull(storageLocations);
@@ -305,7 +305,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             Assert.Fail("Failed to find the area asset");
         }
 
-        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(areaAsset.Integer64ID);
+        List<StorageLocation>? storageLocations = await dataLayer.GetAllAsync(areaAsset.Integer64ID, TestContext.Current.CancellationToken);
 
         //Storage locations must have been returned.
         Assert.NotNull(storageLocations);
@@ -322,7 +322,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         HttpClient client = _factory.CreateClient();
         StorageLocationDataLayer dataLayer = new(client);
 
-        StorageLocation? storageLocation = await dataLayer.GetSingleAsync();
+        StorageLocation? storageLocation = await dataLayer.GetSingleAsync(TestContext.Current.CancellationToken);
         Assert.NotNull(storageLocation);
     }
 
@@ -343,11 +343,11 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             Assert.Fail("Failed to retrieve or create the area asset.");
         }
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Get Single Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID });
+        OperationResult operationResult = await dataLayer.CreateAsync(new StorageLocation() { LocationA = "Get Single Storage Location Test", Name = "Test", OwnerInteger64ID = areaAsset.Integer64ID }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation createdStorageLocation)
         {
-            StorageLocation? fetchedStorageLocation = await dataLayer.GetSingleAsync(createdStorageLocation.Integer64ID);
+            StorageLocation? fetchedStorageLocation = await dataLayer.GetSingleAsync(createdStorageLocation.Integer64ID, TestContext.Current.CancellationToken);
             Assert.NotNull(fetchedStorageLocation);
         }
         else
@@ -387,7 +387,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
         firstStorageLocation.Name = firstStorageLocation.FriendlyName;
-        OperationResult operationResult = await dataLayer.CreateAsync(firstStorageLocation);
+        OperationResult operationResult = await dataLayer.CreateAsync(firstStorageLocation, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first storage location.");
 
         StorageLocation secondStorageLocation = new()
@@ -398,14 +398,14 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
         secondStorageLocation.Name = secondStorageLocation.FriendlyName;
-        operationResult = await dataLayer.CreateAsync(secondStorageLocation);
+        operationResult = await dataLayer.CreateAsync(secondStorageLocation, TestContext.Current.CancellationToken);
 
         if (operationResult.DataObject is StorageLocation duplicateStorageLocation)
         {
             duplicateStorageLocation.LocationA = firstStorageLocation.LocationA;
             duplicateStorageLocation.LocationB = firstStorageLocation.LocationB;
             duplicateStorageLocation.LocationC = firstStorageLocation.LocationC;
-            operationResult = await dataLayer.UpdateAsync(duplicateStorageLocation);
+            operationResult = await dataLayer.UpdateAsync(duplicateStorageLocation, TestContext.Current.CancellationToken);
 
             //The operation must have failed.
             Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -456,7 +456,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
         originalStorageLocation.Name = originalStorageLocation.FriendlyName;
-        OperationResult operationResult = await dataLayer.CreateAsync(originalStorageLocation);
+        OperationResult operationResult = await dataLayer.CreateAsync(originalStorageLocation, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation createdStorageLocation)
         {
@@ -466,7 +466,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
                 LocationB = locationB,
                 LocationC = locationC,
             };
-            operationResult = await dataLayer.UpdateAsync(updatedStorageLocation);
+            operationResult = await dataLayer.UpdateAsync(updatedStorageLocation, TestContext.Current.CancellationToken);
 
             Assert.True(operationResult.IsSuccessStatusCode); //The operation must have been successful.
             Assert.IsType<StorageLocation>(operationResult.DataObject); //A storage location must have been returned.
@@ -501,7 +501,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             OwnerInteger64ID = areaAsset.Integer64ID,
         };
         storageLocation.Name = storageLocation.FriendlyName;
-        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation);
+        OperationResult operationResult = await dataLayer.CreateAsync(storageLocation, TestContext.Current.CancellationToken);
         storageLocation = operationResult.DataObject as StorageLocation;
 
         if (storageLocation is null)
@@ -510,7 +510,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
         }
 
         storageLocation.OwnerInteger64ID = 0;
-        operationResult = await dataLayer.UpdateAsync(storageLocation);
+        operationResult = await dataLayer.UpdateAsync(storageLocation, TestContext.Current.CancellationToken);
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -549,7 +549,7 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             LocationA = "Old Data Storage Location Test",
             Name = "Test",
             OwnerInteger64ID = areaAsset.Integer64ID,
-        });
+        }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is StorageLocation firstStorageLocation)
         {
@@ -558,10 +558,10 @@ public class StorageLocationUnitTest : IClassFixture<WebApplicationFactory<Progr
             firstStorageLocation.LocationB = "Old Data Storage Location Test 1";
             secondStorageLocation.LocationB = "Old Data Storage Location Test 2";
 
-            operationResult = await dataLayer.UpdateAsync(secondStorageLocation);
+            operationResult = await dataLayer.UpdateAsync(secondStorageLocation, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the second storage location.");
 
-            operationResult = await dataLayer.UpdateAsync(firstStorageLocation);
+            operationResult = await dataLayer.UpdateAsync(firstStorageLocation, TestContext.Current.CancellationToken);
 
             Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed."); //The operation must have failed.
             Assert.Null(operationResult.DataObject); //No asset was returned.

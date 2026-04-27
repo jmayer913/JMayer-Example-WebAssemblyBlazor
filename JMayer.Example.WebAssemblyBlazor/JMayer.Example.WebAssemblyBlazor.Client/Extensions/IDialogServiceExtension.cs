@@ -14,7 +14,7 @@ public static class IDialogServiceExtension
     /// <param name="message">The message to display to the user.</param>
     /// <returns>True means the user confirm the action; false or null means the user didn't.</returns>
     public static async Task<bool?> ShowConfirmActionMessageAsync(this IDialogService dialogService, string message = "Do you want to confirm this action?")
-        => _ = await dialogService.ShowMessageBox("Warning", message, cancelText: "Cancel");
+        => _ = await dialogService.ShowMessageBoxAsync("Warning", message, cancelText: "Cancel");
 
     /// <summary>
     /// The method displays an error message to the user.
@@ -23,5 +23,5 @@ public static class IDialogServiceExtension
     /// <param name="message">The message to display to the user.</param>
     /// <returns>A Task object for the async.</returns>
     public static async Task ShowErrorMessageAsync(this IDialogService dialogService, string message)
-        => _ = await dialogService.ShowMessageBox("Error", message, options: new DialogOptions() { CloseButton = false });
+        => _ = await dialogService.ShowMessageBoxAsync("Error", message, options: new DialogOptions() { CloseButton = false });
 }

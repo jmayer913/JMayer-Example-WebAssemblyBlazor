@@ -6,16 +6,16 @@
     <Nullable>enable</Nullable>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
-    <Version>9.0.1</Version>
+    <Version>9.1.0</Version>
     <Authors>jmayer913</Authors>
     <Company>jmayer913</Company>
     <RepositoryUrl>https://github.com/jmayer913/JMayer-Example-WebAssemblyBlazor</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.12" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.12" />
-    <PackageReference Include="MudBlazor" Version="8.15.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.15" />
+    <PackageReference Include="MudBlazor" Version="9.4.0" />
   </ItemGroup>
 
   <ItemGroup>

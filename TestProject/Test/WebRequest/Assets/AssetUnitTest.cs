@@ -57,7 +57,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
 
         if (parentName is not null)
         {
-            parentID = (await dataLayer.GetAllListViewAsync())?.FirstOrDefault(obj => obj.Name == parentName)?.Integer64ID;
+            parentID = (await dataLayer.GetAllListViewAsync(TestContext.Current.CancellationToken))?.FirstOrDefault(obj => obj.Name == parentName)?.Integer64ID;
 
             if (parentID is null)
             {
@@ -73,7 +73,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             ParentID = parentID,
             Type = assetType,
         };
-        OperationResult operationResult = await dataLayer.CreateAsync(asset);
+        OperationResult operationResult = await dataLayer.CreateAsync(asset, TestContext.Current.CancellationToken);
 
         Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
         Assert.IsType<Asset>(operationResult.DataObject); //An asset must have been returned.
@@ -90,10 +90,10 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first asset.");
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test" }, TestContext.Current.CancellationToken);
 
         //The operation must have failed.
         Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -120,7 +120,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        long count = await dataLayer.CountAsync();
+        long count = await dataLayer.CountAsync(TestContext.Current.CancellationToken);
         Assert.True(count > 0);
     }
 
@@ -134,11 +134,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Asset Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Asset Test" }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset asset)
         {
-            operationResult = await dataLayer.DeleteAsync(asset);
+            operationResult = await dataLayer.DeleteAsync(asset, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode, "The operation should have successed.");
         }
         else
@@ -157,19 +157,19 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        long preCount = await dataLayer.CountAsync();
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Parent Test" });
+        long preCount = await dataLayer.CountAsync(TestContext.Current.CancellationToken);
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Delete Parent Test" }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset parentAsset)
         {
-            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = parentAsset.Integer64ID });
+            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 1", ParentID = parentAsset.Integer64ID }, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the child asset.");
 
-            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = parentAsset.Integer64ID });
+            operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Test Child 2", ParentID = parentAsset.Integer64ID }, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the child asset.");
 
-            operationResult = await dataLayer.DeleteAsync(parentAsset);
-            long postCount = await dataLayer.CountAsync();
+            operationResult = await dataLayer.DeleteAsync(parentAsset, TestContext.Current.CancellationToken);
+            long postCount = await dataLayer.CountAsync(TestContext.Current.CancellationToken);
 
             //The operation was a success and the parent and its children were deleted.
             Assert.True(operationResult.IsSuccessStatusCode);
@@ -191,7 +191,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        List<string>? categories = await dataLayer.GetCategoriesAsync();
+        List<string>? categories = await dataLayer.GetCategoriesAsync(TestContext.Current.CancellationToken);
 
         //Asset categories must have been returned.
         Assert.NotNull(categories);
@@ -208,7 +208,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        List<Asset>? assets = await dataLayer.GetAllAsync();
+        List<Asset>? assets = await dataLayer.GetAllAsync(TestContext.Current.CancellationToken);
 
         //Assets must have been returned.
         Assert.NotNull(assets);
@@ -225,7 +225,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        List<ListView>? assets = await dataLayer.GetAllListViewAsync();
+        List<ListView>? assets = await dataLayer.GetAllListViewAsync(TestContext.Current.CancellationToken);
         
         //List view assets must have been returned.
         Assert.NotNull(assets);
@@ -242,7 +242,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        Asset? asset = await dataLayer.GetSingleAsync();
+        Asset? asset = await dataLayer.GetSingleAsync(TestContext.Current.CancellationToken);
         Assert.NotNull(asset);
     }
 
@@ -256,11 +256,11 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Get Single Asset Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Get Single Asset Test" }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdAsset)
         {
-            Asset? asset = await dataLayer.GetSingleAsync(createdAsset.Integer64ID);
+            Asset? asset = await dataLayer.GetSingleAsync(createdAsset.Integer64ID, TestContext.Current.CancellationToken);
             Assert.NotNull(asset);
         }
         else
@@ -296,7 +296,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = originalName });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = originalName }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset createdAsset)
         {
@@ -313,7 +313,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
                 Priority = priority,
                 Type = AssetType.Equipment,
             };
-            operationResult = await dataLayer.UpdateAsync(updatedAsset);
+            operationResult = await dataLayer.UpdateAsync(updatedAsset, TestContext.Current.CancellationToken);
 
             Assert.True(operationResult.IsSuccessStatusCode, "The operation should have been successful."); //The operation must have been successful.
             Assert.IsType<Asset>(operationResult.DataObject); //An asset must have been returned.
@@ -338,7 +338,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         OperationResult operationResult = await dataLayer.CreateAsync(new Asset()
         {
             Name = "Old Data Asset Test",
-        });
+        }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset firstAsset)
         {
@@ -347,10 +347,10 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             firstAsset.Description = "A description";
             secondAsset.Category = "A Category";
 
-            operationResult = await dataLayer.UpdateAsync(secondAsset);
+            operationResult = await dataLayer.UpdateAsync(secondAsset, TestContext.Current.CancellationToken);
             Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the second asset.");
 
-            operationResult = await dataLayer.UpdateAsync(firstAsset);
+            operationResult = await dataLayer.UpdateAsync(firstAsset, TestContext.Current.CancellationToken);
 
             Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed."); //The operation must have failed.
             Assert.Null(operationResult.DataObject); //No asset was returned.
@@ -372,7 +372,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Tree Structure Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Tree Structure Test" }, TestContext.Current.CancellationToken);
         Asset? rootAsset = operationResult.DataObject as Asset;
 
         if (rootAsset is null)
@@ -380,7 +380,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Fail("Failed to create the root asset");
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Other Root Asset Tree Structure Test" });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Other Root Asset Tree Structure Test" }, TestContext.Current.CancellationToken);
         Asset? otherRootAsset = operationResult.DataObject as Asset;
 
         if (otherRootAsset is null)
@@ -388,7 +388,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Fail("Failed to create the other root asset");
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Tree Structure Test", ParentID = rootAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Tree Structure Test", ParentID = rootAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Asset? middleAsset = operationResult.DataObject as Asset;
 
         if (middleAsset is null)
@@ -396,17 +396,17 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Fail("Failed to create the middle asset.");
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 1", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 1", ParentID = middleAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first leaf asset.");
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 2", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Tree Structure Test 2", ParentID = middleAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the second leaf asset.");
 
         middleAsset.ParentID = otherRootAsset.Integer64ID;
-        operationResult = await dataLayer.UpdateAsync(middleAsset);
+        operationResult = await dataLayer.UpdateAsync(middleAsset, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to update the parent of the middle asset.");
 
-        List<Asset>? allAssets = await dataLayer.GetAllAsync();
+        List<Asset>? allAssets = await dataLayer.GetAllAsync(TestContext.Current.CancellationToken);
 
         if (allAssets is null)
         {
@@ -427,15 +427,15 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 1" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 1" }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first asset.");
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 2" });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Duplicate Asset Test 2" }, TestContext.Current.CancellationToken);
 
         if (operationResult.IsSuccessStatusCode && operationResult.DataObject is Asset asset)
         {
             asset.Name = "Duplicate Asset Test 1";
-            operationResult = await dataLayer.UpdateAsync(asset);
+            operationResult = await dataLayer.UpdateAsync(asset, TestContext.Current.CancellationToken);
 
             //The operation must have failed.
             Assert.False(operationResult.IsSuccessStatusCode, "The operation should have failed.");
@@ -467,7 +467,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
         HttpClient client = _factory.CreateClient();
         AssetDataLayer dataLayer = new(client);
 
-        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Rename Test" });
+        OperationResult operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Root Asset Rename Test" }, TestContext.Current.CancellationToken);
         Asset? rootAsset = operationResult.DataObject as Asset;
 
         if (rootAsset is null)
@@ -475,7 +475,7 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Fail("Failed to create the root asset");
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Rename Test", ParentID = rootAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Middle Asset Rename Test", ParentID = rootAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Asset? middleAsset = operationResult.DataObject as Asset;
 
         if (middleAsset is null)
@@ -483,17 +483,17 @@ public class AssetUnitTest : IClassFixture<WebApplicationFactory<Program>>
             Assert.Fail("Failed to create the middle asset.");
         }
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 1", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 1", ParentID = middleAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the first leaf asset.");
 
-        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 2", ParentID = middleAsset.Integer64ID });
+        operationResult = await dataLayer.CreateAsync(new Asset() { Name = "Leaf Asset Rename Test 2", ParentID = middleAsset.Integer64ID }, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to create the second leaf asset.");
 
         rootAsset.Name = "New Root Asset Rename Test";
-        operationResult = await dataLayer.UpdateAsync(rootAsset);
+        operationResult = await dataLayer.UpdateAsync(rootAsset, TestContext.Current.CancellationToken);
         Assert.True(operationResult.IsSuccessStatusCode, "Failed to rename of the root asset.");
 
-        List<Asset>? allAssets = await dataLayer.GetAllAsync();
+        List<Asset>? allAssets = await dataLayer.GetAllAsync(TestContext.Current.CancellationToken);
 
         if (allAssets is null)
         {
